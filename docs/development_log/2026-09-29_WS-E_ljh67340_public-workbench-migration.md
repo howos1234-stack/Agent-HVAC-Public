@@ -40,6 +40,7 @@
 | WS-D | 공개본 P09 `synthetic_search.py`와 테스트의 SHA-256이 private source snapshot과 동일 | 파일별 hash 대조 | 이번 GUI PR에서 WS-D를 중복 변경하지 않음 |
 | 결과 유효성 | 전체 프로젝트 JSON 지문이 현재 프로젝트와 같을 때만 결과 표시 | 공개 가능한 GUI 동작 계약 | 조건·연결·부품·속성 변경 시 stale 결과 제거 |
 | 단위 | 압력은 `bar(a)`만 baseline 입력으로 허용하고 효율은 `dimensionless`만 허용 | 기존 `BaselineCycleSolver` 계약 | `bar(g)`/`barg` 추정 변환 및 효율 단위 오용 차단 |
+| 최신 integration | 공개 PR 생성 후 전진한 `integration` `a200c7b`를 merge하고 양쪽 `CURRENT_STATE` 이력을 보존 | 공개 WORK_PROTOCOL | source manifest를 재생성하고 WS-E + network_map 집중 검증 재실행 |
 
 - 단위 / 물리식 / 상관식 / 제품 데이터 영향: 물리식과 제품 데이터 변경 없음. 일반 baseline GUI 연결만 대상.
 - public interface 영향 / ACR 링크: 별도 Streamlit GUI entrypoint 추가. 공통 schema 변경 없음.
@@ -59,7 +60,8 @@
 | manifest | `uv run --locked python scripts/source_manifest.py --check` | Windows | PASS | 155 files verified |
 | build | `uv build --no-build-isolation` | Windows | PASS | sdist와 wheel 생성 |
 | 실제 브라우저 포인터 | Chromium CDP `Input.dispatchMouseEvent`와 실제 Streamlit DOM, 빈 캔버스부터 재현 | HeadlessChrome 153.0.0.0 / Windows | PASS | 부품 추가·노드 drag·포트 drag 4연결·조건 6개·수렴/상태표·세 종류 invalidation·미지원 배관 차단 확인 |
-| 원격 CI | 공개 branch push 후 GitHub Actions Windows/Ubuntu × base/gui | GitHub-hosted | NOT_RUN | PR 생성 전 |
+| 첫 공개 head CI | Actions run `36577131557` @ `54d0e01` | GitHub-hosted | PARTIAL | Windows base/gui PASS; Ubuntu base/gui는 기존 `network_map` 1건만 FAIL. integration 전진 후 최신 head 재실행 필요 |
+| integration 반영 집중검사 | `uv run --locked --extra gui pytest tests/ws_e tests/ws_a_system/test_network_map.py -q` | Windows / Python 3.12 | PASS | 137 passed |
 
 - 수치 검증 기준값·단위·출처·허용오차·실제 오차(해당 시): R744 합성 교차확인 입력 30/90 bar(a), 6.85/36.85 °C, 0.1 kg/s, 효율 0.8. 제품 성능 기준값이 아니며 GUI는 물리 합격 허용오차를 판정하지 않는다.
 - 실패 재현 및 조치 / 미실행 이유: 최초 base 전체 검사는 새 source manifest 미갱신으로 1 failed, 668 passed였고 manifest를 작성·검토한 뒤 669 passed로 재검증했다. 공개본의 기존 Ubuntu `network_map` 실패는 로컬 Windows에서 재현되지 않았으며 관련 물리 코드·허용오차·테스트를 변경하지 않았다.
