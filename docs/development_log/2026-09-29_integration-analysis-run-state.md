@@ -5,10 +5,10 @@
 - 시작 / 종료 시각 및 시간대: 2026-09-29 23:27 KST / 2026-09-29 23:46 KST (로컬 검증)
 - 수행자 / human owner: Codex 통합·품질 담당 / 요청자 howos1234-stack
 - Phase / Workstream: 기존 합성 해석 GUI 통합 품질 / WS-F 및 WS-E 경계; 신규 major phase 진행 없음
-- 작업 상태: LOCAL_COMPLETE
+- 작업 상태: REVIEW_PENDING
 - 사용자 요청과 목표: 최신 공개 integration 및 담당별 연결 현황 조사 후 작고 독립적인 개선 PR 제출. merge/Gate 승인 제외.
 - 허용 파일 / 제외 파일: analysis_screen_app.py, test_analysis_screen.py, 공개 조사·기록, CURRENT_STATE, manifest. 물리·계약·의존성·제조사 자료·열린 PR #3 코드 제외.
-- branch / 시작 commit / 종료 checkpoint(확인된 경우): codex/integration/analysis-run-state / 041121cf7036409d160f462aab87a163a05a8cc6 / 아직 없음
+- branch / 시작 commit / 종료 checkpoint(확인된 경우): codex/integration/analysis-run-state / 041121cf7036409d160f462aab87a163a05a8cc6 / 코드 checkpoint 73b9b780b9c6b9691173ae4aa04a8ff61019a71c (이후 문서만 갱신)
 - 시작 시 기존 변경: 기존 비공개 checkout에 CURRENT_STATE 수정과 다수 untracked 기록이 있었고 보존했다. 기존 공개 checkout은 clean detached HEAD였으며 그대로 보존했다. 공개 origin의 integration을 별도 integration-quality 폴더에 clone; 작업 시작 clean.
 - 읽은 문서 및 버전: 공개 기준 SHA의 AGENTS, README, CURRENT_STATE, WORK_PROTOCOL, SESSION_TEMPLATE, WS-A analysis screen/manager 안내, WS-A/WS-B 최신 작업 기록, DEPENDENCIES, CI, pyproject, lock 및 관련 코드·테스트·schema. 마스터 플랜 v0.3 및 공통 절차는 읽기 전용 참조; 내부 문서/이력 복사 없음. 공개 workstream README·공통 freeze 승인 문서 부재를 확인했고 공통 계약은 수정하지 않았다.
 - 의존 작업 / frozen interface: CompactAnalysisInput, AnalysisReport와 기존 GUI 내부 bundle 사용. 공통 서비스·물리 계약 변경 없음. PR #3 코드 파일과 중복 없음; CURRENT_STATE/manifest 공유 파일은 향후 병합 시 조율 필요.
@@ -64,8 +64,8 @@
 | 실제 브라우저 | cua.createBrowserTab iab `http://127.0.0.1:8527` 2회 | Windows browser tool | BLOCKED | kernel exited: `windows sandbox failed: helper_unknown_error: setup refresh had errors`. AppTest/HTTP 응답과 구분 |
 | 로컬 HTTP | `Invoke-WebRequest http://127.0.0.1:8527/_stcore/health` | hidden local Streamlit | PASS | `ok`; 실제 브라우저 시각 검증 아님 |
 | diff | `git diff --check`; 소스/테스트/manifest diff 검토 | Git | PASS | 물리/허용오차/기존 테스트 삭제 없음 |
-| 작업 기록 | `uv run --locked python scripts/check_work_record.py --base 041121cf7036409d160f462aab87a163a05a8cc6` | base | NOT_RUN | commit 후 실행 예정 |
-| 이번 PR 원격 CI | 제출 후 head별 Actions 확인 | GitHub | NOT_RUN | 아직 PR 미제출 |
+| 작업 기록 | `uv run --locked python scripts/check_work_record.py --base 041121cf7036409d160f462aab87a163a05a8cc6` | base | PASS | 코드 checkpoint 73b9b78에서 work record 및 CURRENT_STATE 검사 성공; 문서 갱신 commit 후 재확인 |
+| 이번 PR 원격 CI | 제출 후 head별 Actions 확인 | GitHub | NOT_RUN | [PR #4](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/4) 제출; 최신 head 완료 결과는 아직 확인하지 않음 |
 
 - 수치 검증 기준값·단위·출처·허용오차·실제 오차(해당 시): 물리 변경 없음; 기존 물리 회귀 기준 유지. 중단 회귀는 session 부분 기록 주입으로 검증하며 실제 브라우저 Stop 버튼 검증은 BLOCKED.
 - 실패 재현 및 조치 / 미실행 이유: 기본 exec 및 node 실행이 sandbox setup refresh 오류로 실패하여 승인된 escalated shell로 읽기/검증했다. 루트 private repo의 ownership 경고는 해당 조회에만 `git -c safe.directory=E:/Agent-HVAC` 사용; global Git 설정 변경 없음. 최초 HTTP 서버 시작은 artifacts 폴더 부재로 실패했으며 폴더 생성 후 시작/health 확인. private 변경 및 기존 공개 checkout 보존. 새 clone 작성자 미설정 확인 후 인증 계정의 공개 numeric ID/login에 따른 GitHub noreply 주소를 commit 명령에만 지정; global 설정 변경 없음.
@@ -74,8 +74,8 @@
 ## 종료 및 인수인계
 
 - 완료한 범위: 공개 현황 조사, 실패 3건 재현, 제한된 GUI lifecycle 수정 및 base/gui 전체 회귀·정적·build 검사.
-- 남은 작업 / 알려진 한계 / blocker: PR 제출 및 최신 head 원격 CI/리뷰. 실제 브라우저 도구 초기화 BLOCKED. 공통 Agent/제품 최적화/최종 보고서 연결은 후속 범위.
+- 남은 작업 / 알려진 한계 / blocker: PR #4 최신 head 원격 CI/리뷰; 승인 후 담당자가 통합 여부 결정. 실제 브라우저 도구 초기화 BLOCKED. 공통 Agent/제품 최적화/최종 보고서 연결은 후속 범위.
 - 다음 담당자와 첫 실행 작업: 통합 담당은 이번 PR 최신 head CI/리뷰 확인; WS-E는 #3 리뷰 정리 및 두 GUI 흐름의 연결 검토; WS-C 공개 범위/계약 결정은 사용자 및 담당 세션이 수행.
 - `CURRENT_STATE.md` 갱신 여부: 갱신; 공개 현황 감사와 이 기록 링크 포함.
 - Phase checklist / Gate 상태와 증거: CV-1~CV-3, P06 전체, production/Gate 승인 변경 없음.
-- PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): 미제출/미리뷰/미승인/미병합; 후속 갱신 예정. 이번 요청에 merge 권한 없음.
+- PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): [공개 PR #4](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/4) 제출, base integration; 미리뷰/미승인/미병합. 원격 CI는 로컬 PASS와 별개이며 최신 head 완료 결과 미확인. 이번 요청에 merge 권한 없음.
