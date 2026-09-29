@@ -103,3 +103,48 @@ def test_expansion_is_downloadable_without_numerical_execution():
     assert "analysis_bundle" not in at.session_state
     assert at.dataframe[0].value["후보"].tolist() == ["candidate-000", "candidate-001"]
     assert "합성" in at.title[0].value
+
+
+def test_rerun_metadata_failure_replaces_previous_result(monkeypatch):
+    from agent_hvac.app import analysis_screen
+
+    at = app()
+    at.button(key="run").click().run(timeout=120)
+    assert at.session_state["analysis_bundle"]["status"] == "COMPLETE"
+
+    def broken(*args, **kwargs):
+        raise OSError("deliberate metadata read failure")
+
+    monkeypatch.setattr(analysis_screen, "run_metadata", broken)
+    at.button(key="run").click().run(timeout=30)
+    assert not at.exception
+    bundle = at.session_state["analysis_bundle"]
+    assert bundle["status"] == "ERROR" and "report" not in bundle
+    assert bundle["completed_points"] == []
+    assert bundle["metadata"] is None
+    assert bundle["input"]["refrigerant"] == "R410A"
+    assert "deliberate metadata read failure" in bundle["error"]["message"]
+    assert at.error and not at.success and not at.dataframe
+    assert len(at.get("download_button")) == 1
+    at.run()
+    assert not at.exception and at.error and not at.dataframe
+
+
+@pytest.mark.parametrize("status", [None, "RUNNING"])
+def test_interrupted_run_preserves_partial_archive_without_success(status):
+    at = app()
+    completed = [{"case": {"case_id": "already-recorded-candidate"}}]
+    partial = {"metadata": {"is_mock": True}, "completed_points": completed}
+    if status is not None:
+        partial["status"] = status
+    at.session_state["analysis_bundle"] = partial
+    at.run()
+    assert not at.exception
+    bundle = at.session_state["analysis_bundle"]
+    assert bundle["status"] == "ERROR"
+    assert bundle["error"]["type"] == "InterruptedRun"
+    assert bundle["metadata"] == {"is_mock": True}
+    assert bundle["completed_points"] == completed
+    assert "report" not in bundle
+    assert at.error and not at.success and not at.dataframe
+    assert len(at.get("download_button")) == 1

@@ -181,9 +181,15 @@ def main() -> None:
         )
     if st.button("해석 실행", key="run"):
         points: list[dict[str, Any]] = []
-        progress = st.empty()
-        bundle = {"metadata": run_metadata(compact, expanded), "completed_points": points}
+        # Replace the previous run before preparation can fail or Streamlit can stop.
+        bundle: dict[str, Any] = {
+            "status": "RUNNING",
+            "input": compact.model_dump(mode="json"),
+            "metadata": None,
+            "completed_points": points,
+        }
         st.session_state["analysis_bundle"] = bundle
+        progress = st.empty()
 
         def record(point: DesignPoint) -> None:
             points.append(point.model_dump(mode="json"))
@@ -192,15 +198,24 @@ def main() -> None:
             )
 
         try:
+            bundle["metadata"] = run_metadata(compact, expanded)
             report = run_analysis(CoolPropBackend(), expanded, on_point=record)
-            bundle["status"] = "COMPLETE"
             bundle["report"] = report.model_dump(mode="json")
+            bundle["status"] = "COMPLETE"
         except Exception as exc:
             bundle["status"] = "ERROR"
             bundle["error"] = {"type": type(exc).__name__, "message": str(exc)}
         progress.empty()
     bundle = st.session_state.get("analysis_bundle")
     if bundle:
+        # A rerun can resume the UI after a Stop/Rerun interrupted the script.
+        # Older sessions may also contain the pre-status partial bundle.
+        if bundle.get("status") in (None, "RUNNING"):
+            bundle["status"] = "ERROR"
+            bundle["error"] = {
+                "type": "InterruptedRun",
+                "message": "이전 실행이 완료되기 전에 중단됐습니다. 다시 실행하세요.",
+            }
         if bundle["status"] == "ERROR":
             st.error(f"계산 오류: {bundle['error']['type']}: {bundle['error']['message']}")
             st.info("성공으로 처리하지 않았습니다. 완료된 후보와 오류 기록을 내려받을 수 있습니다.")

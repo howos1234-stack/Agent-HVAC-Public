@@ -31,3 +31,12 @@
 - Ubuntu 최초 CI의 배관 실패 기대값은 작은 열전달에서 상대 에너지 잔차가 기존 `1e-12` 판정 경계의 양쪽으로 반올림되는 환경 의존적 사례로 분석됐다. 물리식·수치 한계는 유지하고, 통과 시 실제 잔차가 한계 이내인지 확인하며 결정론적 실패 전파 회귀를 추가했다. 공개 PR #1은 `a200c7b`로 integration에 병합됐다.
 - 비공개 PR #71 head `b033f9e`에서 공개 가능한 합성 압축기·밸브 `is_mock` 전달 및 실패 후 결과 비재사용 테스트만 파일별 검토 후 이관했다. 제조사 자료·비공개 작업 기록은 제외했다.
 - 검증·공개 PR·최신 Windows/Ubuntu × base/gui CI는 작업 기록에서 개별 확인한다. 병합 후 run 36577425396은 Success, 4/4 jobs다. CV-1~CV-3, P06 전체, production 및 Gate 승인은 이번 작업 범위가 아니다.
+
+## Integration quality audit and analysis run state (2026-09-29)
+
+- Audit basis: public `integration` `041121cf7036409d160f462aab87a163a05a8cc6`.
+- [Implementation and flow audit](docs/development/INTEGRATION_AUDIT_2026-09-29.md): WS-A deterministic synthetic analysis and WS-B typed Excel adapters are present; WS-D optimization uses explicit stubs; public WS-C execution/Agent/HITL is absent; WS-E workbench PR #3 remains OPEN / CHANGES_REQUESTED at `9d5bcbd9b85a46a5c646c01419d1c0d9dc472845` (that head has four successful CI checks).
+- Isolated branch `codex/integration/analysis-run-state` fixes preparation failures retaining the previous completed run and interrupted bundles crashing on rerun. Current input, partial points and explicit ERROR remain downloadable. No physical equations, tolerances, dependencies or frozen contracts changed.
+- Three regression cases failed before the fix; the focused screen suite passed (11 tests). Locked `.venv-base` and `.venv-gui` are separate; base Streamlit absence verified. Full validation and PR status are recorded in the [session record](docs/development_log/2026-09-29_integration-analysis-run-state.md).
+- Real browser QA is BLOCKED by the browser tool Windows sandbox setup failure; AppTest and local HTTP health are separate evidence.
+- Local validation: base 592 passed / 2 GUI skips; GUI 620 passed; Ruff, mypy, manifest and base/gui builds PASS. PR submission is pending; no review, merge, CV/P06/Gate or production approval is claimed. Next: finish latest-head CI/review, resolve PR #3 review, and decide public WS-C migration/interface scope before connecting the full workflow.
