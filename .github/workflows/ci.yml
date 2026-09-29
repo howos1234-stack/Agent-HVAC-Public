@@ -43,6 +43,7 @@ jobs:
         if: matrix.environment == 'gui'
         run: uv run --locked --extra gui mypy src/agent_hvac/app/streamlit_app.py
       - run: uv run --locked ${{ matrix.extra }} python scripts/source_manifest.py --check
+      - run: uv run --locked ${{ matrix.extra }} python scripts/check_public_data_boundary.py
       - run: uv run --locked ${{ matrix.extra }} pytest --junitxml=artifacts/pytest.xml
       - run: uv build --no-build-isolation
       - name: Require work record on pull requests

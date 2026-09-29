@@ -31,3 +31,13 @@
 - Ubuntu 최초 CI의 배관 실패 기대값은 작은 열전달에서 상대 에너지 잔차가 기존 `1e-12` 판정 경계의 양쪽으로 반올림되는 환경 의존적 사례로 분석됐다. 물리식·수치 한계는 유지하고, 통과 시 실제 잔차가 한계 이내인지 확인하며 결정론적 실패 전파 회귀를 추가했다. 공개 PR #1은 `a200c7b`로 integration에 병합됐다.
 - 비공개 PR #71 head `b033f9e`에서 공개 가능한 합성 압축기·밸브 `is_mock` 전달 및 실패 후 결과 비재사용 테스트만 파일별 검토 후 이관했다. 제조사 자료·비공개 작업 기록은 제외했다.
 - 검증·공개 PR·최신 Windows/Ubuntu × base/gui CI는 작업 기록에서 개별 확인한다. 병합 후 run 36577425396은 Success, 4/4 jobs다. CV-1~CV-3, P06 전체, production 및 Gate 승인은 이번 작업 범위가 아니다.
+
+## WS-B 공개 제품자료 경계 검사 (2026-09-29, 진행 중)
+
+- Branch: `codex/ws-b/public-data-boundary-guard`, start `041121cf7036409d160f462aab87a163a05a8cc6`.
+- 공개 저장소에서 허용되는 binary product-data artifact는 데이터 행이 없는 15-sheet Excel schema 0.2.0 template 한 개로 제한한다.
+- 제조사 PDF·추가 Excel·스크린샷·ZIP과 `data/components`의 실제 record는 CI에서 거부한다. pytest가 임시 생성하는 합성 workbook은 repository에 저장하지 않는다.
+- ProductRecord, schema, loader, 단위 변환, WS-A adapter 및 실제 제품 데이터는 변경하지 않는다.
+- 집중 합성 회귀: 6 passed. 전체 품질 검사와 공개 matrix CI는 후속 확인한다.
+- CV-1~CV-3, 실제 제조사 검증, P06 전체, production 및 Gate 상태는 변경하지 않는다.
+- Work record: [record](docs/development_log/2026-09-29_2334_WS-B_sangryul1208_public-data-boundary-guard.md).
