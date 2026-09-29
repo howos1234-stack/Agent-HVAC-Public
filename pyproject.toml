@@ -45,7 +45,7 @@ select = ["E", "F", "I", "UP", "B"]
 python_version = "3.12"
 strict = true
 files = ["src/agent_hvac"]
-exclude = ["^src[\\\\/]agent_hvac[\\\\/]app[\\\\/]streamlit_app\\.py$"]
+exclude = ["^src[\\\\/]agent_hvac[\\\\/]app[\\\\/](streamlit_app|design_workbench_app)\\.py$"]
 
 [tool.hatch.build.targets.sdist]
 include = [

@@ -13,7 +13,7 @@
   },
   {
     "path": "pyproject.toml",
-    "sha256": "d3c1e05cf29efb3d810df5a1435561150dd78bc82876224da52cedfecfbc74b4"
+    "sha256": "3b14889751e6d5cc480de9bbf64a71467e422980ca6b048ee814670ea057aed6"
   },
   {
     "path": "scripts/analyze_design_study.py",
@@ -80,16 +80,32 @@
     "sha256": "dce31c947d54782dd56d1d8f1e37ce5540280245a176f928e14249df4be3351b"
   },
   {
+    "path": "src/agent_hvac/app/design_workbench.py",
+    "sha256": "1371216eae11839b2f3398dfebf51d56288ddd295128c8764d7c586dfad3616a"
+  },
+  {
+    "path": "src/agent_hvac/app/design_workbench_app.py",
+    "sha256": "5f093997f6a5386417bc30ca75692b7f21a6bd101b03d7fb9b9114950eba0fb4"
+  },
+  {
     "path": "src/agent_hvac/app/result_view.py",
     "sha256": "30cd5c7cbbd567629c119c985093907b8f2fb05d1e112892754e54a5d797c6c9"
   },
   {
     "path": "src/agent_hvac/app/streamlit_app.py",
-    "sha256": "9eb3e483d939b654f185591ddb69d452b26b174bda87c9a5f1ec99c4c739df47"
+    "sha256": "3ee5e2cfc8ff66fe0f2cad2882271f041ca7f7773883b233214bd5d6a7973f9f"
   },
   {
     "path": "src/agent_hvac/app/synthetic_flow.py",
     "sha256": "b3cd46f47f99c80a0b5365315d24e48d782d3ff05d4f5835e15a681cc3e03acf"
+  },
+  {
+    "path": "src/agent_hvac/app/workbench_canvas_component.py",
+    "sha256": "f895d457e0f206c9f5de2e721b5bb7a81bc53856223f2b83cb382b86205ed2f8"
+  },
+  {
+    "path": "src/agent_hvac/app/workbench_command.py",
+    "sha256": "5d686464d14398cb2c144dbf03b0d168dc3ccd2018b39f0ed12ba14df0b419c6"
   },
   {
     "path": "src/agent_hvac/components/__init__.py",
@@ -580,6 +596,10 @@
     "sha256": "0e30ca93f76401360ef251c44e5e621f6e33248dd96737163b54088794f8445d"
   },
   {
+    "path": "tests/ws_e/test_design_workbench.py",
+    "sha256": "140aa95f869bc2d57d1359467f6a233c99aa702af70d21318494b72b0579f429"
+  },
+  {
     "path": "tests/ws_e/test_file_generators.py",
     "sha256": "4233ea000f92ef5392a481ff72bee4a94ffa31e3dbe135ec88235c6a58bbf551"
   },
@@ -589,7 +609,7 @@
   },
   {
     "path": "tests/ws_e/test_streamlit_app.py",
-    "sha256": "fddeb4ae5d51c412d4eb2795d5c1824662c06b75ed14d55f1ce5d817970a4b14"
+    "sha256": "554f22bc27faac424e8e7b8c589a3a54baf4cf769a8316392496624fba0034bc"
   },
   {
     "path": "tests/ws_e/test_synthetic_result_flow.py",
