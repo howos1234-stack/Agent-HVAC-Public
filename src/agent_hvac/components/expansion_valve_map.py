@@ -56,6 +56,7 @@ class ExpansionValveMapResult:
 
     model_path: Literal["PERFORMANCE_MAP"]
     product_id: str
+    is_mock: bool
     map_id: str
     envelope_id: str
     inlet_phase: str
@@ -150,6 +151,7 @@ def evaluate_expansion_valve_map(data: ExpansionValveMapInput) -> ExpansionValve
     return ExpansionValveMapResult(
         model_path="PERFORMANCE_MAP",
         product_id=product.product_id,
+        is_mock=product.is_mock,
         map_id=evaluation.map_id,
         envelope_id=calculation_envelope.envelope_id,
         inlet_phase=inlet_state.phase,

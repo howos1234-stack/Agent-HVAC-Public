@@ -52,6 +52,7 @@ def test_compressor_map_interpolates_and_identifies_separate_model_path(
 
     assert result.model_path == "PERFORMANCE_MAP"
     assert result.product_id == "MOCK-compressor-v020"
+    assert result.is_mock is product.is_mock is True
     assert result.map_id == "cmp-map-1"
     assert result.envelope_id == "cmp-envelope-1"
     assert result.outputs["input_power"] == pytest.approx(1150.0, rel=0.0, abs=1e-12)
@@ -177,6 +178,20 @@ def test_missing_or_extra_operating_condition_is_not_guessed(
 def test_fixed_condition_mismatch_is_rejected(product: ProductRecord) -> None:
     with pytest.raises(PerformanceMapError, match="does not exactly match"):
         evaluate_compressor_map(_input(product, frequency=Quantity(value=60.0, unit="Hz")))
+
+
+def test_failed_synthetic_candidate_cannot_reuse_previous_map_result(
+    product: ProductRecord,
+) -> None:
+    first = evaluate_compressor_map(_input(product))
+
+    with pytest.raises(PerformanceMapError, match="does not exactly match"):
+        evaluate_compressor_map(_input(product, frequency=Quantity(value=60.0, unit="Hz")))
+
+    repeated = evaluate_compressor_map(_input(product))
+    assert repeated.outputs == first.outputs
+    assert repeated.output_source_ids == first.output_source_ids
+    assert repeated.is_mock is first.is_mock is True
 
 
 def test_non_compressive_pressure_direction_is_rejected(product: ProductRecord) -> None:

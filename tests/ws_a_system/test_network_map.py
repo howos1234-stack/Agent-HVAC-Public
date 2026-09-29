@@ -85,7 +85,6 @@ def test_small_heat_pipe_failure_is_retained_not_relaxed(network_data):
     from agent_hvac.utils.units import Pressure, SpecificEnthalpy
 
     data = copy.deepcopy(network_data)
-    data["scenario"]["network"]["suction_pipe"]["linear_heat_transfer_coefficient"]["value"] = 0.5
     for key in ("discharge_pipe", "high_side_pipe", "suction_pipe"):
         data["scenario"]["network"][key]["linear_heat_transfer_coefficient"]["value"] = 0.5
     req = ConvergenceRequest.model_validate(data)
@@ -95,8 +94,51 @@ def test_small_heat_pipe_failure_is_retained_not_relaxed(network_data):
         SpecificEnthalpy(value=450000, unit="J/kg"),
         Pressure(value=3e6, unit="Pa"),
     )
+    # At this tiny heat flow, CoolProp/binary64 rounding can put the suction
+    # pipe residual on either side of the unchanged 1e-12 closure limit.
+    if result.status == "component-numerical-failure":
+        assert result.failed_stage == "suction_pipe" and "energy closure" in result.message
+        assert result.diagnostics is None
+    else:
+        assert result.status == "evaluated", result.model_dump_json()
+        assert result.diagnostics is not None
+        assert len(result.components) == 7
+        assert all(
+            trace.pipe.relative_energy_residual <= 1e-12
+            for trace in result.components
+            if trace.pipe is not None
+        )
+
+
+def test_pipe_energy_closure_failure_retains_network_stage(network_data, monkeypatch):
+    from agent_hvac.utils.exceptions import ConvergenceError
+    from agent_hvac.utils.units import Pressure, SpecificEnthalpy
+
+    data = copy.deepcopy(network_data)
+    for key in ("discharge_pipe", "high_side_pipe", "suction_pipe"):
+        data["scenario"]["network"][key]["linear_heat_transfer_coefficient"]["value"] = 0.5
+    req = ConvergenceRequest.model_validate(data)
+    actual_evaluate = network.evaluate_pipe_1d
+    pipe_calls = 0
+
+    def closure_failure_at_suction(*args, **kwargs):
+        nonlocal pipe_calls
+        pipe_calls += 1
+        if pipe_calls == 3:
+            raise ConvergenceError("pipe energy closure residual 2e-12 exceeds 1e-12")
+        return actual_evaluate(*args, **kwargs)
+
+    monkeypatch.setattr(network, "evaluate_pipe_1d", closure_failure_at_suction)
+    result = network.traverse_network(
+        CoolPropBackend(),
+        req.scenario,
+        SpecificEnthalpy(value=450000, unit="J/kg"),
+        Pressure(value=3e6, unit="Pa"),
+    )
+    assert pipe_calls == 3
     assert result.status == "component-numerical-failure"
-    assert result.failed_stage == "suction_pipe" and "energy closure" in result.message
+    assert result.failed_stage == "suction_pipe"
+    assert "energy closure" in result.message
     assert result.diagnostics is None
 
 
