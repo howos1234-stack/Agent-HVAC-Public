@@ -8,7 +8,7 @@
 - 작업 상태: REVIEW_PENDING
 - 사용자 요청과 목표: 비공개 저장소의 Git 이력과 제조사 자료를 반입하지 않고 공개 저장소에서 ProductRecord, 생성 Schema, Excel loader, 빈 양식 및 합성 검증 경로를 계속 개발할 수 있는지 확인한다.
 - 허용 파일 / 제외 파일: 공개 코드·생성 Schema·빈 Excel 양식·직접 만든 합성 fixture·검증 코드만 허용한다. 제조사 PDF·선정 프로그램 출력·조사 Excel·스크린샷·성능표·이용권 미확인 수치와 private Git/PR 이력은 제외한다.
-- branch / 시작 commit / 종료 checkpoint(확인된 경우): `codex/ws-b/public-product-db-audit` / `f19f2fefc05c78bb050e024b9e15651b0fd4bef4` / 이 기록의 최종 commit은 PR 제출 시 확정한다.
+- branch / 시작 commit / 종료 checkpoint(확인된 경우): `codex/ws-b/public-product-db-audit` / 감사 기준 `f19f2fefc05c78bb050e024b9e15651b0fd4bef4` / 공개 PR #2 최초 head `0b88deddd0827df4b8aea28af92dcc7396492f9a` / 최신 integration `a200c7bec109cb475c8283e7a1f9a2d9733fb743` 반영 중.
 - 시작 시 기존 변경: 새 공개 clone은 clean이었다. 별도 비공개 작업 폴더의 untracked `.artifact_work/`는 변경하거나 이관하지 않았다.
 - 읽은 문서 및 버전: `README.md`, `AGENTS.md`, `CURRENT_STATE.md`, `docs/development/WORK_PROTOCOL.md`, `docs/development_log/SESSION_TEMPLATE.md`, `docs/development_log/2026-09-29_public-export.md` at `f19f2fe`.
 - 의존 작업 / frozen interface: ProductRecord 0.2.0, Excel schema 0.2.0, loader 0.2.x 및 기존 WS-A adapter 경계를 유지한다. 계약 변경은 수행하지 않았다.
@@ -34,7 +34,7 @@
 | 빈 workbook | 공개 양식은 15개 계약 sheet, header와 49개 빈 입력 행만 포함한다. 데이터 행은 0개다. | openpyxl read-only/normal load로 모든 sheet의 nonblank data row를 검사했다. | 실제 제조사 자료 없이 loader 개발과 합성 테스트에 사용한다. |
 | 공개 자료 경계 | tracked binary는 빈 `.xlsx` 1개뿐이며 제조사명·모델명 검색 결과가 없다. | `git ls-files` 확장자 감사 및 Dorin/Danfoss/Kelvion/AlfaBlue/CCMT/model 문자열 검색. | 제조사 원본과 조사 결과는 private 저장소에 유지한다. |
 | 배포 산출물 | sdist에는 공개 문서·빈 workbook·합성 fixture가 포함되고 wheel에는 Python package만 포함된다. 제조사 원본은 없다. | `python -m build --no-isolation` 후 tar/zip member 목록 감사. | 향후 build에서도 동일 검사를 유지한다. |
-| Ubuntu 실패 | 공개 초기 CI의 Ubuntu `network_map` 실패는 이 WS-B 감사에서 수정하지 않는다. | public CI run 36565346488 및 `CURRENT_STATE.md`; WS-A 소유 수치 경로. | WS-A가 별도 branch/PR에서 원인을 조사한다. tolerance 완화나 실패 은폐를 하지 않는다. |
+| Ubuntu 실패 | 공개 초기 CI의 Ubuntu `network_map` 실패는 감사 기준 `f19f2fe`의 과거 결과다. WS-A 공개 PR #1이 물리 tolerance를 유지한 회귀 보강을 제출했고 `a200c7b`로 병합됐다. | 초기 run 36565346488, PR #1 merge `a200c7b`, post-merge run 36577425396. | 병합 후 run은 Success, Windows/Ubuntu × base/gui 4/4 jobs다. |
 
 - 단위 / 물리식 / 상관식 / 제품 데이터 영향: 원단위→canonical SI, 차원 검증, source/value 참조, 격리 및 상태 처리의 기존 계약을 변경하지 않았다. 실제 제품 수치도 추가하지 않았다.
 - public interface 영향 / ACR 링크: 없음. 새로운 ACR이 필요한 계약 변경 없음.
@@ -44,17 +44,18 @@
 
 | 검증 대상 | 정확한 명령 또는 검사 방법 | 환경 | PASS/FAIL/NOT_RUN/BLOCKED | 결과 요약 및 증거 |
 |---|---|---|---|---|
-| WS-B + WS-A Excel adapter 집중 회귀 | `python -m pytest -q ... tests/ws_b tests/ws_a/test_excel_*_integration.py` | Windows, GUI 의존성 설치 환경 | PASS | 90 passed. loader→ProductRecord→compressor/valve/HX 합성 소비 경로 포함. |
-| 전체 회귀 | `python -m pytest -q --tb=short -p no:cacheprovider` | Windows, GUI 의존성 설치 환경 | PASS | 614 passed. |
+| WS-B + WS-A Excel adapter 집중 회귀 | `..\Agent-HVAC-repo\.venv\Scripts\python.exe -m pytest -q --tb=short -p no:cacheprovider --basetemp='.artifact_work\pytest-public-escalated' tests\ws_b tests\ws_a\test_excel_compressor_integration.py tests\ws_a\test_excel_valve_integration.py tests\ws_a\test_excel_hx_integration.py` | Windows, GUI 의존성 설치 환경, 감사 기준 `f19f2fe` | PASS | 90 passed. loader→ProductRecord→compressor/valve/HX 합성 소비 경로 포함. 최신 head 결과로 간주하지 않는다. |
+| 전체 회귀 | `..\Agent-HVAC-repo\.venv\Scripts\python.exe -m pytest -q --tb=short -p no:cacheprovider --basetemp='.artifact_work\pytest-full'` | Windows, GUI 의존성 설치 환경, 감사 기준 `f19f2fe` | PASS | 614 passed. 최신 head 결과로 간주하지 않는다. |
 | 생성 Schema 일치 | `test_deployed_schema_is_generated_from_product_record` | Windows | PASS | production 모델 생성 결과와 배포 `ProductRecord.schema.json` 동일. |
 | 빈 Excel 양식 | openpyxl로 15개 sheet의 header와 nonblank data row 검사 | Windows | PASS | 15 sheets, 모든 sheet의 nonblank data row 0개. |
 | 비공개 자료 혼입 | tracked 확장자 및 제조사·모델 문자열 검색 | Git worktree | PASS | tracked binary는 빈 template `.xlsx` 1개; 대상 제조사·모델 검색 결과 없음. |
 | Ruff | `ruff check .`, `ruff format --check .` | Windows | PASS | lint 통과, 148 files formatted. |
 | mypy | `mypy src`, `mypy src/agent_hvac/app/streamlit_app.py` | Windows | PASS | 72 source files 및 GUI entry 통과. |
-| source manifest | `python scripts/source_manifest.py --write`, `python scripts/source_manifest.py --check` | Windows | PASS | 150 files 일치. 문서 기록은 source inventory 대상이 아니어서 manifest 내용은 변경되지 않았다. |
+| source manifest | `..\Agent-HVAC-repo\.venv\Scripts\python.exe scripts\source_manifest.py --write`, `..\Agent-HVAC-repo\.venv\Scripts\python.exe scripts\source_manifest.py --check` | Windows, 감사 기준 `f19f2fe` | PASS | 150 files 일치. 감사 문서 기록은 source inventory 대상이 아니어서 당시 manifest 내용은 변경되지 않았다. 최신 integration의 manifest 변경은 WS-A PR #1의 source/test 변경을 반영한 것이다. |
 | build | `python -m build --no-isolation` | Windows | PASS | sdist와 wheel 생성 성공, member 목록 감사 완료. |
 | locked base/gui 분리 실행 | `uv sync --locked ...` | Windows | BLOCKED | 이 호스트에서 `uv` 실행 파일을 찾지 못해 환경별 재생성은 미실행. 설치된 GUI 환경 전체 614개와 집중 90개는 통과했다. 원격 CI에서 base/gui를 다시 확인한다. |
-| 원격 CI | 공개 PR head | GitHub Actions | NOT_RUN | branch push와 PR 제출 후 확인한다. |
+| PR #2 원격 CI | 최초 head `0b88ded`, documentation-only diff | GitHub Actions | NOT_RUN | Checks 0. Markdown-only 정책에 따른 미실행이며 결제 차단이 아니다. |
+| PR #1 병합 후 CI | merge `a200c7b`, [run 36577425396](https://github.com/howos1234-stack/Agent-HVAC-Public/actions/runs/36577425396) | GitHub Actions | PASS | Success, Windows/Ubuntu × base/gui 4/4 jobs completed, total duration 11m 34s. |
 
 - 수치 검증 기준값·단위·출처·허용오차·실제 오차(해당 시): 실제 제조사 수치를 사용하지 않았으므로 해당 없음.
 - 실패 재현 및 조치 / 미실행 이유: 최초 pytest/build는 Windows temp ACL로 실패하여 명시적 임시 경로와 승인된 실행으로 재실행했다. 코드 실패가 아니며 재실행은 통과했다.
@@ -63,8 +64,8 @@
 ## 종료 및 인수인계
 
 - 완료한 범위: 공개 저장소 분리 clone, push 경로 확인, 관련 문서 검토, 공개/비공개 범위 분류, WS-B 코드·Schema·blank template·합성 adapter 경로·build 산출물 감사.
-- 남은 작업 / 알려진 한계 / blocker: 원격 base/gui CI 확인이 남았다. Ubuntu `network_map` 실패는 WS-A 별도 조사 항목이다. 실제 제조사 자료와 CV-1~CV-3는 공개 저장소에 반입하지 않는다.
-- 다음 담당자와 첫 실행 작업: WS-B는 이 branch를 공개 PR로 제출한다. WS-A는 공개 합성 adapter 경계와 알려진 Ubuntu 실패를 별도 검토한다.
+- 남은 작업 / 알려진 한계 / blocker: PR #2 최신 head의 Checks 상태 확인이 남았다. 실제 제조사 자료와 CV-1~CV-3는 공개 저장소에 반입하지 않는다.
+- 다음 담당자와 첫 실행 작업: WS-B는 PR #2 정정 head를 제출한다. WS-A는 공개 합성 adapter 경계를 재검토한다.
 - `CURRENT_STATE.md` 갱신 여부: 갱신.
 - Phase checklist / Gate 상태와 증거: CV-1~CV-3, 실제 제조사 검증, P06 전체 및 Gate 상태 변경 없음.
-- PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): PR 미제출, REVIEW_PENDING, 미병합, 원격 CI NOT_RUN.
+- PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): 공개 PR #2, 관리자 `CHANGES_REQUESTED`, REVIEW_PENDING, 미병합. 최초 head의 Checks 0은 Markdown-only 정책에 따른 NOT_RUN이다.

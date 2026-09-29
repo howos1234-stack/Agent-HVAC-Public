@@ -97,6 +97,7 @@ def test_valve_map_interpolates_and_keeps_outlet_flashing_out_of_scope(
 
     assert result.model_path == "PERFORMANCE_MAP"
     assert result.product_id == "MOCK-expansion-valve-v020"
+    assert result.is_mock is product.is_mock is True
     assert result.map_id == "valve-map-1"
     assert result.envelope_id == "valve-envelope-1"
     assert result.inlet_phase == "supercritical_liquid"
@@ -313,6 +314,22 @@ def test_valve_fixed_condition_mismatch_is_rejected(product: ProductRecord) -> N
         evaluate_expansion_valve_map(
             _input(product, inlet_temperature=Temperature(value=304.0, unit="K"))
         )
+
+
+def test_failed_synthetic_candidate_cannot_reuse_previous_valve_result(
+    product: ProductRecord,
+) -> None:
+    first = evaluate_expansion_valve_map(_input(product))
+
+    with pytest.raises(PerformanceMapError, match="does not exactly match"):
+        evaluate_expansion_valve_map(
+            _input(product, inlet_temperature=Temperature(value=304.0, unit="K"))
+        )
+
+    repeated = evaluate_expansion_valve_map(_input(product))
+    assert repeated.outputs == first.outputs
+    assert repeated.output_source_ids == first.output_source_ids
+    assert repeated.is_mock is first.is_mock is True
 
 
 @pytest.mark.parametrize(

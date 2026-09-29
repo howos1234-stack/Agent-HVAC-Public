@@ -66,6 +66,7 @@ class CompressorMapResult:
 
     model_path: Literal["PERFORMANCE_MAP"]
     product_id: str
+    is_mock: bool
     map_id: str
     envelope_id: str
     conditions_si: Mapping[str, float]
@@ -147,6 +148,7 @@ def evaluate_compressor_map(data: CompressorMapInput) -> CompressorMapResult:
     return CompressorMapResult(
         model_path="PERFORMANCE_MAP",
         product_id=product.product_id,
+        is_mock=product.is_mock,
         map_id=evaluation.map_id,
         envelope_id=calculation_envelope.envelope_id,
         conditions_si=MappingProxyType(dict(conditions_si)),
