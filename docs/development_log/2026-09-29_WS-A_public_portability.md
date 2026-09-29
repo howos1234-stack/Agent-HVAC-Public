@@ -41,6 +41,8 @@
 | 상태 | 새로운 승인 아님 | 공개 저장소 AGENTS.md와 WORK_PROTOCOL.md | CV-1~CV-3/P06/Gate 유지 |
 
 - 단위·물리식·상관식·공통 계약·DB 변경 없음. 공개 계산 결과에 기존 `is_mock` 정보를 추가 보존한다.
+- 비공개 PR #71의 파일별 이관: `src/agent_hvac/components/compressor_map.py`, `src/agent_hvac/components/expansion_valve_map.py`, `tests/ws_a/test_compressor_map.py`, `tests/ws_a/test_expansion_valve_map.py`의 합성 코드·회귀 hunk만 새 공개 커밋으로 재작성했다.
+- 비공개 PR #71에서 제외: `CURRENT_STATE.md`, `docs/development_log/2026-09-29_1750_WS-A_daeyunekim_synthetic-component-evidence.md`, `docs/validation/p00-source-manifest.json`은 공개 저장소의 상태·기록·해시로 새로 생성했다. `docs/workstreams/ws_a/SYNTHETIC_COMPONENT_EVIDENCE_HANDOFF.md`는 비공개 저장소의 작업 이력·상태 인계를 포함하므로 그대로 복사하지 않았다. 제조사 원본·선정 출력·이용권 미확인 수치·개인정보·비밀키는 애초에 이관 대상에 포함하지 않았다.
 
 ## 검증 결과
 
