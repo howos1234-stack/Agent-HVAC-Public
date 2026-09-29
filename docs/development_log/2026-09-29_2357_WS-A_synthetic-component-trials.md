@@ -8,7 +8,7 @@
 - 작업 상태: REVIEW_PENDING
 - 사용자 요청과 목표: 최신 공개 `integration`에서 압축기·팽창밸브·HX 합성 후보의 계산 결과와 실패·출처·mock 표시를 후보별로 분리한다.
 - 허용 파일 / 제외 파일: WS-A 계산 연결 함수·합성 테스트·검증 문서·상태 기록만 변경한다. 제조사 원본, 조사 수치, private 이력, 공통 계약·물리식은 제외한다.
-- branch / 시작 commit / 종료 checkpoint(확인된 경우): `codex/ws-a/synthetic-component-trials` / `041121cf7036409d160f462aab87a163a05a8cc6` / PR 제출 전 확인 예정.
+- branch / 시작 commit / 종료 checkpoint(확인된 경우): `codex/ws-a/synthetic-component-trials` / `041121cf7036409d160f462aab87a163a05a8cc6` / 최초 공개 PR #6 head `b6a0173afd39f2ace6f8b2baabfd34f75b6bd336`.
 - 시작 시 기존 변경: 공개 `integration`을 `041121c`로 fast-forward한 뒤 clean 상태에서 분기했다.
 - 읽은 문서 및 버전: 공개 README, AGENTS, CURRENT_STATE, WORK_PROTOCOL, SESSION_TEMPLATE 및 WS-A 장비별 계산 코드·합성 테스트.
 - 의존 작업 / frozen interface: ProductRecord 0.2.0, loader 0.2.x, P05 및 장비별 map evaluator의 물리·단위·출처 계약은 유지한다.
@@ -54,7 +54,7 @@
 | manifest | `python scripts/source_manifest.py --write`, `python scripts/source_manifest.py --check` | 기존 GUI 가상환경 | PASS | 151 files verified |
 | sdist/wheel | `python -m build --no-isolation --outdir '.artifact_work\dist-component-trials'` | 기존 GUI 가상환경 | PASS | sdist 및 wheel 생성. 최종 문서 반영 후 재실행 예정 |
 | locked base/gui 환경 재생성 | `uv sync --locked`, `uv sync --locked --extra gui` | 현재 호스트 | BLOCKED | `uv` 실행 파일을 찾지 못함. 기존 가상환경 결과를 locked 결과로 위장하지 않는다. |
-| 공개 원격 CI | 새 PR head | GitHub Actions | NOT_RUN | PR 제출 후 확인 예정 |
+| 공개 원격 CI | [PR #6](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/6) 최신 head | GitHub Actions | NOT_RUN | 최초 head의 run 36589237467이 실행 중이며 완료 결과는 아직 확인하지 않았다. 실행 중은 PASS로 기록하지 않는다. |
 
 - 수치 검증 기준값·단위·출처·허용오차·실제 오차(해당 시): 합성 fixture의 기존 기준을 사용한다.
 - 실패 재현 및 조치 / 미실행 이유: 첫 기본 전체 실행은 임시 폴더 상위 경로 누락에 따른 97개 setup 오류와 변경된 source manifest의 미갱신으로 실패했다. 상위 폴더 생성 및 manifest 재생성 후 전체를 재실행해 통과했다. `uv` 부재는 남은 환경 제한이다.
@@ -63,8 +63,8 @@
 ## 종료 및 인수인계
 
 - 완료한 범위: 공개 최신 integration 동기화, 합성 후보별 독립 평가 연결, 세 장비군 회귀 및 로컬 검증.
-- 남은 작업 / 알려진 한계 / blocker: 공개 PR 제출, 최신 head의 locked 원격 CI 및 리뷰. 실제 후보 비교 정책은 관리자 범위.
+- 남은 작업 / 알려진 한계 / blocker: PR #6 최신 head의 locked 원격 CI 및 리뷰. 실제 후보 비교 정책은 관리자 범위.
 - 다음 담당자와 첫 실행 작업: 관리자에게 합성 전용 경계와 실패 격리, CI를 검토 요청한다.
 - `CURRENT_STATE.md` 갱신 여부: 갱신.
 - Phase checklist / Gate 상태와 증거: CV-1~CV-3, P06 전체, production, Gate 미승인 유지.
-- PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): PR 제출 전, REVIEW_PENDING, 미병합, 원격 CI NOT_RUN.
+- PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): 공개 [PR #6](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/6), REVIEW_PENDING, 미병합, 원격 CI run 36589237467 실행 중/결과 미확인.

@@ -36,6 +36,6 @@
 
 - 공개 `integration` `041121cf7036409d160f462aab87a163a05a8cc6`에서 분기했다. 별도 private 이력이나 제조사 자료는 반입하지 않았다.
 - mock ProductRecord만 대상으로 압축기 map, 팽창밸브 map, HX rated point→P05 계산을 후보별로 독립 실행한다. 성공 결과에는 기존 상세 출처가 남고 실패 후보는 출력 없이 오류·선택 ID만 보존한다. 순위·목적함수·실제 제품 자동선정은 포함하지 않는다.
-- 로컬 기존 가상환경에서 집중 4개, 기본 전체 596 passed/2 skipped, GUI 전체 621 passed. Ruff, mypy, manifest 151 files, build를 확인했다. `uv`가 이 호스트에서 없어 locked 환경 재생성은 BLOCKED이며 원격 CI는 아직 NOT_RUN이다.
+- 로컬 기존 가상환경에서 집중 4개, 기본 전체 596 passed/2 skipped, GUI 전체 621 passed. Ruff, mypy, manifest 151 files, build를 확인했다. `uv`가 이 호스트에서 없어 locked 환경 재생성은 BLOCKED다. 공개 [PR #6](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/6)의 locked 원격 CI 결과는 별도 확인한다.
 - PR #2 관리자 승인 때 남긴 비차단 문구 정정 세 건을 이 작업에 포함했다. 세부 검증은 [작업 기록](docs/development_log/2026-09-29_2357_WS-A_synthetic-component-trials.md)을 따른다.
 - 실제 제조사 검증·CV-1~CV-3·P06 전체·production·Gate 상태는 변경하지 않는다.
