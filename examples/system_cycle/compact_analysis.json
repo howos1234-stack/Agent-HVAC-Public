@@ -1,0 +1,82 @@
+{
+  "raw_requirement": "R410A, continuous refrigerant 0.05 kg/s, room 21 degC. Synthetic outdoor 35 degC and sensible load 3000 W.",
+  "authorization_ref": "2026-09-24 user-approved synthetic candidate generation",
+  "preset": "synthetic-condenser-v1",
+  "refrigerant": "R410A",
+  "refrigerant_mass_flow": {
+    "value": 0.05,
+    "unit": "kg/s"
+  },
+  "room_temperature": {
+    "value": 21,
+    "unit": "degC"
+  },
+  "outdoor_temperature": {
+    "value": 35,
+    "unit": "degC"
+  },
+  "sensible_load": {
+    "value": 3000,
+    "unit": "W"
+  },
+  "boundary_source_type": "AGENT_ASSUMPTION",
+  "boundary_source_ref": "R410A_DESIGN_STUDY: outdoor and load synthetic, not measured",
+  "baseline": {
+    "suction_pressure": {
+      "value": 1,
+      "unit": "MPa"
+    },
+    "discharge_pressure": {
+      "value": 3.5,
+      "unit": "MPa"
+    },
+    "indoor_air_flow": {
+      "value": 1.5,
+      "unit": "kg/s"
+    },
+    "outdoor_air_flow": {
+      "value": 0.8,
+      "unit": "kg/s"
+    },
+    "condenser_ua": {
+      "value": 800,
+      "unit": "W/K"
+    },
+    "evaporator_ua": {
+      "value": 800,
+      "unit": "W/K"
+    }
+  },
+  "lower_enthalpy": {
+    "value": 423500,
+    "unit": "J/kg"
+  },
+  "upper_enthalpy": {
+    "value": 450000,
+    "unit": "J/kg"
+  },
+  "valve_pressure_lower": {
+    "value": 1,
+    "unit": "MPa"
+  },
+  "valve_pressure_upper": {
+    "value": 1.1,
+    "unit": "MPa"
+  },
+  "axes": [
+    {
+      "name": "discharge_pressure",
+      "minimum": {
+        "value": 2.8,
+        "unit": "MPa"
+      },
+      "maximum": {
+        "value": 3.5,
+        "unit": "MPa"
+      },
+      "samples": 2,
+      "authorization_ref": "explicit synthetic pressure range"
+    }
+  ],
+  "max_cases": 2
+}

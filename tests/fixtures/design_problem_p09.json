@@ -1,0 +1,116 @@
+{
+  "baseline": {
+    "design_id": "P09-WS-E-MOCK",
+    "requirements": {
+      "raw_prompt": "냉매 R744, 지정 배관 길이 50 cm (P00 구조 예제)",
+      "parameters": [
+        {
+          "name": "refrigerant",
+          "value": "R744",
+          "provenance": {
+            "source_type": "USER",
+            "source_ref": "Master Plan section 22 example",
+            "confidence": null,
+            "note": null
+          }
+        },
+        {
+          "name": "specified_pipe_length",
+          "value": {
+            "value": 0.5,
+            "unit": "meter"
+          },
+          "provenance": {
+            "source_type": "USER",
+            "source_ref": "Master Plan section 22 example",
+            "confidence": null,
+            "note": null
+          }
+        }
+      ],
+      "missing": [
+        {
+          "name": "target_capacity",
+          "classification": "essential",
+          "reason": "Not supplied; P00 fixture does not resolve design requirements"
+        }
+      ],
+      "requested_objective": null,
+      "mandatory_components": [],
+      "forbidden_components": [],
+      "hitl_mode": "REVIEW"
+    },
+    "refrigerant": {
+      "name": "refrigerant",
+      "value": "R744",
+      "provenance": {
+        "source_type": "USER",
+        "source_ref": "Master Plan section 22 example",
+        "confidence": null,
+        "note": null
+      }
+    },
+    "topology": {
+      "name": "topology",
+      "value": "mock-single-stage",
+      "provenance": {
+        "source_type": "AGENT_ASSUMPTION",
+        "source_ref": "P00 synthetic fixture; NOT PHYSICS",
+        "confidence": null,
+        "note": null
+      }
+    },
+    "fixed": [
+      {
+        "name": "specified_pipe_length",
+        "value": {
+          "value": 0.5,
+          "unit": "meter"
+        },
+        "provenance": {
+          "source_type": "USER",
+          "source_ref": "Master Plan section 22 example",
+          "confidence": null,
+          "note": null
+        }
+      }
+    ],
+    "boundary_conditions": [],
+    "decision_variables": [
+      {
+        "name": "synthetic_x",
+        "lower": {
+          "value": -1.0,
+          "unit": "dimensionless"
+        },
+        "upper": {
+          "value": 1.0,
+          "unit": "dimensionless"
+        },
+        "provenance": {
+          "source_type": "AGENT_ASSUMPTION",
+          "source_ref": "P09/P12/P13 synthetic bounds; NOT PHYSICS",
+          "confidence": null,
+          "note": null
+        }
+      }
+    ],
+    "objectives": [
+      {
+        "metric": "synthetic_score",
+        "direction": "minimize",
+        "provenance": {
+          "source_type": "AGENT_ASSUMPTION",
+          "source_ref": "P09 quadratic objective; NOT PHYSICS",
+          "confidence": null,
+          "note": null
+        }
+      }
+    ],
+    "constraints": [],
+    "selected_products": [],
+    "is_mock": true
+  },
+  "candidate_products": [],
+  "random_seed": 73
+}

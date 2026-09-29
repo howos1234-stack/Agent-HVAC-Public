@@ -1,0 +1,179 @@
+{
+  "product_id": "MOCK-compressor-v020",
+  "component_type": "compressor",
+  "manufacturer": "FICTIONAL-P00",
+  "model": "MOCK-compressor-v020",
+  "supported_refrigerants": ["R744"],
+  "source": {
+    "excel_file": "MOCK-NOT-A-REAL-WORKBOOK.xlsx",
+    "sheet": "products",
+    "row": 2,
+    "document_ref": "P06 synthetic ProductRecord 0.2.0 fixture; NO manufacturer evidence",
+    "original_manufacturer": "FICTIONAL-P00",
+    "original_model": "MOCK-compressor-v020",
+    "workbook_modified_at": "2026-09-17T00:00:00+09:00",
+    "retrieved_at": "2026-09-17T00:00:00+09:00",
+    "file_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+    "loader_version": "synthetic-only",
+    "schema_version": "0.2.0"
+  },
+  "status": "unverified",
+  "attributes": [],
+  "rated_conditions": [],
+  "operating_limits": [],
+  "is_mock": true,
+  "data_sources": [
+    {
+      "source_id": "src-map-1",
+      "origin": "MANUFACTURER",
+      "excel_file": "MOCK-NOT-A-REAL-WORKBOOK.xlsx",
+      "file_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "sheet": "performance_points",
+      "row": 2,
+      "document_ref": "Synthetic 2x2 map and envelope fixture",
+      "table_or_figure_ref": "synthetic-table-1",
+      "original_manufacturer": "FICTIONAL-P00",
+      "original_model": "MOCK-compressor-v020"
+    }
+  ],
+  "rated_points": [],
+  "performance_maps": [
+    {
+      "map_id": "cmp-map-1",
+      "map_kind": "COMPRESSOR",
+      "refrigerant": "R744",
+      "original_refrigerant_label": "CO2",
+      "topology": "R744_TRANSCRITICAL",
+      "mode": "COOLING",
+      "axes": [
+        {
+          "axis_id": "map-axis-suction",
+          "order": 0,
+          "canonical_name": "suction_pressure",
+          "native_name": "Suction pressure",
+          "role": "CANONICAL",
+          "physical_kind": "PRESSURE",
+          "original_unit": "Pa",
+          "canonical_unit": "Pa",
+          "original_values": [3000000.0, 4000000.0],
+          "values_si": [3000000.0, 4000000.0],
+          "source_id": "src-map-1"
+        },
+        {
+          "axis_id": "map-axis-discharge",
+          "order": 1,
+          "canonical_name": "discharge_pressure",
+          "native_name": "Discharge pressure",
+          "role": "CANONICAL",
+          "physical_kind": "PRESSURE",
+          "original_unit": "Pa",
+          "canonical_unit": "Pa",
+          "original_values": [8000000.0, 9000000.0],
+          "values_si": [8000000.0, 9000000.0],
+          "source_id": "src-map-1"
+        }
+      ],
+      "fixed_conditions": [
+        {
+          "value_id": "map-fixed-suction-temperature",
+          "canonical_name": "suction_temperature",
+          "original_name": "Suction temperature",
+          "original_value": 6.85,
+          "original_unit": "degC",
+          "value_si": {"value": 280.0, "unit": "K"},
+          "source_id": "src-map-1",
+          "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}
+        },
+        {
+          "value_id": "map-fixed-frequency",
+          "canonical_name": "frequency",
+          "original_name": "Frequency",
+          "original_value": 50.0,
+          "original_unit": "Hz",
+          "value_si": {"value": 50.0, "unit": "Hz"},
+          "source_id": "src-map-1",
+          "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}
+        }
+      ],
+      "output_names": ["input_power", "mass_flow"],
+      "points": [
+        {
+          "point_id": "point-00",
+          "coordinates": [
+            {"value_id": "p00-s", "canonical_name": "suction_pressure", "original_name": "Suction pressure", "original_value": 3000000.0, "original_unit": "Pa", "value_si": {"value": 3000000.0, "unit": "Pa"}, "source_id": "src-map-1", "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}},
+            {"value_id": "p00-d", "canonical_name": "discharge_pressure", "original_name": "Discharge pressure", "original_value": 8000000.0, "original_unit": "Pa", "value_si": {"value": 8000000.0, "unit": "Pa"}, "source_id": "src-map-1", "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}}
+          ],
+          "outputs": [
+            {"value_id": "p00-w", "canonical_name": "input_power", "original_name": "Input power", "original_value": 1000.0, "original_unit": "W", "value_si": {"value": 1000.0, "unit": "W"}, "source_id": "src-map-1", "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}},
+            {"value_id": "p00-m", "canonical_name": "mass_flow", "original_name": "Mass flow", "original_value": 0.08, "original_unit": "kg/s", "value_si": {"value": 0.08, "unit": "kg/s"}, "source_id": "src-map-1", "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}}
+          ],
+          "source_id": "src-map-1"
+        },
+        {
+          "point_id": "point-01",
+          "coordinates": [
+            {"value_id": "p01-s", "canonical_name": "suction_pressure", "original_name": "Suction pressure", "original_value": 3000000.0, "original_unit": "Pa", "value_si": {"value": 3000000.0, "unit": "Pa"}, "source_id": "src-map-1", "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}},
+            {"value_id": "p01-d", "canonical_name": "discharge_pressure", "original_name": "Discharge pressure", "original_value": 9000000.0, "original_unit": "Pa", "value_si": {"value": 9000000.0, "unit": "Pa"}, "source_id": "src-map-1", "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}}
+          ],
+          "outputs": [
+            {"value_id": "p01-w", "canonical_name": "input_power", "original_name": "Input power", "original_value": 1100.0, "original_unit": "W", "value_si": {"value": 1100.0, "unit": "W"}, "source_id": "src-map-1", "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}},
+            {"value_id": "p01-m", "canonical_name": "mass_flow", "original_name": "Mass flow", "original_value": 0.07, "original_unit": "kg/s", "value_si": {"value": 0.07, "unit": "kg/s"}, "source_id": "src-map-1", "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}}
+          ],
+          "source_id": "src-map-1"
+        },
+        {
+          "point_id": "point-10",
+          "coordinates": [
+            {"value_id": "p10-s", "canonical_name": "suction_pressure", "original_name": "Suction pressure", "original_value": 4000000.0, "original_unit": "Pa", "value_si": {"value": 4000000.0, "unit": "Pa"}, "source_id": "src-map-1", "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}},
+            {"value_id": "p10-d", "canonical_name": "discharge_pressure", "original_name": "Discharge pressure", "original_value": 8000000.0, "original_unit": "Pa", "value_si": {"value": 8000000.0, "unit": "Pa"}, "source_id": "src-map-1", "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}}
+          ],
+          "outputs": [
+            {"value_id": "p10-w", "canonical_name": "input_power", "original_name": "Input power", "original_value": 1200.0, "original_unit": "W", "value_si": {"value": 1200.0, "unit": "W"}, "source_id": "src-map-1", "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}},
+            {"value_id": "p10-m", "canonical_name": "mass_flow", "original_name": "Mass flow", "original_value": 0.1, "original_unit": "kg/s", "value_si": {"value": 0.1, "unit": "kg/s"}, "source_id": "src-map-1", "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}}
+          ],
+          "source_id": "src-map-1"
+        },
+        {
+          "point_id": "point-11",
+          "coordinates": [
+            {"value_id": "p11-s", "canonical_name": "suction_pressure", "original_name": "Suction pressure", "original_value": 4000000.0, "original_unit": "Pa", "value_si": {"value": 4000000.0, "unit": "Pa"}, "source_id": "src-map-1", "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}},
+            {"value_id": "p11-d", "canonical_name": "discharge_pressure", "original_name": "Discharge pressure", "original_value": 9000000.0, "original_unit": "Pa", "value_si": {"value": 9000000.0, "unit": "Pa"}, "source_id": "src-map-1", "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}}
+          ],
+          "outputs": [
+            {"value_id": "p11-w", "canonical_name": "input_power", "original_name": "Input power", "original_value": 1300.0, "original_unit": "W", "value_si": {"value": 1300.0, "unit": "W"}, "source_id": "src-map-1", "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}},
+            {"value_id": "p11-m", "canonical_name": "mass_flow", "original_name": "Mass flow", "original_value": 0.09, "original_unit": "kg/s", "value_si": {"value": 0.09, "unit": "kg/s"}, "source_id": "src-map-1", "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}}
+          ],
+          "source_id": "src-map-1"
+        }
+      ],
+      "interpolation": "MULTILINEAR",
+      "extrapolation": "FORBIDDEN",
+      "source_id": "src-map-1",
+      "use_status": {"source_preserved": true, "structure_valid": true, "automatic_selection": "ELIGIBLE", "reasons": []}
+    }
+  ],
+  "operating_envelopes": [
+    {
+      "envelope_id": "cmp-envelope-1",
+      "refrigerant": "R744",
+      "original_refrigerant_label": "CO2",
+      "axes": [
+        {"axis_id": "env-axis-suction", "order": 0, "canonical_name": "suction_pressure", "native_name": "Suction pressure", "role": "CANONICAL", "physical_kind": "PRESSURE", "original_unit": "Pa", "canonical_unit": "Pa", "original_values": [3000000.0, 4000000.0], "values_si": [3000000.0, 4000000.0], "source_id": "src-map-1"},
+        {"axis_id": "env-axis-discharge", "order": 1, "canonical_name": "discharge_pressure", "native_name": "Discharge pressure", "role": "CANONICAL", "physical_kind": "PRESSURE", "original_unit": "Pa", "canonical_unit": "Pa", "original_values": [8000000.0, 9000000.0], "values_si": [8000000.0, 9000000.0], "source_id": "src-map-1"}
+      ],
+      "boundary_vertices": [
+        {"vertex_order": 0, "coordinates": [{"value_id": "v0-s", "canonical_name": "suction_pressure", "original_name": "Suction pressure", "original_value": 3000000.0, "original_unit": "Pa", "value_si": {"value": 3000000.0, "unit": "Pa"}, "source_id": "src-map-1", "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}}, {"value_id": "v0-d", "canonical_name": "discharge_pressure", "original_name": "Discharge pressure", "original_value": 8000000.0, "original_unit": "Pa", "value_si": {"value": 8000000.0, "unit": "Pa"}, "source_id": "src-map-1", "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}}], "source_id": "src-map-1"},
+        {"vertex_order": 1, "coordinates": [{"value_id": "v1-s", "canonical_name": "suction_pressure", "original_name": "Suction pressure", "original_value": 4000000.0, "original_unit": "Pa", "value_si": {"value": 4000000.0, "unit": "Pa"}, "source_id": "src-map-1", "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}}, {"value_id": "v1-d", "canonical_name": "discharge_pressure", "original_name": "Discharge pressure", "original_value": 8000000.0, "original_unit": "Pa", "value_si": {"value": 8000000.0, "unit": "Pa"}, "source_id": "src-map-1", "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}}], "source_id": "src-map-1"},
+        {"vertex_order": 2, "coordinates": [{"value_id": "v2-s", "canonical_name": "suction_pressure", "original_name": "Suction pressure", "original_value": 4000000.0, "original_unit": "Pa", "value_si": {"value": 4000000.0, "unit": "Pa"}, "source_id": "src-map-1", "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}}, {"value_id": "v2-d", "canonical_name": "discharge_pressure", "original_name": "Discharge pressure", "original_value": 9000000.0, "original_unit": "Pa", "value_si": {"value": 9000000.0, "unit": "Pa"}, "source_id": "src-map-1", "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}}], "source_id": "src-map-1"},
+        {"vertex_order": 3, "coordinates": [{"value_id": "v3-s", "canonical_name": "suction_pressure", "original_name": "Suction pressure", "original_value": 3000000.0, "original_unit": "Pa", "value_si": {"value": 3000000.0, "unit": "Pa"}, "source_id": "src-map-1", "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}}, {"value_id": "v3-d", "canonical_name": "discharge_pressure", "original_name": "Discharge pressure", "original_value": 9000000.0, "original_unit": "Pa", "value_si": {"value": 9000000.0, "unit": "Pa"}, "source_id": "src-map-1", "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}}], "source_id": "src-map-1"}
+      ],
+      "boundary_inclusive": true,
+      "fixed_conditions": [
+        {"value_id": "env-fixed-suction-temperature", "canonical_name": "suction_temperature", "original_name": "Suction temperature", "original_value": 6.85, "original_unit": "degC", "value_si": {"value": 280.0, "unit": "K"}, "source_id": "src-map-1", "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}},
+        {"value_id": "env-fixed-frequency", "canonical_name": "frequency", "original_name": "Frequency", "original_value": 50.0, "original_unit": "Hz", "value_si": {"value": 50.0, "unit": "Hz"}, "source_id": "src-map-1", "tolerance": {"value": null, "absence_reason": "NOT_STATED_IN_SOURCE", "accuracy_validation": "NOT_VERIFIABLE"}}
+      ],
+      "source_id": "src-map-1",
+      "use_status": {"source_preserved": true, "structure_valid": true, "automatic_selection": "ELIGIBLE", "reasons": []}
+    }
+  ]
+}

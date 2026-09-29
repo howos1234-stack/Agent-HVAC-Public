@@ -1,0 +1,246 @@
+{
+  "base": {
+    "scenario": {
+      "scenario_id": "r410a-room21-diagnostic-air15",
+      "is_mock": true,
+      "source_type": "AGENT_ASSUMPTION",
+      "source_ref": "docs/workstreams/ws_a/system/R410A_ROOM21_TEST_PLAN.md",
+      "assumptions": [
+        "USER: R410A, refrigerant 0.05 kg/s, target room 21 degC.",
+        "AGENT_ASSUMPTION: outdoor 35 degC, room sensible load 3000 W; dry air cp1006 J/(kg K), evaporator/condenser air0.5/0.8 kg/s.",
+        "AGENT_ASSUMPTION: prescribed absolute pressures1/2.8 MPa; eta0.75; condenser UA800 W/K; evaporator UA100..800 W/K sizing.",
+        "Zero-loss pipe baseline; no products, dynamics or manufacturer validation.",
+        "DIAGNOSTIC ALTERNATIVE: discharge pressure3.5 MPa and evaporator air0.8 kg/s; all user constraints unchanged, load remains3000 W. Not the initial assumptions; no claim of meeting target.",
+        "DIAGNOSTIC SECOND TRIAL: evaporator air1.5 kg/s explicitly replaces0.8; first diagnostic retained in artifacts. Requested load still3000 W."
+      ],
+      "refrigerant": "R410A",
+      "suction_pressure": {
+        "value": 1000000.0,
+        "unit": "Pa"
+      },
+      "discharge_pressure": {
+        "value": 3500000.0,
+        "unit": "Pa"
+      },
+      "trial_suction_temperature": {
+        "value": 285,
+        "unit": "K"
+      },
+      "refrigerant_mass_flow": {
+        "value": 0.05,
+        "unit": "kg/s"
+      },
+      "compressor_isentropic_efficiency": {
+        "value": 0.75,
+        "unit": "dimensionless"
+      },
+      "evaporator": {
+        "source_ref": "AGENT_ASSUMPTION: R410A_ROOM21_TEST_PLAN",
+        "secondary_inlet_temperature": {
+          "value": 294.15,
+          "unit": "K"
+        },
+        "secondary_mass_flow": {
+          "value": 1.5,
+          "unit": "kg/s"
+        },
+        "secondary_specific_heat_capacity": {
+          "value": 1006,
+          "unit": "J/(kg*K)"
+        },
+        "total_thermal_conductance": {
+          "value": 800,
+          "unit": "W/K"
+        },
+        "cell_count": 80
+      },
+      "network": {
+        "source_ref": "AGENT_ASSUMPTION: zero-loss baseline, pressure scan 1..1.1 MPa absolute",
+        "discharge_pipe": {
+          "source_ref": "AGENT_ASSUMPTION: zero length/loss baseline; placeholder geometry and viscosity from R744 fixture, not R410A measured values.",
+          "length": {
+            "value": 0,
+            "unit": "m"
+          },
+          "inner_diameter": {
+            "value": 0.02,
+            "unit": "m"
+          },
+          "roughness": {
+            "value": 1e-06,
+            "unit": "m"
+          },
+          "dynamic_viscosity": {
+            "value": 1.5e-05,
+            "unit": "Pa*s"
+          },
+          "ambient_temperature": {
+            "value": 295,
+            "unit": "K"
+          },
+          "linear_heat_transfer_coefficient": {
+            "value": 0,
+            "unit": "W/(m*K)"
+          },
+          "cell_count": 10
+        },
+        "high_side_pipe": {
+          "source_ref": "AGENT_ASSUMPTION: zero length/loss baseline; placeholder geometry and viscosity from R744 fixture, not R410A measured values.",
+          "length": {
+            "value": 0,
+            "unit": "m"
+          },
+          "inner_diameter": {
+            "value": 0.02,
+            "unit": "m"
+          },
+          "roughness": {
+            "value": 1e-06,
+            "unit": "m"
+          },
+          "dynamic_viscosity": {
+            "value": 1.5e-05,
+            "unit": "Pa*s"
+          },
+          "ambient_temperature": {
+            "value": 295,
+            "unit": "K"
+          },
+          "linear_heat_transfer_coefficient": {
+            "value": 0,
+            "unit": "W/(m*K)"
+          },
+          "cell_count": 10
+        },
+        "suction_pipe": {
+          "source_ref": "AGENT_ASSUMPTION: zero length/loss baseline; placeholder geometry and viscosity from R744 fixture, not R410A measured values.",
+          "length": {
+            "value": 0,
+            "unit": "m"
+          },
+          "inner_diameter": {
+            "value": 0.02,
+            "unit": "m"
+          },
+          "roughness": {
+            "value": 1e-06,
+            "unit": "m"
+          },
+          "dynamic_viscosity": {
+            "value": 1.5e-05,
+            "unit": "Pa*s"
+          },
+          "ambient_temperature": {
+            "value": 295,
+            "unit": "K"
+          },
+          "linear_heat_transfer_coefficient": {
+            "value": 0,
+            "unit": "W/(m*K)"
+          },
+          "cell_count": 10
+        },
+        "evaporator_pressure_drop": {
+          "value": 0,
+          "unit": "Pa"
+        },
+        "valve_pressure_lower": {
+          "value": 1000000.0,
+          "unit": "Pa"
+        },
+        "valve_pressure_upper": {
+          "value": 1100000.0,
+          "unit": "Pa"
+        },
+        "pressure_scan_intervals": 2,
+        "pressure_max_iterations": 60,
+        "pressure_tolerance": {
+          "value": 0.01,
+          "unit": "Pa"
+        },
+        "condenser_pressure_drop": {
+          "value": 0,
+          "unit": "Pa"
+        }
+      },
+      "condenser": {
+        "source_ref": "AGENT_ASSUMPTION: R410A_ROOM21_TEST_PLAN",
+        "secondary_inlet_temperature": {
+          "value": 308.15,
+          "unit": "K"
+        },
+        "secondary_mass_flow": {
+          "value": 0.8,
+          "unit": "kg/s"
+        },
+        "secondary_specific_heat_capacity": {
+          "value": 1006,
+          "unit": "J/(kg*K)"
+        },
+        "total_thermal_conductance": {
+          "value": 800,
+          "unit": "W/K"
+        },
+        "cell_count": 80
+      }
+    },
+    "settings": {
+      "lower_enthalpy": {
+        "value": 425000,
+        "unit": "J/kg"
+      },
+      "upper_enthalpy": {
+        "value": 455000,
+        "unit": "J/kg"
+      },
+      "scan_intervals": 12,
+      "max_iterations": 100,
+      "enthalpy_tolerance": {
+        "value": 0.01,
+        "unit": "J/kg"
+      },
+      "pressure_tolerance": {
+        "value": 1,
+        "unit": "Pa"
+      },
+      "temperature_tolerance": {
+        "value": 0.0001,
+        "unit": "K"
+      },
+      "relative_energy_tolerance": 1e-06,
+      "relative_mass_tolerance": 1e-12
+    }
+  },
+  "source_ref": "AGENT_ASSUMPTION: approved R410A_ROOM21_TEST_PLAN",
+  "room_temperature": {
+    "value": 21,
+    "unit": "degC"
+  },
+  "sensible_load": {
+    "value": 3000,
+    "unit": "W"
+  },
+  "ua_samples": [
+    {
+      "value": 100,
+      "unit": "W/K"
+    },
+    {
+      "value": 200,
+      "unit": "W/K"
+    },
+    {
+      "value": 400,
+      "unit": "W/K"
+    },
+    {
+      "value": 800,
+      "unit": "W/K"
+    }
+  ],
+  "load_tolerance": {
+    "value": 1,
+    "unit": "W"
+  },
+  "max_iterations": 40
+}

@@ -1,0 +1,14 @@
+{
+  "design_id": "MOCK-r744",
+  "checks": [
+    {
+      "rule_id": "MOCK",
+      "passed": true,
+      "hard": true,
+      "message": "Synthetic contract check, not engineering validation",
+      "margin": null
+    }
+  ],
+  "feasible": true,
+  "is_mock": true
+}

@@ -1,0 +1,187 @@
+{
+  "product_id": "mock-r744-gas-cooler-1",
+  "component_type": "gas_cooler",
+  "manufacturer": "Synthetic Manufacturer",
+  "model": "HX-MOCK-01",
+  "supported_refrigerants": ["R744"],
+  "source": {
+    "excel_file": "synthetic_hx.xlsx",
+    "sheet": "products",
+    "row": 2,
+    "document_ref": "synthetic-fixture-only",
+    "original_manufacturer": "Synthetic Manufacturer",
+    "original_model": "HX-MOCK-01",
+    "workbook_modified_at": "2026-09-21T00:00:00+09:00",
+    "retrieved_at": "2026-09-21T00:00:00+09:00",
+    "file_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+    "loader_version": "synthetic-0.2",
+    "schema_version": "0.2.0"
+  },
+  "status": "unverified",
+  "attributes": [],
+  "rated_conditions": [],
+  "operating_limits": [],
+  "is_mock": true,
+  "data_sources": [
+    {
+      "source_id": "src-rated-parent",
+      "origin": "MANUFACTURER",
+      "excel_file": "synthetic_hx.xlsx",
+      "file_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "sheet": "rated_points",
+      "row": 2,
+      "document_ref": "synthetic-fixture-only",
+      "table_or_figure_ref": "mock-rated-point",
+      "original_manufacturer": "Synthetic Manufacturer",
+      "original_model": "HX-MOCK-01"
+    },
+    {
+      "source_id": "src-rated-conditions",
+      "origin": "TEST_STANDARD",
+      "excel_file": "synthetic_hx.xlsx",
+      "file_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "sheet": "rated_point_values",
+      "row": 2,
+      "document_ref": "synthetic-fixture-only",
+      "table_or_figure_ref": "mock-conditions",
+      "original_manufacturer": "Synthetic Manufacturer",
+      "original_model": "HX-MOCK-01"
+    },
+    {
+      "source_id": "src-rated-ua",
+      "origin": "MANUFACTURER",
+      "excel_file": "synthetic_hx.xlsx",
+      "file_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "sheet": "rated_point_values",
+      "row": 5,
+      "document_ref": "synthetic-fixture-only",
+      "table_or_figure_ref": "mock-ua",
+      "original_manufacturer": "Synthetic Manufacturer",
+      "original_model": "HX-MOCK-01"
+    },
+    {
+      "source_id": "src-rated-dp",
+      "origin": "MANUFACTURER",
+      "excel_file": "synthetic_hx.xlsx",
+      "file_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "sheet": "rated_point_values",
+      "row": 6,
+      "document_ref": "synthetic-fixture-only",
+      "table_or_figure_ref": "mock-refrigerant-dp",
+      "original_manufacturer": "Synthetic Manufacturer",
+      "original_model": "HX-MOCK-01"
+    },
+    {
+      "source_id": "src-rated-capacity",
+      "origin": "MANUFACTURER",
+      "excel_file": "synthetic_hx.xlsx",
+      "file_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "sheet": "rated_point_values",
+      "row": 7,
+      "document_ref": "synthetic-fixture-only",
+      "table_or_figure_ref": "mock-rated-capacity",
+      "original_manufacturer": "Synthetic Manufacturer",
+      "original_model": "HX-MOCK-01"
+    }
+  ],
+  "rated_points": [
+    {
+      "rated_point_id": "hx-rated-1",
+      "refrigerant": "R744",
+      "original_refrigerant_label": "R744_CO2",
+      "topology": "R744_TRANSCRITICAL",
+      "mode": "COOLING",
+      "conditions": [
+        {
+          "value_id": "condition-inlet-pressure",
+          "canonical_name": "inlet_pressure",
+          "original_name": "Refrigerant inlet pressure",
+          "original_value": 90.0,
+          "original_unit": "bar",
+          "value_si": {"value": 9000000.0, "unit": "Pa"},
+          "source_id": "src-rated-conditions",
+          "tolerance": {
+            "absence_reason": "NOT_APPLICABLE",
+            "accuracy_validation": "NOT_VERIFIABLE"
+          }
+        },
+        {
+          "value_id": "condition-inlet-temperature",
+          "canonical_name": "inlet_temperature",
+          "original_name": "Refrigerant inlet temperature",
+          "original_value": 375.0,
+          "original_unit": "K",
+          "value_si": {"value": 375.0, "unit": "K"},
+          "source_id": "src-rated-conditions",
+          "tolerance": {
+            "absence_reason": "NOT_APPLICABLE",
+            "accuracy_validation": "NOT_VERIFIABLE"
+          }
+        },
+        {
+          "value_id": "condition-mass-flow",
+          "canonical_name": "mass_flow",
+          "original_name": "Refrigerant mass flow",
+          "original_value": 360.0,
+          "original_unit": "kg/h",
+          "value_si": {"value": 0.1, "unit": "kg/s"},
+          "source_id": "src-rated-conditions",
+          "tolerance": {
+            "absence_reason": "NOT_STATED_IN_SOURCE",
+            "accuracy_validation": "NOT_VERIFIABLE"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "value_id": "output-ua",
+          "canonical_name": "ua",
+          "original_name": "Overall conductance",
+          "original_value": 200.0,
+          "original_unit": "W/K",
+          "value_si": {"value": 200.0, "unit": "W/K"},
+          "source_id": "src-rated-ua",
+          "tolerance": {
+            "absence_reason": "NOT_STATED_IN_SOURCE",
+            "accuracy_validation": "NOT_VERIFIABLE"
+          }
+        },
+        {
+          "value_id": "output-refrigerant-dp",
+          "canonical_name": "refrigerant_pressure_drop",
+          "original_name": "Refrigerant pressure drop",
+          "original_value": 10.0,
+          "original_unit": "kPa",
+          "value_si": {"value": 10000.0, "unit": "Pa"},
+          "source_id": "src-rated-dp",
+          "tolerance": {
+            "absence_reason": "NOT_STATED_IN_SOURCE",
+            "accuracy_validation": "NOT_VERIFIABLE"
+          }
+        },
+        {
+          "value_id": "output-rated-heat-rejection",
+          "canonical_name": "heat_rejection",
+          "original_name": "Rated heat rejection",
+          "original_value": 10.0,
+          "original_unit": "kW",
+          "value_si": {"value": 10000.0, "unit": "W"},
+          "source_id": "src-rated-capacity",
+          "tolerance": {
+            "absence_reason": "NOT_STATED_IN_SOURCE",
+            "accuracy_validation": "NOT_VERIFIABLE"
+          }
+        }
+      ],
+      "source_id": "src-rated-parent",
+      "use_status": {
+        "source_preserved": true,
+        "structure_valid": true,
+        "automatic_selection": "ELIGIBLE",
+        "reasons": []
+      }
+    }
+  ],
+  "performance_maps": [],
+  "operating_envelopes": []
+}

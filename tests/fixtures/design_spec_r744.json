@@ -1,0 +1,149 @@
+{
+  "design_id": "MOCK-r744",
+  "requirements": {
+    "raw_prompt": "냉매 R744, 지정 배관 길이 50 cm (P00 구조 예제)",
+    "parameters": [
+      {
+        "name": "refrigerant",
+        "value": "R744",
+        "provenance": {
+          "source_type": "USER",
+          "source_ref": "Master Plan section 22 example",
+          "confidence": null,
+          "note": null
+        }
+      },
+      {
+        "name": "specified_pipe_length",
+        "value": {
+          "value": 0.5,
+          "unit": "meter"
+        },
+        "provenance": {
+          "source_type": "USER",
+          "source_ref": "Master Plan section 22 example",
+          "confidence": null,
+          "note": null
+        }
+      }
+    ],
+    "missing": [
+      {
+        "name": "target_capacity",
+        "classification": "essential",
+        "reason": "Not supplied; P00 fixture does not resolve design requirements"
+      }
+    ],
+    "requested_objective": null,
+    "mandatory_components": [],
+    "forbidden_components": [],
+    "hitl_mode": "REVIEW"
+  },
+  "refrigerant": {
+    "name": "refrigerant",
+    "value": "R744",
+    "provenance": {
+      "source_type": "USER",
+      "source_ref": "Master Plan section 22 example",
+      "confidence": null,
+      "note": null
+    }
+  },
+  "topology": {
+    "name": "topology",
+    "value": "mock-single-stage",
+    "provenance": {
+      "source_type": "AGENT_ASSUMPTION",
+      "source_ref": "P00 synthetic fixture; NOT PHYSICS",
+      "confidence": null,
+      "note": null
+    }
+  },
+  "fixed": [
+    {
+      "name": "specified_pipe_length",
+      "value": {
+        "value": 0.5,
+        "unit": "meter"
+      },
+      "provenance": {
+        "source_type": "USER",
+        "source_ref": "Master Plan section 22 example",
+        "confidence": null,
+        "note": null
+      }
+    }
+  ],
+  "boundary_conditions": [],
+  "decision_variables": [],
+  "objectives": [
+    {
+      "metric": "cop",
+      "direction": "maximize",
+      "provenance": {
+        "source_type": "AGENT_ASSUMPTION",
+        "source_ref": "P00 synthetic fixture; NOT PHYSICS",
+        "confidence": null,
+        "note": null
+      }
+    }
+  ],
+  "constraints": [],
+  "selected_products": [
+    {
+      "product_id": "MOCK-compressor",
+      "component_type": "compressor",
+      "manufacturer": "FICTIONAL-P00",
+      "model": "MOCK-compressor",
+      "supported_refrigerants": [
+        "R744"
+      ],
+      "source": {
+        "excel_file": "MOCK-NOT-A-REAL-WORKBOOK.xlsx",
+        "sheet": "products",
+        "row": 2,
+        "document_ref": "P00 synthetic fixture; NO manufacturer evidence",
+        "original_manufacturer": "FICTIONAL-P00",
+        "original_model": "MOCK-compressor",
+        "workbook_modified_at": "2026-09-09T00:00:00+09:00",
+        "retrieved_at": "2026-09-09T00:00:00+09:00",
+        "file_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "loader_version": "mock-only",
+        "schema_version": "0.1.0"
+      },
+      "status": "unverified",
+      "attributes": [],
+      "rated_conditions": [],
+      "operating_limits": [],
+      "is_mock": true
+    },
+    {
+      "product_id": "MOCK-evaporator",
+      "component_type": "evaporator",
+      "manufacturer": "FICTIONAL-P00",
+      "model": "MOCK-evaporator",
+      "supported_refrigerants": [
+        "R744"
+      ],
+      "source": {
+        "excel_file": "MOCK-NOT-A-REAL-WORKBOOK.xlsx",
+        "sheet": "products",
+        "row": 2,
+        "document_ref": "P00 synthetic fixture; NO manufacturer evidence",
+        "original_manufacturer": "FICTIONAL-P00",
+        "original_model": "MOCK-evaporator",
+        "workbook_modified_at": "2026-09-09T00:00:00+09:00",
+        "retrieved_at": "2026-09-09T00:00:00+09:00",
+        "file_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "loader_version": "mock-only",
+        "schema_version": "0.1.0"
+      },
+      "status": "unverified",
+      "attributes": [],
+      "rated_conditions": [],
+      "operating_limits": [],
+      "is_mock": true
+    }
+  ],
+  "is_mock": true
+}

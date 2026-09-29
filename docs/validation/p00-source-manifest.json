@@ -1,0 +1,602 @@
+[
+  {
+    "path": ".gitattributes",
+    "sha256": "b8480e5c7205540eed8abc8c22581ca551b7fa2ee666565b95b01cbd1e02e759"
+  },
+  {
+    "path": ".github/workflows/ci.yml",
+    "sha256": "99b3a5f803abd9a428e7ec4606f199006cd711bb55cb72fc88439fe8994ba3f1"
+  },
+  {
+    "path": ".python-version",
+    "sha256": "7b55f8e67b5623c4bef3fa691288da9437d79d3aba156de48d481db32ac7d16d"
+  },
+  {
+    "path": "pyproject.toml",
+    "sha256": "d3c1e05cf29efb3d810df5a1435561150dd78bc82876224da52cedfecfbc74b4"
+  },
+  {
+    "path": "scripts/analyze_design_study.py",
+    "sha256": "d0482d39b66a926785b24567bedb152a39f15a307301f357eccfa5f2ddb0eda4"
+  },
+  {
+    "path": "scripts/check_work_record.py",
+    "sha256": "52bc4f039c87b951de1dfa0514c5c18e08d10c12ec478c8515a0d664555c41ff"
+  },
+  {
+    "path": "scripts/generate_mock_fixtures.py",
+    "sha256": "0e8bfd5a68b2e52541e5f2d556f8f7a7365272660614130f37ac5868f4f6f58c"
+  },
+  {
+    "path": "scripts/p03_tespy_compare.py",
+    "sha256": "5d02ce90b268e00c821bca861aeb668337bd219d48d7260d5f02acacb528e692"
+  },
+  {
+    "path": "scripts/p04_pipe_validate.py",
+    "sha256": "ad12f358c4ddc8fb6f5f56c99e4cb8ed3b5e58da23a45a94324bbcb263c2ce44"
+  },
+  {
+    "path": "scripts/p05_hx_validate.py",
+    "sha256": "49d2d484b481ed9fbcc010302ec1ef00a52083c3955b1610008ebabc3c170294"
+  },
+  {
+    "path": "scripts/run_analysis_manager.py",
+    "sha256": "ec119290874d2f9facb35034747f6db846e7cf7be4efb363bd363f03c5d7740e"
+  },
+  {
+    "path": "scripts/run_design_study.py",
+    "sha256": "a54d98ac5eaa1d5f1ea681d042fb77e9d5e25e8b904d56b4fceea12a07e8273b"
+  },
+  {
+    "path": "scripts/run_system_cycle.py",
+    "sha256": "49e9b06228ac2fa02ca3f7d4e1a0cb12f2afc329996181d50fe47eb332942d71"
+  },
+  {
+    "path": "scripts/source_manifest.py",
+    "sha256": "de19e8a2d407f91a6057b4131366dbab9a188e2f35e2c9ba221138ba080dffb4"
+  },
+  {
+    "path": "src/agent_hvac/__init__.py",
+    "sha256": "134abaa0cc1329a37cd9b2674accb0ea461bdb10aa7e0fc30d4369d0125b6a19"
+  },
+  {
+    "path": "src/agent_hvac/agents/__init__.py",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "src/agent_hvac/agents/tools.py",
+    "sha256": "40bd06b3344e383eef8a0513b33785fcce77d0d2ce2b1ae20cab8c2b2a855490"
+  },
+  {
+    "path": "src/agent_hvac/app/__init__.py",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "src/agent_hvac/app/analysis_screen.py",
+    "sha256": "319e5caca6f9ecb402aa811cda176f3327875f80e869e7f9cd509ab7b3eba9e4"
+  },
+  {
+    "path": "src/agent_hvac/app/analysis_screen_app.py",
+    "sha256": "dce31c947d54782dd56d1d8f1e37ce5540280245a176f928e14249df4be3351b"
+  },
+  {
+    "path": "src/agent_hvac/app/result_view.py",
+    "sha256": "30cd5c7cbbd567629c119c985093907b8f2fb05d1e112892754e54a5d797c6c9"
+  },
+  {
+    "path": "src/agent_hvac/app/streamlit_app.py",
+    "sha256": "9eb3e483d939b654f185591ddb69d452b26b174bda87c9a5f1ec99c4c739df47"
+  },
+  {
+    "path": "src/agent_hvac/app/synthetic_flow.py",
+    "sha256": "b3cd46f47f99c80a0b5365315d24e48d782d3ff05d4f5835e15a681cc3e03acf"
+  },
+  {
+    "path": "src/agent_hvac/components/__init__.py",
+    "sha256": "21426fdcb9a062da24c450df370d707f988a998a19a807d92a93bc511449eae7"
+  },
+  {
+    "path": "src/agent_hvac/components/compressor.py",
+    "sha256": "9377852bd35a9a5745e147f5a66f71f511209da744f5368eecd9744dd7e0343a"
+  },
+  {
+    "path": "src/agent_hvac/components/compressor_map.py",
+    "sha256": "90a376e8666433cd19b57c9a9904f3c85145b205e01a3a669a1fdcd48bdfe323"
+  },
+  {
+    "path": "src/agent_hvac/components/expansion_valve.py",
+    "sha256": "c0c6ecb6edba646a79256da140925b10283dcf210bb897d3c5be19d12d273172"
+  },
+  {
+    "path": "src/agent_hvac/components/expansion_valve_map.py",
+    "sha256": "eda44f61ceaec953ddaf6040183055af32b4dfbaba10049dc97d677aceb394ed"
+  },
+  {
+    "path": "src/agent_hvac/components/heat_exchanger_1d.py",
+    "sha256": "bbc3287696baa62016ded0fc0b9dcbee5c8fefebbd988c53c722b215a888e226"
+  },
+  {
+    "path": "src/agent_hvac/components/heat_exchanger_rated_point.py",
+    "sha256": "ffeb723f2250ac0acb052db92cb87e792d6f70da40e29c4414e3897f0d290595"
+  },
+  {
+    "path": "src/agent_hvac/components/manufacturer_validation.py",
+    "sha256": "3542c47bdbce1ed72b2ead9d4d8e1b51da514284301016f7f5061aa99f3892d9"
+  },
+  {
+    "path": "src/agent_hvac/components/performance_map.py",
+    "sha256": "c5d229903f01e0ffb93dc59f9c9e7f826f6b1a2fd13f864934384442132e8f73"
+  },
+  {
+    "path": "src/agent_hvac/components/pipe.py",
+    "sha256": "8ebf174fa3e72c33c7382e283fc3badd61ced917dc27fcebdfda610b60b1c9cd"
+  },
+  {
+    "path": "src/agent_hvac/components/product_adapter.py",
+    "sha256": "800fbfc77a8dec76d3e853e8b025aac2a386ca5cf193f44502037cc33ee0c5c9"
+  },
+  {
+    "path": "src/agent_hvac/database/__init__.py",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "src/agent_hvac/database/detailed_loader.py",
+    "sha256": "c875665bdd29823157e840fd94622bc6865b612a098080fa0d8bc681587e0676"
+  },
+  {
+    "path": "src/agent_hvac/database/excel_loader.py",
+    "sha256": "db86a3a65785837dad1822632d04b61c7948c78c478de27efa6e2dc73cd55e6d"
+  },
+  {
+    "path": "src/agent_hvac/database/index.py",
+    "sha256": "30effb1c57c4350b453c1379c77950be6bb6503b388274d9ef6686ee0bfd5e17"
+  },
+  {
+    "path": "src/agent_hvac/database/repository.py",
+    "sha256": "b55d8a7e6934e70402e9c87ba3f235efadde0fbd47667e67357ad1835c9fd215"
+  },
+  {
+    "path": "src/agent_hvac/guidelines/__init__.py",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "src/agent_hvac/guidelines/rules.py",
+    "sha256": "90dfa8136e720fb4361cb805f6a013e49c1dbabe3cbb9d41acdf1396785fe519"
+  },
+  {
+    "path": "src/agent_hvac/hitl/__init__.py",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "src/agent_hvac/optimization/__init__.py",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "src/agent_hvac/optimization/optimizer.py",
+    "sha256": "36447e49bdd735943a1bc7fb85efca26db0247ee67d44bb7a8964595d2a31924"
+  },
+  {
+    "path": "src/agent_hvac/optimization/synthetic_search.py",
+    "sha256": "8a3f5b243c40ef913ed5377b0618f820927a477cb6c67168daae222368809f07"
+  },
+  {
+    "path": "src/agent_hvac/physics/__init__.py",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "src/agent_hvac/physics/balances.py",
+    "sha256": "0c960b483d710a3b7d9262af5fb792ce4f0968181a056429777968e157f49960"
+  },
+  {
+    "path": "src/agent_hvac/physics/correlations/__init__.py",
+    "sha256": "8cbabbb5fad2d5d5108e33d90965f11affdc4ec4e50b1c947b5d03f4add379f8"
+  },
+  {
+    "path": "src/agent_hvac/physics/correlations/registry.py",
+    "sha256": "c0d1b6ad54e5e4e023ab1cba14f82298a7d5c0dc11a3e628997f6801d3c5b12e"
+  },
+  {
+    "path": "src/agent_hvac/physics/correlations/single_phase_friction.py",
+    "sha256": "9a5140b41c2e1e37b37f859685614af96e75b1ef4a49917db05794222a48b0d9"
+  },
+  {
+    "path": "src/agent_hvac/physics/cycle.py",
+    "sha256": "a440bb797dc1c3d39dc0bdae39d760b3d676be8d24563eab778d76e01956973f"
+  },
+  {
+    "path": "src/agent_hvac/physics/state.py",
+    "sha256": "b9ec0347e3642e3cf4bf8a40687e7f141c6fe43f259286f6e57db67775d30f11"
+  },
+  {
+    "path": "src/agent_hvac/properties/__init__.py",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "src/agent_hvac/properties/base.py",
+    "sha256": "f8b8b8d823b7de30612cf80e39fc504f82652b18314f2df654e7133e4390e13a"
+  },
+  {
+    "path": "src/agent_hvac/properties/coolprop_backend.py",
+    "sha256": "84db7cdc6532bec32812617ca5a586edc2fa8b9379e592654166f285987e3bc3"
+  },
+  {
+    "path": "src/agent_hvac/reporting/__init__.py",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "src/agent_hvac/reporting/file_generators.py",
+    "sha256": "ca4b2a5ff851217f4babb45316abefd4671264583b7869b42b23c42ad2ba236b"
+  },
+  {
+    "path": "src/agent_hvac/reporting/generator.py",
+    "sha256": "5ee8134f9ef75c52bea07ff4dbc7231e95f557a36ec3cfd4a299754858abb9d2"
+  },
+  {
+    "path": "src/agent_hvac/reporting/optimization_reports.py",
+    "sha256": "43ee18be7773503484a3255432a2501408c969c02e619c72fe7a757366aa6b20"
+  },
+  {
+    "path": "src/agent_hvac/reporting/templates/.gitkeep",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "src/agent_hvac/schemas/__init__.py",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "src/agent_hvac/schemas/base.py",
+    "sha256": "4b36a33debdba5133bf868442f8dc31143fd5ff04db11d71ff5ff1f4cc3eac82"
+  },
+  {
+    "path": "src/agent_hvac/schemas/components.py",
+    "sha256": "c426b47cba59767d90d9a84c3828ecf30ea8b5534d55d14745ab4abfdcab2c32"
+  },
+  {
+    "path": "src/agent_hvac/schemas/design.py",
+    "sha256": "54a0cbe1d01cef08d3557bf3db9cbb1b3a8ce4071add5a0f38e42ed02ad6c9c4"
+  },
+  {
+    "path": "src/agent_hvac/schemas/product_data.py",
+    "sha256": "b267f00334a8cc632270bb8a406adb34b9fd4dc4149d834f80f2d50ded445bb6"
+  },
+  {
+    "path": "src/agent_hvac/schemas/provenance.py",
+    "sha256": "d9ef75a05b0780c4c3bc4d4367d62d75c01ec3d23864ee138f1c6855a9beaf5a"
+  },
+  {
+    "path": "src/agent_hvac/schemas/requirements.py",
+    "sha256": "a22313106c4e1c304d75bb960023ab0afa632a8b422d9151908ed6b6a9901b75"
+  },
+  {
+    "path": "src/agent_hvac/schemas/results.py",
+    "sha256": "f32a91d27e40a0d5cdc6f7897ea8b5756785c5ff61831ca45d992d1ac228f8a9"
+  },
+  {
+    "path": "src/agent_hvac/solvers/__init__.py",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "src/agent_hvac/solvers/base_cycle_solver.py",
+    "sha256": "a89350d3541341a7af8485243a4ccffae3587f35fc692b33f36e2e7815157f83"
+  },
+  {
+    "path": "src/agent_hvac/solvers/baseline_cycle.py",
+    "sha256": "605e7161c6ed3bfc96e7e085167d919a0c124b66ddfdc817ffcc20e69450c7e4"
+  },
+  {
+    "path": "src/agent_hvac/solvers/system_cycle/__init__.py",
+    "sha256": "f7d1c5434dd6df2d25e5cc10ef4e13abdb74d9f2363e18c4edb1ea1728e57867"
+  },
+  {
+    "path": "src/agent_hvac/solvers/system_cycle/analysis_input.py",
+    "sha256": "806900d2a9e88b15d835122b61afda6f37d3006653b6840336b2696d0a5d3216"
+  },
+  {
+    "path": "src/agent_hvac/solvers/system_cycle/analysis_manager.py",
+    "sha256": "51988c3e81f03a6811382b9c39fb62a16510141b834725bff9bcf37a15ec9573"
+  },
+  {
+    "path": "src/agent_hvac/solvers/system_cycle/convergence.py",
+    "sha256": "e9966061190140e86d0ea3730bca10922d8bf6446c92a24074de4f2b57accfc0"
+  },
+  {
+    "path": "src/agent_hvac/solvers/system_cycle/convergence_models.py",
+    "sha256": "68ed034949e3aabd7a1fcfb992568c4844eff563102ef01951b47e3ce803d05e"
+  },
+  {
+    "path": "src/agent_hvac/solvers/system_cycle/design_study.py",
+    "sha256": "6c9dca24bb65600226c2714060efca6b48c4db2da27a0a4438221bec93c4c351"
+  },
+  {
+    "path": "src/agent_hvac/solvers/system_cycle/harness.py",
+    "sha256": "50cb5086e95530cc536f40fbe0ac1a221f1942686f30d40489b2ef22f654382b"
+  },
+  {
+    "path": "src/agent_hvac/solvers/system_cycle/models.py",
+    "sha256": "6029fc5f1b45dfb3f3335ca2f3f94d6ff10ccb567c882f871d8c32ca172d7d94"
+  },
+  {
+    "path": "src/agent_hvac/solvers/system_cycle/network.py",
+    "sha256": "16b0f168aa53f35e473e065231f1898c2159ec4369ab69395cfa32f2154ceeba"
+  },
+  {
+    "path": "src/agent_hvac/solvers/system_cycle/operating_map.py",
+    "sha256": "824d656f90d74c6361770c67765010df9baa207ebe16fbdeadd8a8a44d029e94"
+  },
+  {
+    "path": "src/agent_hvac/solvers/system_cycle/presets/synthetic-condenser-v1.json",
+    "sha256": "702cb1d17b01eea5989087d7b388b9f353fb42028734bd66967c0410f32aab6e"
+  },
+  {
+    "path": "src/agent_hvac/solvers/system_cycle/room_sizing.py",
+    "sha256": "1f2b4b0aaaa2aed8bfeb9dfd94f19bd29ea89c86e00f7f22c8c34c94922371a9"
+  },
+  {
+    "path": "src/agent_hvac/solvers/tespy_reference.py",
+    "sha256": "1a304543ff6224c8a644e53f7c3a7ff65483d6dbc9bf978215e70a3e353e25b8"
+  },
+  {
+    "path": "src/agent_hvac/utils/__init__.py",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "src/agent_hvac/utils/exceptions.py",
+    "sha256": "5663de9b28055ed88637058b1f9a7df3db18f2254a7fbfd3acaf387736f948d1"
+  },
+  {
+    "path": "src/agent_hvac/utils/logging.py",
+    "sha256": "03a93d58f518512a6f7f0044b7360d930a1ec75a25f3df92da45b287cc319685"
+  },
+  {
+    "path": "src/agent_hvac/utils/provenance.py",
+    "sha256": "cca21b75f98cf7315b69dfc85cc22493fa01cdf010a64dd064581679287b8c2c"
+  },
+  {
+    "path": "src/agent_hvac/utils/units.py",
+    "sha256": "480422de79c9a4044b1f2a6e4edf4d060b885ac2d07e4348e951ef3cb1e4a40c"
+  },
+  {
+    "path": "tests/__init__.py",
+    "sha256": "0557c58ccca7c96af3ab2e674189ac564c82058ab9efe71116b9bc2d7081bdec"
+  },
+  {
+    "path": "tests/conftest.py",
+    "sha256": "724f58667d02b88c21d6852f7a62ddf6e3b360254dee5cc2cab17b11699fdb74"
+  },
+  {
+    "path": "tests/contracts/.gitkeep",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "tests/contracts/test_architecture.py",
+    "sha256": "4a483d8471af3f2b1bb6f280a364273f6f647a6598c11454360baa3d6cdd5b3f"
+  },
+  {
+    "path": "tests/contracts/test_fixtures.py",
+    "sha256": "95be3cc1fcc8effcdfa7e164db62bc78b17cd108eb35c03c50eca2ef315575c2"
+  },
+  {
+    "path": "tests/contracts/test_generated_schema.py",
+    "sha256": "10a3560f815a13741c1f4b865dbb2b98e3ded0054fe75784fe9f288696db03ab"
+  },
+  {
+    "path": "tests/contracts/test_source_manifest.py",
+    "sha256": "a2285fc7ff82a31d7cfa328190e59880ee7cd19768254801e8c6f8771b6b9014"
+  },
+  {
+    "path": "tests/fixtures/.gitkeep",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "tests/fixtures/README.md",
+    "sha256": "8996fe7ab9f63a62c32add8eed0a96abe4a872e0047bf35d1846448a8f2738d2"
+  },
+  {
+    "path": "tests/fixtures/compressor_product.json",
+    "sha256": "c1b9967121eaa4ad8440ac12539f0fed4abe0b1e742c26f656d52e0a1597269c"
+  },
+  {
+    "path": "tests/fixtures/compressor_product_v020.json",
+    "sha256": "b711b7b60e877a0ee9d37b0475cf70465e32c78c15ac75621c662cd5201ded8a"
+  },
+  {
+    "path": "tests/fixtures/constraint_report.json",
+    "sha256": "f64c6594d857a78b263c999bd4d4d3ddf85140aa03dfdd70849a2e9ad6c64765"
+  },
+  {
+    "path": "tests/fixtures/design_problem_p09.json",
+    "sha256": "aaeb2fc0c0080ee629e7b4c5424928d8b981ba7d757f3cdf67c761d8cf6728a1"
+  },
+  {
+    "path": "tests/fixtures/design_spec_r744.json",
+    "sha256": "d4df193888904721815c8192addff059affa8a61e949493f00cede27c642b931"
+  },
+  {
+    "path": "tests/fixtures/evaporator_product.json",
+    "sha256": "4079e8f80ce5a40a309621716f66d9d8fadcc3575a09e8070fdd0081ccd97495"
+  },
+  {
+    "path": "tests/fixtures/final_design_package.json",
+    "sha256": "b7c5531ea630f021df0421800616b11c1f5809eca513eb8ad461d40ecb698cd2"
+  },
+  {
+    "path": "tests/fixtures/hx_product_v020.json",
+    "sha256": "b36035498eb82427488ece2f83e8c6375b07360aed16ed8b70185c27323f48ac"
+  },
+  {
+    "path": "tests/fixtures/optimization_result.json",
+    "sha256": "97e988472ba591c974cd98df64b949100ec9ab71262ee9a6eb7413949bb2b69d"
+  },
+  {
+    "path": "tests/fixtures/optimization_result_p09.json",
+    "sha256": "b15f31ed058fba39a69c35293ff560cdfa720f2c6ceb4e63e48e8f04cce0710b"
+  },
+  {
+    "path": "tests/fixtures/simulation_result_r744.json",
+    "sha256": "ba5ef0fa43da823e1b3cd19fa63d4ef50981dbc48c38a8ffda9124903199f9c6"
+  },
+  {
+    "path": "tests/integration/.gitkeep",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "tests/integration/test_mock_pipeline.py",
+    "sha256": "9b6e2ca8312887298d1bd4b157a022c286d9a8d3da741095aefdf36b6b136bd1"
+  },
+  {
+    "path": "tests/regression/.gitkeep",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "tests/unit/.gitkeep",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "tests/unit/test_provenance.py",
+    "sha256": "9cd043d14d28a746fb3d8de15dba39512db4c22cc116579a5c7d2387bf4653d6"
+  },
+  {
+    "path": "tests/unit/test_review_regressions.py",
+    "sha256": "858d78ca63da54120c606315dcd0897e893bfd8103e2dbb9ec75044a94565ace"
+  },
+  {
+    "path": "tests/unit/test_schema_guards.py",
+    "sha256": "e32cafb2d9dcd1872ff8504ab7dc57c92aeaeccd922c75b7691c08d511b70653"
+  },
+  {
+    "path": "tests/unit/test_units.py",
+    "sha256": "d429cef3c5e8ad1bbdc85126a24c924c2c47c2a3584ccdd12b7aeb052a6bc345"
+  },
+  {
+    "path": "tests/unit/test_work_record.py",
+    "sha256": "44025554ffa7a9e8cc8e7a7c7ad756cea2aaeb83aa99565c6f94d9b5cf3a3622"
+  },
+  {
+    "path": "tests/validation/.gitkeep",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "tests/ws_a/test_baseline_cycle.py",
+    "sha256": "93dbe66b5fd9ca846030c4e670845ba6f8b27e20f5d9cea24b70e1a1ff2b33b9"
+  },
+  {
+    "path": "tests/ws_a/test_compressor_map.py",
+    "sha256": "86bb005815653fdf5028233ab982804ad1f9f2b1c8378edcfa8d845cdaa39298"
+  },
+  {
+    "path": "tests/ws_a/test_coolprop_backend.py",
+    "sha256": "d99099514da18ced36cc261befc2073e84fc1a9a2354b7f5690c8944894edb21"
+  },
+  {
+    "path": "tests/ws_a/test_excel_compressor_integration.py",
+    "sha256": "2960fe855dbe916aecafcd762dea26587999558af696031334afa5f06f1aed1e"
+  },
+  {
+    "path": "tests/ws_a/test_excel_hx_integration.py",
+    "sha256": "56aebea4313e184271b048ccc6d373f2109dfeafb5744982397064c6eb5d9ca1"
+  },
+  {
+    "path": "tests/ws_a/test_excel_valve_integration.py",
+    "sha256": "81a3b149d1eea277bc1c90db8bcdd9effd5601278f2f3bd88257debc40b59732"
+  },
+  {
+    "path": "tests/ws_a/test_expansion_valve_map.py",
+    "sha256": "80c5ee10cbe256760f350498290057b7ce83fcc99bafdb3e8f393b77443cc4e7"
+  },
+  {
+    "path": "tests/ws_a/test_heat_exchanger_1d.py",
+    "sha256": "13aef52afa24ecef75a98dadc4e3e37f390ad6c26f52dbb4189e1e471a2ce959"
+  },
+  {
+    "path": "tests/ws_a/test_heat_exchanger_rated_point.py",
+    "sha256": "1dbd2b201a55278749b1a2d1ff752f8f81643fe96f934a9282e65aa7ee3f235d"
+  },
+  {
+    "path": "tests/ws_a/test_manufacturer_validation.py",
+    "sha256": "c45a6a4521feaa870659159ec1285fd6581925570835e7875a2ec845ad730a33"
+  },
+  {
+    "path": "tests/ws_a/test_performance_map.py",
+    "sha256": "fcea6deb9ee164334ac78488054f6751771d0dd081fb9f748ef0a9bf4865aeff"
+  },
+  {
+    "path": "tests/ws_a/test_pipe_1d.py",
+    "sha256": "1fcda6cc9f0ea055a0ac5a1be56bc799df90d7b8ba4853330ae7a7aa2d6bb7d8"
+  },
+  {
+    "path": "tests/ws_a/test_product_adapter.py",
+    "sha256": "bafba81913333109c41513b8f5373e4c07073747e387a0d48a7f214028a2cba6"
+  },
+  {
+    "path": "tests/ws_a/test_r410a_properties.py",
+    "sha256": "161d0628f96707fa3729ccd171e6fda393f263d49ab99539ffe8dfe2899a13a3"
+  },
+  {
+    "path": "tests/ws_a/test_tespy_cross_validation.py",
+    "sha256": "07ee70abfeb5101a65f0f62774b34804341bd41ecde68eaee74496f4787fb2a1"
+  },
+  {
+    "path": "tests/ws_a_system/test_analysis_input.py",
+    "sha256": "2051f6ec4c8b418313ff604fb6860f9463f51cc0ebc2935925111bc3a26cce1c"
+  },
+  {
+    "path": "tests/ws_a_system/test_analysis_manager.py",
+    "sha256": "fdea35a047ed1a133f0e078def53877f1f2d0e08409cc4f223c69659d2159a2e"
+  },
+  {
+    "path": "tests/ws_a_system/test_circuit_harness.py",
+    "sha256": "94aa27b22fa66b14fd47982c186177bdd14107efce11da1111a3c2d85ef92814"
+  },
+  {
+    "path": "tests/ws_a_system/test_convergence.py",
+    "sha256": "acc725e700b5b42610a8beae38c8818d55047e08969ea5f8f8087515ee697053"
+  },
+  {
+    "path": "tests/ws_a_system/test_design_study.py",
+    "sha256": "4ce64f4d1343768b797a1bbef2e4d4151ef3e4dc7579fd87b065112540fae457"
+  },
+  {
+    "path": "tests/ws_a_system/test_network_map.py",
+    "sha256": "7cf2226e9447e0da46c14db44c62c38089627d2943e00b7818ea5a38e97123b4"
+  },
+  {
+    "path": "tests/ws_a_system/test_room_sizing.py",
+    "sha256": "fbf4c263e30d375b3a1c3581e725c50c97c4c702202308a5b7181f8875cc74b8"
+  },
+  {
+    "path": "tests/ws_b/test_excel_repository.py",
+    "sha256": "3908e618777fbaa243fa2a32ccf9029499ade9816d7cecb41c4e1119563204ef"
+  },
+  {
+    "path": "tests/ws_b/test_product_record_v020.py",
+    "sha256": "153f96a70056e358c0a7c11f0edb4338f0c3de4a55d2d62d28e5392cf23c2844"
+  },
+  {
+    "path": "tests/ws_d/test_synthetic_search.py",
+    "sha256": "780f5be62ce13dac32dd9d2f87b40af62a1289312b7954ce803e9cd8044c497e"
+  },
+  {
+    "path": "tests/ws_e/test_analysis_screen.py",
+    "sha256": "0e30ca93f76401360ef251c44e5e621f6e33248dd96737163b54088794f8445d"
+  },
+  {
+    "path": "tests/ws_e/test_file_generators.py",
+    "sha256": "4233ea000f92ef5392a481ff72bee4a94ffa31e3dbe135ec88235c6a58bbf551"
+  },
+  {
+    "path": "tests/ws_e/test_result_view.py",
+    "sha256": "fc6cd90d8895c254618fc02aa99ad2f32d29f9ffa899771a31f271758bae4afe"
+  },
+  {
+    "path": "tests/ws_e/test_streamlit_app.py",
+    "sha256": "fddeb4ae5d51c412d4eb2795d5c1824662c06b75ed14d55f1ce5d817970a4b14"
+  },
+  {
+    "path": "tests/ws_e/test_synthetic_result_flow.py",
+    "sha256": "e34b721d6f91d22450ccf93c3014e700c0fac67a96e987d24cf6c2540bfcffdd"
+  },
+  {
+    "path": "uv.lock",
+    "sha256": "71029e97fa8efb7283122c2f805c3e233e09656b4b29b4cec27896e8f1986150"
+  }
+]

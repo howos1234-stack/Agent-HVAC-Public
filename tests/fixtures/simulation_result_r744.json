@@ -1,0 +1,55 @@
+{
+  "design_id": "MOCK-r744",
+  "status": "converged",
+  "is_mock": true,
+  "state_points": {
+    "example": {
+      "fluid": "R744",
+      "pressure": {
+        "value": 1000000.0,
+        "unit": "pascal"
+      },
+      "temperature": {
+        "value": 300.0,
+        "unit": "kelvin"
+      },
+      "enthalpy": {
+        "value": 100000.0,
+        "unit": "joule / kilogram"
+      },
+      "density": {
+        "value": 1.0,
+        "unit": "kilogram / meter ** 3"
+      },
+      "phase": "mock-unspecified",
+      "vapor_quality": null
+    }
+  },
+  "mass_flow": {
+    "value": 1.0,
+    "unit": "kilogram / second"
+  },
+  "compressor_power": {
+    "value": 1.0,
+    "unit": "watt"
+  },
+  "evaporator_capacity": {
+    "value": 1.0,
+    "unit": "watt"
+  },
+  "heat_rejection": {
+    "value": 1.0,
+    "unit": "watt"
+  },
+  "cop": 1.0,
+  "eer": null,
+  "pressure_drops": {},
+  "heat_exchanger_duties": {},
+  "energy_balance_error": 1.0,
+  "mass_balance_error": 1.0,
+  "active_constraints": [],
+  "envelope_margins": {},
+  "messages": [
+    "MOCK ONLY: arbitrary placeholders; no physical convergence or validation"
+  ]
+}

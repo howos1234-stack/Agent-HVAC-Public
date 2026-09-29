@@ -1,0 +1,50 @@
+name: Foundation CI
+on:
+  push:
+    branches: [integration, main]
+    paths-ignore:
+      - "**/*.md"
+  pull_request:
+    paths-ignore:
+      - "**/*.md"
+  workflow_dispatch:
+concurrency:
+  group: foundation-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  foundation:
+    name: foundation (${{ matrix.os }}, ${{ matrix.environment }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        environment: [base, gui]
+        include:
+          - environment: base
+            extra: ""
+          - environment: gui
+            extra: "--extra gui"
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.12.11"
+          python-version: "3.12"
+      - run: uv sync --locked ${{ matrix.extra }}
+      - run: uv run --locked ${{ matrix.extra }} ruff check .
+      - run: uv run --locked ${{ matrix.extra }} ruff format --check .
+      - run: uv run --locked ${{ matrix.extra }} mypy
+      - name: Type-check the optional Streamlit entry point
+        if: matrix.environment == 'gui'
+        run: uv run --locked --extra gui mypy src/agent_hvac/app/streamlit_app.py
+      - run: uv run --locked ${{ matrix.extra }} python scripts/source_manifest.py --check
+      - run: uv run --locked ${{ matrix.extra }} pytest --junitxml=artifacts/pytest.xml
+      - run: uv build --no-build-isolation
+      - name: Require work record on pull requests
+        if: github.event_name == 'pull_request'
+        run: uv run --locked ${{ matrix.extra }} python scripts/check_work_record.py --base "${{ github.event.pull_request.base.sha }}"

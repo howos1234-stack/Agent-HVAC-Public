@@ -1,0 +1,98 @@
+{
+  "$defs": {
+    "ConstraintCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "rule_id": {
+          "minLength": 1,
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "boolean"
+        },
+        "hard": {
+          "title": "Hard",
+          "type": "boolean"
+        },
+        "message": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "margin": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Quantity"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "rule_id",
+        "passed",
+        "hard",
+        "message"
+      ],
+      "title": "ConstraintCheck",
+      "type": "object"
+    },
+    "Quantity": {
+      "additionalProperties": false,
+      "description": "Finite scalar with a unit; normalized to SI when constructed.\n\nAbsolute temperatures use Temperature; differences use TemperatureDifference.\nGeneric quantities allow dimensionless metrics but never implicit units.",
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "Quantity",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "design_id": {
+      "minLength": 1,
+      "title": "Design Id",
+      "type": "string"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/ConstraintCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "feasible": {
+      "title": "Feasible",
+      "type": "boolean"
+    },
+    "is_mock": {
+      "title": "Is Mock",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "design_id",
+    "checks",
+    "feasible",
+    "is_mock"
+  ],
+  "title": "ConstraintReport",
+  "type": "object"
+}

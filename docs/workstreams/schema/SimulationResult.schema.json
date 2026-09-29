@@ -1,0 +1,425 @@
+{
+  "$defs": {
+    "Density": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "Density",
+      "type": "object"
+    },
+    "MassFlow": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "MassFlow",
+      "type": "object"
+    },
+    "Power": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "Power",
+      "type": "object"
+    },
+    "Pressure": {
+      "additionalProperties": false,
+      "description": "Absolute pressure; gauge values must be converted with explicit reference.",
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "Pressure",
+      "type": "object"
+    },
+    "PressureDifference": {
+      "additionalProperties": false,
+      "description": "Nonnegative pressure loss, including the zero-loss limit (not a signed delta).",
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "PressureDifference",
+      "type": "object"
+    },
+    "Quantity": {
+      "additionalProperties": false,
+      "description": "Finite scalar with a unit; normalized to SI when constructed.\n\nAbsolute temperatures use Temperature; differences use TemperatureDifference.\nGeneric quantities allow dimensionless metrics but never implicit units.",
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "Quantity",
+      "type": "object"
+    },
+    "SolverStatus": {
+      "enum": [
+        "converged",
+        "unconverged",
+        "infeasible",
+        "invalid-property-state",
+        "component-envelope-violation"
+      ],
+      "title": "SolverStatus",
+      "type": "string"
+    },
+    "SpecificEnthalpy": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "SpecificEnthalpy",
+      "type": "object"
+    },
+    "SpecificEntropy": {
+      "additionalProperties": false,
+      "description": "Finite mass-specific entropy; the backend decides state validity.",
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "SpecificEntropy",
+      "type": "object"
+    },
+    "Temperature": {
+      "additionalProperties": false,
+      "description": "Absolute thermodynamic temperature, strictly above zero kelvin.",
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "Temperature",
+      "type": "object"
+    },
+    "ThermoState": {
+      "additionalProperties": false,
+      "properties": {
+        "fluid": {
+          "minLength": 1,
+          "title": "Fluid",
+          "type": "string"
+        },
+        "pressure": {
+          "$ref": "#/$defs/Pressure"
+        },
+        "temperature": {
+          "$ref": "#/$defs/Temperature"
+        },
+        "enthalpy": {
+          "$ref": "#/$defs/SpecificEnthalpy"
+        },
+        "density": {
+          "$ref": "#/$defs/Density"
+        },
+        "phase": {
+          "minLength": 1,
+          "title": "Phase",
+          "type": "string"
+        },
+        "vapor_quality": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vapor Quality"
+        },
+        "entropy": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SpecificEntropy"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "fluid",
+        "pressure",
+        "temperature",
+        "enthalpy",
+        "density",
+        "phase"
+      ],
+      "title": "ThermoState",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "design_id": {
+      "minLength": 1,
+      "title": "Design Id",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/SolverStatus"
+    },
+    "is_mock": {
+      "title": "Is Mock",
+      "type": "boolean"
+    },
+    "state_points": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ThermoState"
+      },
+      "title": "State Points",
+      "type": "object"
+    },
+    "mass_flow": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MassFlow"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "compressor_power": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Power"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "evaporator_capacity": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Power"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "heat_rejection": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Power"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "cop": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cop"
+    },
+    "eer": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Eer"
+    },
+    "pressure_drops": {
+      "additionalProperties": {
+        "$ref": "#/$defs/PressureDifference"
+      },
+      "title": "Pressure Drops",
+      "type": "object"
+    },
+    "heat_exchanger_duties": {
+      "additionalProperties": {
+        "$ref": "#/$defs/Power"
+      },
+      "title": "Heat Exchanger Duties",
+      "type": "object"
+    },
+    "energy_balance_error": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Energy Balance Error"
+    },
+    "mass_balance_error": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Mass Balance Error"
+    },
+    "active_constraints": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Active Constraints",
+      "type": "array"
+    },
+    "envelope_margins": {
+      "additionalProperties": {
+        "$ref": "#/$defs/Quantity"
+      },
+      "title": "Envelope Margins",
+      "type": "object"
+    },
+    "messages": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Messages",
+      "type": "array"
+    }
+  },
+  "required": [
+    "design_id",
+    "status",
+    "is_mock"
+  ],
+  "title": "SimulationResult",
+  "type": "object"
+}

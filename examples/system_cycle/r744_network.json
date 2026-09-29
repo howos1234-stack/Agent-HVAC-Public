@@ -1,0 +1,210 @@
+{
+  "scenario": {
+    "scenario_id": "synthetic-r744-network-v1",
+    "is_mock": true,
+    "source_type": "AGENT_ASSUMPTION",
+    "source_ref": "docs/workstreams/ws_a/system/SYNTHETIC_MAP_DECISIONS.md",
+    "assumptions": [
+      "Synthetic development input, not manufacturer performance or a converged design.",
+      "R744, 30/90 bar, 0.1 kg/s and efficiency 0.8 reuse P02 regression inputs.",
+      "Constant-UA co-current dry secondary streams; UA and secondary values are explicit test choices.",
+      "Prescribed compressor p/m; synthetic P04 viscosity and U-prime, explicit pipe losses and HX dp; no product data."
+    ],
+    "refrigerant": "R744",
+    "suction_pressure": {
+      "value": 30,
+      "unit": "bar"
+    },
+    "discharge_pressure": {
+      "value": 90,
+      "unit": "bar"
+    },
+    "trial_suction_temperature": {
+      "value": 280,
+      "unit": "K"
+    },
+    "refrigerant_mass_flow": {
+      "value": 360,
+      "unit": "kg/h"
+    },
+    "compressor_isentropic_efficiency": {
+      "value": 0.8,
+      "unit": "dimensionless"
+    },
+    "gas_cooler": {
+      "source_ref": "AGENT_ASSUMPTION: P05/PR34-inspired 200 W/K trial, no rated-point selection",
+      "secondary_inlet_temperature": {
+        "value": 290,
+        "unit": "K"
+      },
+      "secondary_mass_flow": {
+        "value": 1,
+        "unit": "kg/s"
+      },
+      "secondary_specific_heat_capacity": {
+        "value": 1000,
+        "unit": "J/(kg*K)"
+      },
+      "total_thermal_conductance": {
+        "value": 0.2,
+        "unit": "kW/K"
+      },
+      "cell_count": 80
+    },
+    "evaporator": {
+      "source_ref": "AGENT_ASSUMPTION: 200 W/K, 300 K, 1 kg/s, 1000 J/(kg*K) synthetic trial",
+      "secondary_inlet_temperature": {
+        "value": 300,
+        "unit": "K"
+      },
+      "secondary_mass_flow": {
+        "value": 1,
+        "unit": "kg/s"
+      },
+      "secondary_specific_heat_capacity": {
+        "value": 1000,
+        "unit": "J/(kg*K)"
+      },
+      "total_thermal_conductance": {
+        "value": 0.2,
+        "unit": "kW/K"
+      },
+      "cell_count": 80
+    },
+    "network": {
+      "source_ref": "AGENT_ASSUMPTION: 10kPa GC and 5kPa EV loss; pressure bracket3..3.1MPa",
+      "discharge_pipe": {
+        "source_ref": "AGENT_ASSUMPTION: mu=15 microPa*s, L=0.5m, D=20mm, roughness=1um, Uprime=20 W/(m K), ambient=295K",
+        "length": {
+          "value": 0.5,
+          "unit": "m"
+        },
+        "inner_diameter": {
+          "value": 0.02,
+          "unit": "m"
+        },
+        "roughness": {
+          "value": 1e-06,
+          "unit": "m"
+        },
+        "dynamic_viscosity": {
+          "value": 1.5e-05,
+          "unit": "Pa*s"
+        },
+        "ambient_temperature": {
+          "value": 295,
+          "unit": "K"
+        },
+        "linear_heat_transfer_coefficient": {
+          "value": 20,
+          "unit": "W/(m*K)"
+        },
+        "cell_count": 10
+      },
+      "high_side_pipe": {
+        "source_ref": "AGENT_ASSUMPTION: mu=15 microPa*s, L=0.5m, D=20mm, roughness=1um, Uprime=20 W/(m K), ambient=295K",
+        "length": {
+          "value": 0.5,
+          "unit": "m"
+        },
+        "inner_diameter": {
+          "value": 0.02,
+          "unit": "m"
+        },
+        "roughness": {
+          "value": 1e-06,
+          "unit": "m"
+        },
+        "dynamic_viscosity": {
+          "value": 1.5e-05,
+          "unit": "Pa*s"
+        },
+        "ambient_temperature": {
+          "value": 295,
+          "unit": "K"
+        },
+        "linear_heat_transfer_coefficient": {
+          "value": 20,
+          "unit": "W/(m*K)"
+        },
+        "cell_count": 10
+      },
+      "suction_pipe": {
+        "source_ref": "AGENT_ASSUMPTION: mu=15 microPa*s, L=0.5m, D=20mm, roughness=1um, Uprime=20 W/(m K), ambient=295K",
+        "length": {
+          "value": 0.5,
+          "unit": "m"
+        },
+        "inner_diameter": {
+          "value": 0.02,
+          "unit": "m"
+        },
+        "roughness": {
+          "value": 1e-06,
+          "unit": "m"
+        },
+        "dynamic_viscosity": {
+          "value": 1.5e-05,
+          "unit": "Pa*s"
+        },
+        "ambient_temperature": {
+          "value": 295,
+          "unit": "K"
+        },
+        "linear_heat_transfer_coefficient": {
+          "value": 20,
+          "unit": "W/(m*K)"
+        },
+        "cell_count": 10
+      },
+      "gas_cooler_pressure_drop": {
+        "value": 10000,
+        "unit": "Pa"
+      },
+      "evaporator_pressure_drop": {
+        "value": 5000,
+        "unit": "Pa"
+      },
+      "valve_pressure_lower": {
+        "value": 3000000.0,
+        "unit": "Pa"
+      },
+      "valve_pressure_upper": {
+        "value": 3100000.0,
+        "unit": "Pa"
+      },
+      "pressure_scan_intervals": 2,
+      "pressure_max_iterations": 60,
+      "pressure_tolerance": {
+        "value": 0.01,
+        "unit": "Pa"
+      }
+    }
+  },
+  "settings": {
+    "lower_enthalpy": {
+      "value": 450,
+      "unit": "kJ/kg"
+    },
+    "upper_enthalpy": {
+      "value": 480,
+      "unit": "kJ/kg"
+    },
+    "scan_intervals": 6,
+    "max_iterations": 100,
+    "enthalpy_tolerance": {
+      "value": 0.01,
+      "unit": "J/kg"
+    },
+    "pressure_tolerance": {
+      "value": 1,
+      "unit": "Pa"
+    },
+    "temperature_tolerance": {
+      "value": 0.0001,
+      "unit": "K"
+    },
+    "relative_energy_tolerance": 1e-06,
+    "relative_mass_tolerance": 1e-12
+  }
+}

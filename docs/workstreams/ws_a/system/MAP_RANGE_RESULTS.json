@@ -1,0 +1,548 @@
+{
+  "is_mock": true,
+  "code_commit_at_run": "0923c7ff59615d8370d0f8dfc1def106f355f73c",
+  "working_tree_dirty_at_run": false,
+  "current_source_hashes_match": true,
+  "converged": 14,
+  "failed": 4,
+  "points": [
+    {
+      "index": 0,
+      "pressure_bar_a": 80.0,
+      "secondary_K": 285.0,
+      "prescribed_flow_kg_s": 0.08,
+      "status": "converged",
+      "reason": "closure-satisfied",
+      "message": "closure-satisfied: all closure checks passed",
+      "cop": 0.9110800936703951,
+      "dh_J_kg": 0.0009135431610047817,
+      "dp_Pa": 0.005448468029499054,
+      "energy_relative": 8.827544703869103e-09
+    },
+    {
+      "index": 1,
+      "pressure_bar_a": 80.0,
+      "secondary_K": 285.0,
+      "prescribed_flow_kg_s": 0.1,
+      "status": "converged",
+      "reason": "closure-satisfied",
+      "message": "closure-satisfied: all closure checks passed",
+      "cop": 0.6762527848175405,
+      "dh_J_kg": 0.00441919342847541,
+      "dp_Pa": 0.008277529384940863,
+      "energy_relative": 4.849036640126994e-08
+    },
+    {
+      "index": 2,
+      "pressure_bar_a": 80.0,
+      "secondary_K": 285.0,
+      "prescribed_flow_kg_s": 0.12,
+      "status": "converged",
+      "reason": "closure-satisfied",
+      "message": "closure-satisfied: all closure checks passed",
+      "cop": 0.5024876158342684,
+      "dh_J_kg": -0.006703556922730058,
+      "dp_Pa": 3.259629011154175e-09,
+      "energy_relative": 8.165055679095594e-08
+    },
+    {
+      "index": 3,
+      "pressure_bar_a": 80.0,
+      "secondary_K": 305.0,
+      "prescribed_flow_kg_s": 0.08,
+      "status": "unconverged",
+      "reason": "invalid-domain-in-bracket",
+      "message": "invalid-domain-in-bracket: pressure-solve: pressure-no-valid-bracket; inspect pressure_history for component failures; last component failure: suction_pipe: pipe energy closure residual 1.07747e-12 exceeds 1e-12",
+      "cop": null,
+      "dh_J_kg": null,
+      "dp_Pa": null,
+      "energy_relative": null
+    },
+    {
+      "index": 4,
+      "pressure_bar_a": 80.0,
+      "secondary_K": 305.0,
+      "prescribed_flow_kg_s": 0.1,
+      "status": "unconverged",
+      "reason": "invalid-domain-in-bracket",
+      "message": "invalid-domain-in-bracket: pressure-solve: pressure-no-valid-bracket; inspect pressure_history for component failures; last component failure: suction_pipe: pipe energy closure residual 1.09124e-12 exceeds 1e-12",
+      "cop": null,
+      "dh_J_kg": null,
+      "dp_Pa": null,
+      "energy_relative": null
+    },
+    {
+      "index": 5,
+      "pressure_bar_a": 80.0,
+      "secondary_K": 305.0,
+      "prescribed_flow_kg_s": 0.12,
+      "status": "unconverged",
+      "reason": "no-bracket",
+      "message": "no-bracket: No adjacent valid sign-changing samples in the specified bounds; this does not prove that no physical root exists.; last component failure: suction_pipe: pipe energy closure residual 1.00354e-12 exceeds 1e-12",
+      "cop": null,
+      "dh_J_kg": null,
+      "dp_Pa": null,
+      "energy_relative": null
+    },
+    {
+      "index": 6,
+      "pressure_bar_a": 90.0,
+      "secondary_K": 285.0,
+      "prescribed_flow_kg_s": 0.08,
+      "status": "converged",
+      "reason": "closure-satisfied",
+      "message": "closure-satisfied: all closure checks passed",
+      "cop": 0.923347044325176,
+      "dh_J_kg": -0.00508239958435297,
+      "dp_Pa": 0.005443999543786049,
+      "energy_relative": 4.382820550833856e-08
+    },
+    {
+      "index": 7,
+      "pressure_bar_a": 90.0,
+      "secondary_K": 285.0,
+      "prescribed_flow_kg_s": 0.1,
+      "status": "converged",
+      "reason": "closure-satisfied",
+      "message": "closure-satisfied: all closure checks passed",
+      "cop": 0.679090689936383,
+      "dh_J_kg": 0.004090342321433127,
+      "dp_Pa": 0.0082619059830904,
+      "energy_relative": 4.0078051113247825e-08
+    },
+    {
+      "index": 8,
+      "pressure_bar_a": 90.0,
+      "secondary_K": 285.0,
+      "prescribed_flow_kg_s": 0.12,
+      "status": "converged",
+      "reason": "closure-satisfied",
+      "message": "closure-satisfied: all closure checks passed",
+      "cop": 0.5010160287538473,
+      "dh_J_kg": 0.002590418211184442,
+      "dp_Pa": 2.7939677238464355e-09,
+      "energy_relative": 2.814611399597463e-08
+    },
+    {
+      "index": 9,
+      "pressure_bar_a": 90.0,
+      "secondary_K": 305.0,
+      "prescribed_flow_kg_s": 0.08,
+      "status": "converged",
+      "reason": "closure-satisfied",
+      "message": "closure-satisfied: all closure checks passed",
+      "cop": 0.5552869191709017,
+      "dh_J_kg": 0.008055159996729344,
+      "dp_Pa": 0.005475375335663557,
+      "energy_relative": 8.615275166173274e-08
+    },
+    {
+      "index": 10,
+      "pressure_bar_a": 90.0,
+      "secondary_K": 305.0,
+      "prescribed_flow_kg_s": 0.1,
+      "status": "converged",
+      "reason": "closure-satisfied",
+      "message": "closure-satisfied: all closure checks passed",
+      "cop": 0.38218438660042514,
+      "dh_J_kg": 0.0012929810327477753,
+      "dp_Pa": 0.008361436426639557,
+      "energy_relative": 1.5408091258800876e-08
+    },
+    {
+      "index": 11,
+      "pressure_bar_a": 90.0,
+      "secondary_K": 305.0,
+      "prescribed_flow_kg_s": 0.12,
+      "status": "unconverged",
+      "reason": "invalid-domain-in-bracket",
+      "message": "invalid-domain-in-bracket: pressure-solve: pressure-no-valid-bracket; inspect pressure_history for component failures; last component failure: suction_pipe: pipe energy closure residual 1.02838e-12 exceeds 1e-12",
+      "cop": null,
+      "dh_J_kg": null,
+      "dp_Pa": null,
+      "energy_relative": null
+    },
+    {
+      "index": 12,
+      "pressure_bar_a": 100.0,
+      "secondary_K": 285.0,
+      "prescribed_flow_kg_s": 0.08,
+      "status": "converged",
+      "reason": "closure-satisfied",
+      "message": "closure-satisfied: all closure checks passed",
+      "cop": 0.9341766452282009,
+      "dh_J_kg": 0.0013394785928539932,
+      "dp_Pa": 0.005305110476911068,
+      "energy_relative": 1.061258110990691e-08
+    },
+    {
+      "index": 13,
+      "pressure_bar_a": 100.0,
+      "secondary_K": 285.0,
+      "prescribed_flow_kg_s": 0.1,
+      "status": "converged",
+      "reason": "closure-satisfied",
+      "message": "closure-satisfied: all closure checks passed",
+      "cop": 0.6824444427821428,
+      "dh_J_kg": 0.008880271518137306,
+      "dp_Pa": 0.008155407384037971,
+      "energy_relative": 7.964230291189005e-08
+    },
+    {
+      "index": 14,
+      "pressure_bar_a": 100.0,
+      "secondary_K": 285.0,
+      "prescribed_flow_kg_s": 0.12,
+      "status": "converged",
+      "reason": "closure-satisfied",
+      "message": "closure-satisfied: all closure checks passed",
+      "cop": 0.5007012760352276,
+      "dh_J_kg": -0.0010642746347002685,
+      "dp_Pa": 3.259629011154175e-09,
+      "energy_relative": 1.0551784291623888e-08
+    },
+    {
+      "index": 15,
+      "pressure_bar_a": 100.0,
+      "secondary_K": 305.0,
+      "prescribed_flow_kg_s": 0.08,
+      "status": "converged",
+      "reason": "closure-satisfied",
+      "message": "closure-satisfied: all closure checks passed",
+      "cop": 0.5851376709782925,
+      "dh_J_kg": -0.004390043264720589,
+      "dp_Pa": 0.00545991538092494,
+      "energy_relative": 4.169594093417622e-08
+    },
+    {
+      "index": 16,
+      "pressure_bar_a": 100.0,
+      "secondary_K": 305.0,
+      "prescribed_flow_kg_s": 0.1,
+      "status": "converged",
+      "reason": "closure-satisfied",
+      "message": "closure-satisfied: all closure checks passed",
+      "cop": 0.4033135956524054,
+      "dh_J_kg": -0.007434147875756025,
+      "dp_Pa": 0.00833190232515335,
+      "energy_relative": 7.895902182299297e-08
+    },
+    {
+      "index": 17,
+      "pressure_bar_a": 100.0,
+      "secondary_K": 305.0,
+      "prescribed_flow_kg_s": 0.12,
+      "status": "converged",
+      "reason": "closure-satisfied",
+      "message": "closure-satisfied: all closure checks passed",
+      "cop": 0.26671858238456675,
+      "dh_J_kg": 0.005523584026377648,
+      "dp_Pa": 3.725290298461914e-09,
+      "energy_relative": 6.427182918799495e-08
+    }
+  ],
+  "stability": [
+    {
+      "case": "bracket-misses-root",
+      "status": "unconverged",
+      "reason": "no-bracket",
+      "cop": null,
+      "cop_relative_change_vs_80": null,
+      "diagnostics": {
+        "enthalpy_return_minus_trial": {
+          "value": -14833.444427699433,
+          "unit": "joule / kilogram"
+        },
+        "pressure_return_minus_trial": {
+          "value": 0.008306312374770641,
+          "unit": "pascal"
+        },
+        "temperature_return_minus_trial": {
+          "value": -12.537391566379142,
+          "unit": "kelvin"
+        },
+        "net_heat_and_work_to_refrigerant": {
+          "value": -1483.3444427699699,
+          "unit": "watt"
+        },
+        "transported_enthalpy_difference": {
+          "value": -1483.3444427699433,
+          "unit": "watt"
+        },
+        "transport_energy_error": {
+          "value": -2.660272002685815e-11,
+          "unit": "watt"
+        },
+        "relative_transport_energy_error": 2.395949260845668e-15,
+        "compressor_power": {
+          "value": 7461.558750160591,
+          "unit": "watt"
+        },
+        "evaporator_heat": {
+          "value": 3509.5810958643497,
+          "unit": "watt"
+        },
+        "gas_cooler_heat_rejection": {
+          "value": 11103.206758839511,
+          "unit": "watt"
+        }
+      }
+    },
+    {
+      "case": "bracket-shifted",
+      "status": "converged",
+      "reason": "closure-satisfied",
+      "cop": 0.6006746702004905,
+      "cop_relative_change_vs_80": 1.0591228627454541e-07,
+      "diagnostics": {
+        "enthalpy_return_minus_trial": {
+          "value": 0.0019240284455008805,
+          "unit": "joule / kilogram"
+        },
+        "pressure_return_minus_trial": {
+          "value": 0.008274478372186422,
+          "unit": "pascal"
+        },
+        "temperature_return_minus_trial": {
+          "value": 1.6466679539917095e-06,
+          "unit": "kelvin"
+        },
+        "net_heat_and_work_to_refrigerant": {
+          "value": 0.00019240285882915487,
+          "unit": "watt"
+        },
+        "transported_enthalpy_difference": {
+          "value": 0.00019240284455008806,
+          "unit": "watt"
+        },
+        "transport_energy_error": {
+          "value": 1.4279066806992952e-11,
+          "unit": "watt"
+        },
+        "relative_transport_energy_error": 1.4615681986710257e-15,
+        "compressor_power": {
+          "value": 6805.938024552692,
+          "unit": "watt"
+        },
+        "evaporator_heat": {
+          "value": 4088.154578303166,
+          "unit": "watt"
+        },
+        "gas_cooler_heat_rejection": {
+          "value": 9769.689036732338,
+          "unit": "watt"
+        }
+      }
+    },
+    {
+      "case": "bracket-wide",
+      "status": "converged",
+      "reason": "closure-satisfied",
+      "cop": 0.6006746065816696,
+      "cop_relative_change_vs_80": 0.0,
+      "diagnostics": {
+        "enthalpy_return_minus_trial": {
+          "value": -0.0044431735295802355,
+          "unit": "joule / kilogram"
+        },
+        "pressure_return_minus_trial": {
+          "value": 0.008274477440863848,
+          "unit": "pascal"
+        },
+        "temperature_return_minus_trial": {
+          "value": -3.4712226693045523e-06,
+          "unit": "kelvin"
+        },
+        "net_heat_and_work_to_refrigerant": {
+          "value": -0.0004443173245363141,
+          "unit": "watt"
+        },
+        "transported_enthalpy_difference": {
+          "value": -0.00044431735295802355,
+          "unit": "watt"
+        },
+        "transport_energy_error": {
+          "value": 2.8421709430404007e-11,
+          "unit": "watt"
+        },
+        "relative_transport_energy_error": 2.9091722017320497e-15,
+        "compressor_power": {
+          "value": 6805.93831640813,
+          "unit": "watt"
+        },
+        "evaporator_heat": {
+          "value": 4088.1543206275646,
+          "unit": "watt"
+        },
+        "gas_cooler_heat_rejection": {
+          "value": 9769.689609120567,
+          "unit": "watt"
+        }
+      }
+    },
+    {
+      "case": "grid-coarse",
+      "status": "converged",
+      "reason": "closure-satisfied",
+      "cop": 0.6065780045303523,
+      "cop_relative_change_vs_80": 0.009827946585386549,
+      "diagnostics": {
+        "enthalpy_return_minus_trial": {
+          "value": 0.0013046269887126982,
+          "unit": "joule / kilogram"
+        },
+        "pressure_return_minus_trial": {
+          "value": 0.008284911513328552,
+          "unit": "pascal"
+        },
+        "temperature_return_minus_trial": {
+          "value": 1.1489444204926258e-06,
+          "unit": "kelvin"
+        },
+        "net_heat_and_work_to_refrigerant": {
+          "value": 0.0001304627155604976,
+          "unit": "watt"
+        },
+        "transported_enthalpy_difference": {
+          "value": 0.00013046269887126983,
+          "unit": "watt"
+        },
+        "transport_energy_error": {
+          "value": 1.6689227772112222e-11,
+          "unit": "watt"
+        },
+        "relative_transport_energy_error": 1.70102231053856e-15,
+        "compressor_power": {
+          "value": 6806.069651066195,
+          "unit": "watt"
+        },
+        "evaporator_heat": {
+          "value": 4128.412147638323,
+          "unit": "watt"
+        },
+        "gas_cooler_heat_rejection": {
+          "value": 9811.2926965833,
+          "unit": "watt"
+        }
+      }
+    },
+    {
+      "case": "grid-fine",
+      "status": "converged",
+      "reason": "closure-satisfied",
+      "cop": 0.5977505650466867,
+      "cop_relative_change_vs_80": -0.0048679293296967074,
+      "diagnostics": {
+        "enthalpy_return_minus_trial": {
+          "value": -0.006174743873998523,
+          "unit": "joule / kilogram"
+        },
+        "pressure_return_minus_trial": {
+          "value": 0.008269164711236954,
+          "unit": "pascal"
+        },
+        "temperature_return_minus_trial": {
+          "value": -4.863053220560687e-06,
+          "unit": "kelvin"
+        },
+        "net_heat_and_work_to_refrigerant": {
+          "value": -0.0006174744209488381,
+          "unit": "watt"
+        },
+        "transported_enthalpy_difference": {
+          "value": -0.0006174743873998523,
+          "unit": "watt"
+        },
+        "transport_energy_error": {
+          "value": -3.354898574659676e-11,
+          "unit": "watt"
+        },
+        "relative_transport_energy_error": 3.4412464891557385e-15,
+        "compressor_power": {
+          "value": 6805.872648858953,
+          "unit": "watt"
+        },
+        "evaporator_heat": {
+          "value": 4068.214221491229,
+          "unit": "watt"
+        },
+        "gas_cooler_heat_rejection": {
+          "value": 9749.079542054988,
+          "unit": "watt"
+        }
+      }
+    },
+    {
+      "case": "pressure-narrow",
+      "status": "converged",
+      "reason": "closure-satisfied",
+      "cop": 0.600674608094421,
+      "cop_relative_change_vs_80": 2.518420805230903e-09,
+      "diagnostics": {
+        "enthalpy_return_minus_trial": {
+          "value": -0.0043385441531427205,
+          "unit": "joule / kilogram"
+        },
+        "pressure_return_minus_trial": {
+          "value": 4.368368536233902e-05,
+          "unit": "pascal"
+        },
+        "temperature_return_minus_trial": {
+          "value": -3.4867479143940727e-06,
+          "unit": "kelvin"
+        },
+        "net_heat_and_work_to_refrigerant": {
+          "value": -0.0004338544222832752,
+          "unit": "watt"
+        },
+        "transported_enthalpy_difference": {
+          "value": -0.0004338544153142721,
+          "unit": "watt"
+        },
+        "transport_energy_error": {
+          "value": -6.9690031198089974e-12,
+          "unit": "watt"
+        },
+        "relative_transport_energy_error": 7.133290205354152e-16,
+        "compressor_power": {
+          "value": 6805.93831640813,
+          "unit": "watt"
+        },
+        "evaporator_heat": {
+          "value": 4088.154330923257,
+          "unit": "watt"
+        },
+        "gas_cooler_heat_rejection": {
+          "value": 9769.689609120567,
+          "unit": "watt"
+        }
+      }
+    }
+  ],
+  "artifact_sha256": {
+    "bracket-misses-root.json": "1ede83cedf27d7e2f23608af28fff5b6ed195b57d98a717c2bf3bae1482059fb",
+    "bracket-shifted.json": "9dc21d2b933686bbd4e2175a98382d62562e4458f781ec211da9c4a6c678b43a",
+    "bracket-wide.json": "268883e3b333a72dc830397669af7c831428db215f9bc2a5583b8826075f799e",
+    "grid-coarse.json": "539208918b51e0be5c40a077b2ebb5f7e924f2445ca8be13090eb06d433b532c",
+    "grid-fine.json": "25b74bffba9eacc4e870353e65c9051e05878bf9c81edad9f149a5c4e2f1a443",
+    "pressure-narrow.json": "67926d17e222584053eba5cf7db3357cf9ef0b605bb90a6493bd8dac523a233c",
+    "range.json": "e474d8fcdc2846d96c40470db8837326ccb9bc8732a2ff294cb026c61f3d6d3c"
+  },
+  "python": "3.12.14",
+  "coolprop": "8.0.0",
+  "lock_sha256": "71029e97fa8efb7283122c2f805c3e233e09656b4b29b4cec27896e8f1986150",
+  "map_input_sha256": "98a4c91886e7fce6ee0e36240e25af4a4c55566d8e00977b4e2f201359750c9c",
+  "changed_source_sha256": {
+    "src/agent_hvac/solvers/system_cycle/network.py": "569813890d89ec2d75262fdf50401919ffaa48dc0ff895a8149cb611f3871a3a",
+    "src/agent_hvac/solvers/system_cycle/operating_map.py": "441a8eb17717281e1a9772bd257585d0ff43530925b382c3016ceff55e32733f"
+  },
+  "before_fix": {
+    "converged": 11,
+    "failed": 7
+  },
+  "recovered_indices": [
+    9,
+    12,
+    15
+  ]
+}

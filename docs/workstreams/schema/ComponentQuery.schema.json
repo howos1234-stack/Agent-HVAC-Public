@@ -1,0 +1,158 @@
+{
+  "$defs": {
+    "ComponentType": {
+      "enum": [
+        "compressor",
+        "evaporator",
+        "condenser",
+        "gas_cooler",
+        "expansion_valve",
+        "pipe",
+        "fan",
+        "pump",
+        "receiver",
+        "accumulator",
+        "ihx"
+      ],
+      "title": "ComponentType",
+      "type": "string"
+    },
+    "Parameter": {
+      "additionalProperties": false,
+      "description": "Numbers require an explicit Quantity, including dimensionless values.",
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Quantity"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            }
+          ],
+          "title": "Value"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        }
+      },
+      "required": [
+        "name",
+        "value",
+        "provenance"
+      ],
+      "title": "Parameter",
+      "type": "object"
+    },
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "source_type": {
+          "$ref": "#/$defs/SourceType"
+        },
+        "source_ref": {
+          "minLength": 1,
+          "title": "Source Ref",
+          "type": "string"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "required": [
+        "source_type",
+        "source_ref"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "Quantity": {
+      "additionalProperties": false,
+      "description": "Finite scalar with a unit; normalized to SI when constructed.\n\nAbsolute temperatures use Temperature; differences use TemperatureDifference.\nGeneric quantities allow dimensionless metrics but never implicit units.",
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "Quantity",
+      "type": "object"
+    },
+    "SourceType": {
+      "enum": [
+        "USER",
+        "PRODUCT_DB",
+        "DESIGN_GUIDELINE",
+        "PHYSICS_DERIVED",
+        "OPTIMIZED",
+        "AGENT_ASSUMPTION",
+        "HUMAN_CONFIRMED"
+      ],
+      "title": "SourceType",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "component_type": {
+      "$ref": "#/$defs/ComponentType"
+    },
+    "refrigerant": {
+      "minLength": 1,
+      "title": "Refrigerant",
+      "type": "string"
+    },
+    "filters": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Parameter"
+      },
+      "title": "Filters",
+      "type": "array"
+    }
+  },
+  "required": [
+    "component_type",
+    "refrigerant"
+  ],
+  "title": "ComponentQuery",
+  "type": "object"
+}

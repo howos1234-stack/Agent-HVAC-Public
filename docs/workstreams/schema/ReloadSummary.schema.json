@@ -1,0 +1,41 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "valid_files": {
+      "minimum": 0,
+      "title": "Valid Files",
+      "type": "integer"
+    },
+    "rejected_files": {
+      "minimum": 0,
+      "title": "Rejected Files",
+      "type": "integer"
+    },
+    "loaded_products": {
+      "minimum": 0,
+      "title": "Loaded Products",
+      "type": "integer"
+    },
+    "database_version": {
+      "minLength": 1,
+      "title": "Database Version",
+      "type": "string"
+    },
+    "errors": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Errors",
+      "type": "array"
+    }
+  },
+  "required": [
+    "valid_files",
+    "rejected_files",
+    "loaded_products",
+    "database_version"
+  ],
+  "title": "ReloadSummary",
+  "type": "object"
+}

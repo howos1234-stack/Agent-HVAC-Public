@@ -1,0 +1,591 @@
+{
+  "$defs": {
+    "ComponentType": {
+      "enum": [
+        "compressor",
+        "evaporator",
+        "condenser",
+        "gas_cooler",
+        "expansion_valve",
+        "pipe",
+        "fan",
+        "pump",
+        "receiver",
+        "accumulator",
+        "ihx"
+      ],
+      "title": "ComponentType",
+      "type": "string"
+    },
+    "ConstraintDefinition": {
+      "additionalProperties": false,
+      "properties": {
+        "rule_id": {
+          "minLength": 1,
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "parameter": {
+          "minLength": 1,
+          "title": "Parameter",
+          "type": "string"
+        },
+        "operator": {
+          "pattern": "^(le|ge|eq)$",
+          "title": "Operator",
+          "type": "string"
+        },
+        "limit": {
+          "$ref": "#/$defs/Quantity"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        },
+        "hard": {
+          "title": "Hard",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "rule_id",
+        "parameter",
+        "operator",
+        "limit",
+        "provenance",
+        "hard"
+      ],
+      "title": "ConstraintDefinition",
+      "type": "object"
+    },
+    "DecisionVariable": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "lower": {
+          "$ref": "#/$defs/Quantity"
+        },
+        "upper": {
+          "$ref": "#/$defs/Quantity"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        }
+      },
+      "required": [
+        "name",
+        "lower",
+        "upper",
+        "provenance"
+      ],
+      "title": "DecisionVariable",
+      "type": "object"
+    },
+    "DesignSpecification": {
+      "additionalProperties": false,
+      "properties": {
+        "design_id": {
+          "minLength": 1,
+          "title": "Design Id",
+          "type": "string"
+        },
+        "requirements": {
+          "$ref": "#/$defs/UserRequirements"
+        },
+        "refrigerant": {
+          "$ref": "#/$defs/Parameter"
+        },
+        "topology": {
+          "$ref": "#/$defs/Parameter"
+        },
+        "fixed": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Parameter"
+          },
+          "title": "Fixed",
+          "type": "array"
+        },
+        "boundary_conditions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Parameter"
+          },
+          "title": "Boundary Conditions",
+          "type": "array"
+        },
+        "decision_variables": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/DecisionVariable"
+          },
+          "title": "Decision Variables",
+          "type": "array"
+        },
+        "objectives": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Objective"
+          },
+          "title": "Objectives",
+          "type": "array"
+        },
+        "constraints": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ConstraintDefinition"
+          },
+          "title": "Constraints",
+          "type": "array"
+        },
+        "selected_products": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ProductRecord"
+          },
+          "title": "Selected Products",
+          "type": "array"
+        },
+        "is_mock": {
+          "title": "Is Mock",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "design_id",
+        "requirements",
+        "refrigerant",
+        "topology",
+        "is_mock"
+      ],
+      "title": "DesignSpecification",
+      "type": "object"
+    },
+    "HITLMode": {
+      "enum": [
+        "AUTO",
+        "REVIEW",
+        "INTERACTIVE"
+      ],
+      "title": "HITLMode",
+      "type": "string"
+    },
+    "MissingInput": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "classification": {
+          "pattern": "^(essential|defaultable|free_variable)$",
+          "title": "Classification",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "classification",
+        "reason"
+      ],
+      "title": "MissingInput",
+      "type": "object"
+    },
+    "Objective": {
+      "additionalProperties": false,
+      "properties": {
+        "metric": {
+          "minLength": 1,
+          "title": "Metric",
+          "type": "string"
+        },
+        "direction": {
+          "pattern": "^(minimize|maximize)$",
+          "title": "Direction",
+          "type": "string"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        }
+      },
+      "required": [
+        "metric",
+        "direction",
+        "provenance"
+      ],
+      "title": "Objective",
+      "type": "object"
+    },
+    "Parameter": {
+      "additionalProperties": false,
+      "description": "Numbers require an explicit Quantity, including dimensionless values.",
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Quantity"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            }
+          ],
+          "title": "Value"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        }
+      },
+      "required": [
+        "name",
+        "value",
+        "provenance"
+      ],
+      "title": "Parameter",
+      "type": "object"
+    },
+    "ProductRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "product_id": {
+          "minLength": 1,
+          "title": "Product Id",
+          "type": "string"
+        },
+        "component_type": {
+          "$ref": "#/$defs/ComponentType"
+        },
+        "manufacturer": {
+          "minLength": 1,
+          "title": "Manufacturer",
+          "type": "string"
+        },
+        "model": {
+          "minLength": 1,
+          "title": "Model",
+          "type": "string"
+        },
+        "supported_refrigerants": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Supported Refrigerants",
+          "type": "array"
+        },
+        "source": {
+          "$ref": "#/$defs/ProductSource"
+        },
+        "status": {
+          "pattern": "^(verified|unverified|deprecated)$",
+          "title": "Status",
+          "type": "string"
+        },
+        "attributes": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Parameter"
+          },
+          "title": "Attributes",
+          "type": "array"
+        },
+        "rated_conditions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Parameter"
+          },
+          "title": "Rated Conditions",
+          "type": "array"
+        },
+        "operating_limits": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Parameter"
+          },
+          "title": "Operating Limits",
+          "type": "array"
+        },
+        "is_mock": {
+          "title": "Is Mock",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "product_id",
+        "component_type",
+        "manufacturer",
+        "model",
+        "supported_refrigerants",
+        "source",
+        "status",
+        "is_mock"
+      ],
+      "title": "ProductRecord",
+      "type": "object"
+    },
+    "ProductSource": {
+      "additionalProperties": false,
+      "properties": {
+        "excel_file": {
+          "minLength": 1,
+          "title": "Excel File",
+          "type": "string"
+        },
+        "sheet": {
+          "minLength": 1,
+          "title": "Sheet",
+          "type": "string"
+        },
+        "row": {
+          "minimum": 1,
+          "title": "Row",
+          "type": "integer"
+        },
+        "document_ref": {
+          "minLength": 1,
+          "title": "Document Ref",
+          "type": "string"
+        },
+        "original_manufacturer": {
+          "minLength": 1,
+          "title": "Original Manufacturer",
+          "type": "string"
+        },
+        "original_model": {
+          "minLength": 1,
+          "title": "Original Model",
+          "type": "string"
+        },
+        "workbook_modified_at": {
+          "format": "date-time",
+          "title": "Workbook Modified At",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "file_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "File Sha256",
+          "type": "string"
+        },
+        "loader_version": {
+          "minLength": 1,
+          "title": "Loader Version",
+          "type": "string"
+        },
+        "schema_version": {
+          "minLength": 1,
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "excel_file",
+        "sheet",
+        "row",
+        "document_ref",
+        "original_manufacturer",
+        "original_model",
+        "workbook_modified_at",
+        "retrieved_at",
+        "file_sha256",
+        "loader_version",
+        "schema_version"
+      ],
+      "title": "ProductSource",
+      "type": "object"
+    },
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "source_type": {
+          "$ref": "#/$defs/SourceType"
+        },
+        "source_ref": {
+          "minLength": 1,
+          "title": "Source Ref",
+          "type": "string"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "required": [
+        "source_type",
+        "source_ref"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "Quantity": {
+      "additionalProperties": false,
+      "description": "Finite scalar with a unit; normalized to SI when constructed.\n\nAbsolute temperatures use Temperature; differences use TemperatureDifference.\nGeneric quantities allow dimensionless metrics but never implicit units.",
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "Quantity",
+      "type": "object"
+    },
+    "SourceType": {
+      "enum": [
+        "USER",
+        "PRODUCT_DB",
+        "DESIGN_GUIDELINE",
+        "PHYSICS_DERIVED",
+        "OPTIMIZED",
+        "AGENT_ASSUMPTION",
+        "HUMAN_CONFIRMED"
+      ],
+      "title": "SourceType",
+      "type": "string"
+    },
+    "UserRequirements": {
+      "additionalProperties": false,
+      "properties": {
+        "raw_prompt": {
+          "minLength": 1,
+          "title": "Raw Prompt",
+          "type": "string"
+        },
+        "parameters": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Parameter"
+          },
+          "title": "Parameters",
+          "type": "array"
+        },
+        "missing": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/MissingInput"
+          },
+          "title": "Missing",
+          "type": "array"
+        },
+        "requested_objective": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Parameter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "mandatory_components": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Mandatory Components",
+          "type": "array"
+        },
+        "forbidden_components": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Forbidden Components",
+          "type": "array"
+        },
+        "hitl_mode": {
+          "$ref": "#/$defs/HITLMode"
+        }
+      },
+      "required": [
+        "raw_prompt",
+        "hitl_mode"
+      ],
+      "title": "UserRequirements",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "baseline": {
+      "$ref": "#/$defs/DesignSpecification"
+    },
+    "candidate_products": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ProductRecord"
+      },
+      "title": "Candidate Products",
+      "type": "array"
+    },
+    "random_seed": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Random Seed"
+    }
+  },
+  "required": [
+    "baseline"
+  ],
+  "title": "DesignProblem",
+  "type": "object"
+}

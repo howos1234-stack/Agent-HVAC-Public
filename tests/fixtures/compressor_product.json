@@ -1,0 +1,27 @@
+{
+  "product_id": "MOCK-compressor",
+  "component_type": "compressor",
+  "manufacturer": "FICTIONAL-P00",
+  "model": "MOCK-compressor",
+  "supported_refrigerants": [
+    "R744"
+  ],
+  "source": {
+    "excel_file": "MOCK-NOT-A-REAL-WORKBOOK.xlsx",
+    "sheet": "products",
+    "row": 2,
+    "document_ref": "P00 synthetic fixture; NO manufacturer evidence",
+    "original_manufacturer": "FICTIONAL-P00",
+    "original_model": "MOCK-compressor",
+    "workbook_modified_at": "2026-09-09T00:00:00+09:00",
+    "retrieved_at": "2026-09-09T00:00:00+09:00",
+    "file_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "loader_version": "mock-only",
+    "schema_version": "0.1.0"
+  },
+  "status": "unverified",
+  "attributes": [],
+  "rated_conditions": [],
+  "operating_limits": [],
+  "is_mock": true
+}

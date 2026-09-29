@@ -1,0 +1,1235 @@
+{
+  "$defs": {
+    "AccuracyValidationStatus": {
+      "enum": [
+        "VERIFIABLE",
+        "NOT_VERIFIABLE"
+      ],
+      "title": "AccuracyValidationStatus",
+      "type": "string"
+    },
+    "AutomaticSelectionStatus": {
+      "enum": [
+        "ELIGIBLE",
+        "INELIGIBLE"
+      ],
+      "title": "AutomaticSelectionStatus",
+      "type": "string"
+    },
+    "AxisPhysicalKind": {
+      "enum": [
+        "PRESSURE",
+        "TEMPERATURE",
+        "ROTATIONAL_SPEED",
+        "FREQUENCY",
+        "OPENING_FRACTION"
+      ],
+      "title": "AxisPhysicalKind",
+      "type": "string"
+    },
+    "AxisRole": {
+      "enum": [
+        "CANONICAL",
+        "NATIVE_ONLY"
+      ],
+      "title": "AxisRole",
+      "type": "string"
+    },
+    "CanonicalAxisName": {
+      "enum": [
+        "suction_pressure",
+        "discharge_pressure",
+        "speed",
+        "frequency",
+        "inlet_pressure",
+        "outlet_pressure",
+        "opening"
+      ],
+      "title": "CanonicalAxisName",
+      "type": "string"
+    },
+    "CanonicalValueName": {
+      "enum": [
+        "suction_pressure",
+        "discharge_pressure",
+        "suction_temperature",
+        "gas_cooler_outlet_temperature",
+        "gas_cooler_outlet_enthalpy",
+        "speed",
+        "frequency",
+        "input_power",
+        "mass_flow",
+        "cooling_capacity",
+        "heating_capacity",
+        "discharge_temperature",
+        "isentropic_efficiency",
+        "volumetric_efficiency",
+        "ua",
+        "maximum_working_pressure",
+        "inlet_pressure",
+        "outlet_pressure",
+        "inlet_temperature",
+        "opening",
+        "kv",
+        "cv",
+        "heat_rejection",
+        "refrigerant_pressure_drop",
+        "secondary_pressure_drop",
+        "air_volume_flow",
+        "fan_power",
+        "pump_power",
+        "inlet_relative_humidity",
+        "other_native_only"
+      ],
+      "title": "CanonicalValueName",
+      "type": "string"
+    },
+    "ComponentType": {
+      "enum": [
+        "compressor",
+        "evaporator",
+        "condenser",
+        "gas_cooler",
+        "expansion_valve",
+        "pipe",
+        "fan",
+        "pump",
+        "receiver",
+        "accumulator",
+        "ihx"
+      ],
+      "title": "ComponentType",
+      "type": "string"
+    },
+    "DataUseStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "source_preserved": {
+          "title": "Source Preserved",
+          "type": "boolean"
+        },
+        "structure_valid": {
+          "title": "Structure Valid",
+          "type": "boolean"
+        },
+        "automatic_selection": {
+          "$ref": "#/$defs/AutomaticSelectionStatus"
+        },
+        "reasons": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/UseRestrictionReason"
+          },
+          "title": "Reasons",
+          "type": "array"
+        }
+      },
+      "required": [
+        "source_preserved",
+        "structure_valid",
+        "automatic_selection"
+      ],
+      "title": "DataUseStatus",
+      "type": "object"
+    },
+    "DerivedMethod": {
+      "additionalProperties": false,
+      "properties": {
+        "method_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Method Id",
+          "type": "string"
+        },
+        "method_version": {
+          "minLength": 1,
+          "title": "Method Version",
+          "type": "string"
+        },
+        "equation_ref": {
+          "minLength": 1,
+          "title": "Equation Ref",
+          "type": "string"
+        },
+        "input_value_refs": {
+          "items": {
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Input Value Refs",
+          "type": "array"
+        },
+        "applicable_conditions": {
+          "items": {
+            "$ref": "#/$defs/ProductDataValue"
+          },
+          "minItems": 1,
+          "title": "Applicable Conditions",
+          "type": "array"
+        },
+        "assumptions": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Assumptions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "method_id",
+        "method_version",
+        "equation_ref",
+        "input_value_refs",
+        "applicable_conditions"
+      ],
+      "title": "DerivedMethod",
+      "type": "object"
+    },
+    "EnvelopeVertex": {
+      "additionalProperties": false,
+      "properties": {
+        "vertex_order": {
+          "minimum": 0,
+          "title": "Vertex Order",
+          "type": "integer"
+        },
+        "coordinates": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "$ref": "#/$defs/ProductDataValue"
+            },
+            {
+              "$ref": "#/$defs/ProductDataValue"
+            }
+          ],
+          "title": "Coordinates",
+          "type": "array"
+        },
+        "source_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Source Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "vertex_order",
+        "coordinates",
+        "source_id"
+      ],
+      "title": "EnvelopeVertex",
+      "type": "object"
+    },
+    "InterpolationPolicy": {
+      "enum": [
+        "LINEAR",
+        "MULTILINEAR"
+      ],
+      "title": "InterpolationPolicy",
+      "type": "string"
+    },
+    "MapAxis": {
+      "additionalProperties": false,
+      "properties": {
+        "axis_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Axis Id",
+          "type": "string"
+        },
+        "order": {
+          "minimum": 0,
+          "title": "Order",
+          "type": "integer"
+        },
+        "canonical_name": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CanonicalAxisName"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "native_name": {
+          "minLength": 1,
+          "title": "Native Name",
+          "type": "string"
+        },
+        "role": {
+          "$ref": "#/$defs/AxisRole"
+        },
+        "physical_kind": {
+          "$ref": "#/$defs/AxisPhysicalKind"
+        },
+        "original_unit": {
+          "minLength": 1,
+          "title": "Original Unit",
+          "type": "string"
+        },
+        "canonical_unit": {
+          "minLength": 1,
+          "title": "Canonical Unit",
+          "type": "string"
+        },
+        "original_values": {
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "title": "Original Values",
+          "type": "array"
+        },
+        "values_si": {
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "title": "Values Si",
+          "type": "array"
+        },
+        "source_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Source Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "axis_id",
+        "order",
+        "canonical_name",
+        "native_name",
+        "role",
+        "physical_kind",
+        "original_unit",
+        "canonical_unit",
+        "original_values",
+        "values_si",
+        "source_id"
+      ],
+      "title": "MapAxis",
+      "type": "object"
+    },
+    "OperatingEnvelope": {
+      "additionalProperties": false,
+      "properties": {
+        "envelope_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Envelope Id",
+          "type": "string"
+        },
+        "refrigerant": {
+          "minLength": 1,
+          "title": "Refrigerant",
+          "type": "string"
+        },
+        "original_refrigerant_label": {
+          "minLength": 1,
+          "title": "Original Refrigerant Label",
+          "type": "string"
+        },
+        "axes": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "$ref": "#/$defs/MapAxis"
+            },
+            {
+              "$ref": "#/$defs/MapAxis"
+            }
+          ],
+          "title": "Axes",
+          "type": "array"
+        },
+        "boundary_vertices": {
+          "items": {
+            "$ref": "#/$defs/EnvelopeVertex"
+          },
+          "minItems": 3,
+          "title": "Boundary Vertices",
+          "type": "array"
+        },
+        "boundary_inclusive": {
+          "title": "Boundary Inclusive",
+          "type": "boolean"
+        },
+        "fixed_conditions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ProductDataValue"
+          },
+          "title": "Fixed Conditions",
+          "type": "array"
+        },
+        "source_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "use_status": {
+          "$ref": "#/$defs/DataUseStatus"
+        }
+      },
+      "required": [
+        "envelope_id",
+        "refrigerant",
+        "original_refrigerant_label",
+        "axes",
+        "boundary_vertices",
+        "boundary_inclusive",
+        "source_id",
+        "use_status"
+      ],
+      "title": "OperatingEnvelope",
+      "type": "object"
+    },
+    "OperatingMode": {
+      "enum": [
+        "COOLING",
+        "HEATING",
+        "OTHER_NATIVE_ONLY"
+      ],
+      "title": "OperatingMode",
+      "type": "string"
+    },
+    "Parameter": {
+      "additionalProperties": false,
+      "description": "Numbers require an explicit Quantity, including dimensionless values.",
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Quantity"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            }
+          ],
+          "title": "Value"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        }
+      },
+      "required": [
+        "name",
+        "value",
+        "provenance"
+      ],
+      "title": "Parameter",
+      "type": "object"
+    },
+    "PerformanceMap": {
+      "additionalProperties": false,
+      "properties": {
+        "map_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Map Id",
+          "type": "string"
+        },
+        "map_kind": {
+          "$ref": "#/$defs/PerformanceMapKind"
+        },
+        "refrigerant": {
+          "minLength": 1,
+          "title": "Refrigerant",
+          "type": "string"
+        },
+        "original_refrigerant_label": {
+          "minLength": 1,
+          "title": "Original Refrigerant Label",
+          "type": "string"
+        },
+        "topology": {
+          "$ref": "#/$defs/ProductTopology"
+        },
+        "mode": {
+          "$ref": "#/$defs/OperatingMode"
+        },
+        "axes": {
+          "items": {
+            "$ref": "#/$defs/MapAxis"
+          },
+          "minItems": 1,
+          "title": "Axes",
+          "type": "array"
+        },
+        "fixed_conditions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ProductDataValue"
+          },
+          "title": "Fixed Conditions",
+          "type": "array"
+        },
+        "output_names": {
+          "items": {
+            "$ref": "#/$defs/CanonicalValueName"
+          },
+          "minItems": 1,
+          "title": "Output Names",
+          "type": "array"
+        },
+        "points": {
+          "items": {
+            "$ref": "#/$defs/PerformancePoint"
+          },
+          "minItems": 1,
+          "title": "Points",
+          "type": "array"
+        },
+        "interpolation": {
+          "$ref": "#/$defs/InterpolationPolicy"
+        },
+        "extrapolation": {
+          "const": "FORBIDDEN",
+          "default": "FORBIDDEN",
+          "title": "Extrapolation",
+          "type": "string"
+        },
+        "source_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "use_status": {
+          "$ref": "#/$defs/DataUseStatus"
+        }
+      },
+      "required": [
+        "map_id",
+        "map_kind",
+        "refrigerant",
+        "original_refrigerant_label",
+        "topology",
+        "mode",
+        "axes",
+        "output_names",
+        "points",
+        "interpolation",
+        "source_id",
+        "use_status"
+      ],
+      "title": "PerformanceMap",
+      "type": "object"
+    },
+    "PerformanceMapKind": {
+      "enum": [
+        "COMPRESSOR",
+        "EXPANSION_VALVE"
+      ],
+      "title": "PerformanceMapKind",
+      "type": "string"
+    },
+    "PerformancePoint": {
+      "additionalProperties": false,
+      "properties": {
+        "point_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Point Id",
+          "type": "string"
+        },
+        "coordinates": {
+          "items": {
+            "$ref": "#/$defs/ProductDataValue"
+          },
+          "minItems": 1,
+          "title": "Coordinates",
+          "type": "array"
+        },
+        "outputs": {
+          "items": {
+            "$ref": "#/$defs/ProductDataValue"
+          },
+          "minItems": 1,
+          "title": "Outputs",
+          "type": "array"
+        },
+        "source_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Source Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "point_id",
+        "coordinates",
+        "outputs",
+        "source_id"
+      ],
+      "title": "PerformancePoint",
+      "type": "object"
+    },
+    "PhysicsDerivedDataSource": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "origin": {
+          "const": "PHYSICS_DERIVED",
+          "title": "Origin",
+          "type": "string"
+        },
+        "derived_method": {
+          "$ref": "#/$defs/DerivedMethod"
+        }
+      },
+      "required": [
+        "source_id",
+        "origin",
+        "derived_method"
+      ],
+      "title": "PhysicsDerivedDataSource",
+      "type": "object"
+    },
+    "ProductDataValue": {
+      "additionalProperties": false,
+      "properties": {
+        "value_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Value Id",
+          "type": "string"
+        },
+        "canonical_name": {
+          "$ref": "#/$defs/CanonicalValueName"
+        },
+        "original_name": {
+          "minLength": 1,
+          "title": "Original Name",
+          "type": "string"
+        },
+        "original_value": {
+          "title": "Original Value",
+          "type": "number"
+        },
+        "original_unit": {
+          "minLength": 1,
+          "title": "Original Unit",
+          "type": "string"
+        },
+        "value_si": {
+          "$ref": "#/$defs/Quantity"
+        },
+        "source_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "tolerance": {
+          "$ref": "#/$defs/ToleranceInfo"
+        }
+      },
+      "required": [
+        "value_id",
+        "canonical_name",
+        "original_name",
+        "original_value",
+        "original_unit",
+        "value_si",
+        "source_id",
+        "tolerance"
+      ],
+      "title": "ProductDataValue",
+      "type": "object"
+    },
+    "ProductSource": {
+      "additionalProperties": false,
+      "properties": {
+        "excel_file": {
+          "minLength": 1,
+          "title": "Excel File",
+          "type": "string"
+        },
+        "sheet": {
+          "minLength": 1,
+          "title": "Sheet",
+          "type": "string"
+        },
+        "row": {
+          "minimum": 1,
+          "title": "Row",
+          "type": "integer"
+        },
+        "document_ref": {
+          "minLength": 1,
+          "title": "Document Ref",
+          "type": "string"
+        },
+        "original_manufacturer": {
+          "minLength": 1,
+          "title": "Original Manufacturer",
+          "type": "string"
+        },
+        "original_model": {
+          "minLength": 1,
+          "title": "Original Model",
+          "type": "string"
+        },
+        "workbook_modified_at": {
+          "format": "date-time",
+          "title": "Workbook Modified At",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "file_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "File Sha256",
+          "type": "string"
+        },
+        "loader_version": {
+          "minLength": 1,
+          "title": "Loader Version",
+          "type": "string"
+        },
+        "schema_version": {
+          "minLength": 1,
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "excel_file",
+        "sheet",
+        "row",
+        "document_ref",
+        "original_manufacturer",
+        "original_model",
+        "workbook_modified_at",
+        "retrieved_at",
+        "file_sha256",
+        "loader_version",
+        "schema_version"
+      ],
+      "title": "ProductSource",
+      "type": "object"
+    },
+    "ProductTopology": {
+      "enum": [
+        "R744_TRANSCRITICAL",
+        "SUBCRITICAL",
+        "OTHER_NATIVE_ONLY"
+      ],
+      "title": "ProductTopology",
+      "type": "string"
+    },
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "source_type": {
+          "$ref": "#/$defs/SourceType"
+        },
+        "source_ref": {
+          "minLength": 1,
+          "title": "Source Ref",
+          "type": "string"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "required": [
+        "source_type",
+        "source_ref"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "Quantity": {
+      "additionalProperties": false,
+      "description": "Finite scalar with a unit; normalized to SI when constructed.\n\nAbsolute temperatures use Temperature; differences use TemperatureDifference.\nGeneric quantities allow dimensionless metrics but never implicit units.",
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "Quantity",
+      "type": "object"
+    },
+    "RatedPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "rated_point_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Rated Point Id",
+          "type": "string"
+        },
+        "refrigerant": {
+          "minLength": 1,
+          "title": "Refrigerant",
+          "type": "string"
+        },
+        "original_refrigerant_label": {
+          "minLength": 1,
+          "title": "Original Refrigerant Label",
+          "type": "string"
+        },
+        "topology": {
+          "$ref": "#/$defs/ProductTopology"
+        },
+        "mode": {
+          "$ref": "#/$defs/OperatingMode"
+        },
+        "conditions": {
+          "items": {
+            "$ref": "#/$defs/ProductDataValue"
+          },
+          "minItems": 1,
+          "title": "Conditions",
+          "type": "array"
+        },
+        "outputs": {
+          "items": {
+            "$ref": "#/$defs/ProductDataValue"
+          },
+          "minItems": 1,
+          "title": "Outputs",
+          "type": "array"
+        },
+        "source_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "use_status": {
+          "$ref": "#/$defs/DataUseStatus"
+        }
+      },
+      "required": [
+        "rated_point_id",
+        "refrigerant",
+        "original_refrigerant_label",
+        "topology",
+        "mode",
+        "conditions",
+        "outputs",
+        "source_id",
+        "use_status"
+      ],
+      "title": "RatedPoint",
+      "type": "object"
+    },
+    "SourceType": {
+      "enum": [
+        "USER",
+        "PRODUCT_DB",
+        "DESIGN_GUIDELINE",
+        "PHYSICS_DERIVED",
+        "OPTIMIZED",
+        "AGENT_ASSUMPTION",
+        "HUMAN_CONFIRMED"
+      ],
+      "title": "SourceType",
+      "type": "string"
+    },
+    "ToleranceAbsenceReason": {
+      "enum": [
+        "NOT_STATED_IN_SOURCE",
+        "SOURCE_UNAVAILABLE",
+        "NOT_APPLICABLE"
+      ],
+      "title": "ToleranceAbsenceReason",
+      "type": "string"
+    },
+    "ToleranceInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToleranceSpec"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "absence_reason": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToleranceAbsenceReason"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "accuracy_validation": {
+          "$ref": "#/$defs/AccuracyValidationStatus"
+        }
+      },
+      "required": [
+        "accuracy_validation"
+      ],
+      "title": "ToleranceInfo",
+      "type": "object"
+    },
+    "ToleranceKind": {
+      "enum": [
+        "ABSOLUTE",
+        "RELATIVE",
+        "PERCENT"
+      ],
+      "title": "ToleranceKind",
+      "type": "string"
+    },
+    "ToleranceReference": {
+      "enum": [
+        "MEASURED_VALUE",
+        "RATED_VALUE",
+        "FULL_SCALE"
+      ],
+      "title": "ToleranceReference",
+      "type": "string"
+    },
+    "ToleranceSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/ToleranceKind"
+        },
+        "value": {
+          "$ref": "#/$defs/Quantity"
+        },
+        "reference": {
+          "$ref": "#/$defs/ToleranceReference"
+        },
+        "reference_value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Quantity"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Source Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "value",
+        "reference",
+        "source_id"
+      ],
+      "title": "ToleranceSpec",
+      "type": "object"
+    },
+    "UseRestrictionReason": {
+      "enum": [
+        "NATIVE_TEMPERATURE_AXIS_ONLY",
+        "SUCTION_TEMPERATURE_MISSING",
+        "INLET_TEMPERATURE_MISSING",
+        "OPENING_CONDITION_MISSING",
+        "SUPERHEAT_ONLY",
+        "INCOMPLETE_REGULAR_GRID",
+        "UNSUPPORTED_REFRIGERANT",
+        "UNAPPROVED_ALIAS",
+        "REQUIRED_OUTPUT_MISSING",
+        "UA_NOT_AVAILABLE",
+        "UNAPPROVED_TOPOLOGY",
+        "UNSUPPORTED_AXIS",
+        "COMPONENT_MAP_KIND_MISMATCH",
+        "INVALID_FLASHING_INLET_STATE"
+      ],
+      "title": "UseRestrictionReason",
+      "type": "string"
+    },
+    "WorkbookProductDataSource": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "origin": {
+          "enum": [
+            "MANUFACTURER",
+            "TEST_STANDARD"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "excel_file": {
+          "minLength": 1,
+          "title": "Excel File",
+          "type": "string"
+        },
+        "file_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "File Sha256",
+          "type": "string"
+        },
+        "sheet": {
+          "minLength": 1,
+          "title": "Sheet",
+          "type": "string"
+        },
+        "row": {
+          "minimum": 1,
+          "title": "Row",
+          "type": "integer"
+        },
+        "document_ref": {
+          "minLength": 1,
+          "title": "Document Ref",
+          "type": "string"
+        },
+        "table_or_figure_ref": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Table Or Figure Ref"
+        },
+        "original_manufacturer": {
+          "minLength": 1,
+          "title": "Original Manufacturer",
+          "type": "string"
+        },
+        "original_model": {
+          "minLength": 1,
+          "title": "Original Model",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "origin",
+        "excel_file",
+        "file_sha256",
+        "sheet",
+        "row",
+        "document_ref",
+        "original_manufacturer",
+        "original_model"
+      ],
+      "title": "WorkbookProductDataSource",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "product_id": {
+      "minLength": 1,
+      "title": "Product Id",
+      "type": "string"
+    },
+    "component_type": {
+      "$ref": "#/$defs/ComponentType"
+    },
+    "manufacturer": {
+      "minLength": 1,
+      "title": "Manufacturer",
+      "type": "string"
+    },
+    "model": {
+      "minLength": 1,
+      "title": "Model",
+      "type": "string"
+    },
+    "supported_refrigerants": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Supported Refrigerants",
+      "type": "array"
+    },
+    "source": {
+      "$ref": "#/$defs/ProductSource"
+    },
+    "status": {
+      "pattern": "^(verified|unverified|deprecated)$",
+      "title": "Status",
+      "type": "string"
+    },
+    "attributes": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Parameter"
+      },
+      "title": "Attributes",
+      "type": "array"
+    },
+    "rated_conditions": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Parameter"
+      },
+      "title": "Rated Conditions",
+      "type": "array"
+    },
+    "operating_limits": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Parameter"
+      },
+      "title": "Operating Limits",
+      "type": "array"
+    },
+    "is_mock": {
+      "title": "Is Mock",
+      "type": "boolean"
+    },
+    "data_sources": {
+      "default": [],
+      "items": {
+        "discriminator": {
+          "mapping": {
+            "MANUFACTURER": "#/$defs/WorkbookProductDataSource",
+            "PHYSICS_DERIVED": "#/$defs/PhysicsDerivedDataSource",
+            "TEST_STANDARD": "#/$defs/WorkbookProductDataSource"
+          },
+          "propertyName": "origin"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/$defs/WorkbookProductDataSource"
+          },
+          {
+            "$ref": "#/$defs/PhysicsDerivedDataSource"
+          }
+        ]
+      },
+      "title": "Data Sources",
+      "type": "array"
+    },
+    "rated_points": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/RatedPoint"
+      },
+      "title": "Rated Points",
+      "type": "array"
+    },
+    "performance_maps": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/PerformanceMap"
+      },
+      "title": "Performance Maps",
+      "type": "array"
+    },
+    "operating_envelopes": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/OperatingEnvelope"
+      },
+      "title": "Operating Envelopes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "product_id",
+    "component_type",
+    "manufacturer",
+    "model",
+    "supported_refrigerants",
+    "source",
+    "status",
+    "is_mock"
+  ],
+  "title": "ProductRecord",
+  "type": "object"
+}

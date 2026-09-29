@@ -1,0 +1,34 @@
+{
+  "scenario_id": "synthetic-r744-single-pass-v1",
+  "is_mock": true,
+  "source_type": "AGENT_ASSUMPTION",
+  "source_ref": "docs/workstreams/ws_a/system/S1_HARNESS_VALIDATION.md",
+  "assumptions": [
+    "Synthetic development input, not manufacturer performance or a converged design.",
+    "R744, 30/90 bar, 0.1 kg/s and efficiency 0.8 reuse P02 regression inputs.",
+    "Constant-UA co-current dry secondary streams; UA and secondary values are explicit test choices.",
+    "No pipes, zero HX pressure drop, prescribed flow; compressor work excludes motor/fan/pump power."
+  ],
+  "refrigerant": "R744",
+  "suction_pressure": {"value": 30, "unit": "bar"},
+  "discharge_pressure": {"value": 90, "unit": "bar"},
+  "trial_suction_temperature": {"value": 280, "unit": "K"},
+  "refrigerant_mass_flow": {"value": 360, "unit": "kg/h"},
+  "compressor_isentropic_efficiency": {"value": 0.8, "unit": "dimensionless"},
+  "gas_cooler": {
+    "source_ref": "AGENT_ASSUMPTION: P05/PR34-inspired 200 W/K trial, no rated-point selection",
+    "secondary_inlet_temperature": {"value": 290, "unit": "K"},
+    "secondary_mass_flow": {"value": 1, "unit": "kg/s"},
+    "secondary_specific_heat_capacity": {"value": 1000, "unit": "J/(kg*K)"},
+    "total_thermal_conductance": {"value": 0.2, "unit": "kW/K"},
+    "cell_count": 80
+  },
+  "evaporator": {
+    "source_ref": "AGENT_ASSUMPTION: 200 W/K, 300 K, 1 kg/s, 1000 J/(kg*K) synthetic trial",
+    "secondary_inlet_temperature": {"value": 300, "unit": "K"},
+    "secondary_mass_flow": {"value": 1, "unit": "kg/s"},
+    "secondary_specific_heat_capacity": {"value": 1000, "unit": "J/(kg*K)"},
+    "total_thermal_conductance": {"value": 0.2, "unit": "kW/K"},
+    "cell_count": 80
+  }
+}

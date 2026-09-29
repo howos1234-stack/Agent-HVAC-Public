@@ -1,0 +1,919 @@
+{
+  "status": "completed",
+  "ranked_designs": [
+    {
+      "design": {
+        "design_id": "P09-WS-E-MOCK-p09-cd622e5c0dacfb18",
+        "requirements": {
+          "raw_prompt": "냉매 R744, 지정 배관 길이 50 cm (P00 구조 예제)",
+          "parameters": [
+            {
+              "name": "refrigerant",
+              "value": "R744",
+              "provenance": {
+                "source_type": "USER",
+                "source_ref": "Master Plan section 22 example",
+                "confidence": null,
+                "note": null
+              }
+            },
+            {
+              "name": "specified_pipe_length",
+              "value": {
+                "value": 0.5,
+                "unit": "meter"
+              },
+              "provenance": {
+                "source_type": "USER",
+                "source_ref": "Master Plan section 22 example",
+                "confidence": null,
+                "note": null
+              }
+            }
+          ],
+          "missing": [
+            {
+              "name": "target_capacity",
+              "classification": "essential",
+              "reason": "Not supplied; P00 fixture does not resolve design requirements"
+            }
+          ],
+          "requested_objective": null,
+          "mandatory_components": [],
+          "forbidden_components": [],
+          "hitl_mode": "REVIEW"
+        },
+        "refrigerant": {
+          "name": "refrigerant",
+          "value": "R744",
+          "provenance": {
+            "source_type": "USER",
+            "source_ref": "Master Plan section 22 example",
+            "confidence": null,
+            "note": null
+          }
+        },
+        "topology": {
+          "name": "topology",
+          "value": "mock-single-stage",
+          "provenance": {
+            "source_type": "AGENT_ASSUMPTION",
+            "source_ref": "P00 synthetic fixture; NOT PHYSICS",
+            "confidence": null,
+            "note": null
+          }
+        },
+        "fixed": [
+          {
+            "name": "specified_pipe_length",
+            "value": {
+              "value": 0.5,
+              "unit": "meter"
+            },
+            "provenance": {
+              "source_type": "USER",
+              "source_ref": "Master Plan section 22 example",
+              "confidence": null,
+              "note": null
+            }
+          },
+          {
+            "name": "synthetic_x",
+            "value": {
+              "value": 0.0,
+              "unit": "dimensionless"
+            },
+            "provenance": {
+              "source_type": "OPTIMIZED",
+              "source_ref": "p09-synthetic-grid-v1",
+              "confidence": 1.0,
+              "note": "MOCK ONLY: finite synthetic grid value"
+            }
+          }
+        ],
+        "boundary_conditions": [],
+        "decision_variables": [],
+        "objectives": [
+          {
+            "metric": "synthetic_score",
+            "direction": "minimize",
+            "provenance": {
+              "source_type": "AGENT_ASSUMPTION",
+              "source_ref": "P09 quadratic objective; NOT PHYSICS",
+              "confidence": null,
+              "note": null
+            }
+          }
+        ],
+        "constraints": [],
+        "selected_products": [],
+        "is_mock": true
+      },
+      "simulation": {
+        "design_id": "P09-WS-E-MOCK-p09-cd622e5c0dacfb18",
+        "status": "converged",
+        "is_mock": true,
+        "state_points": {
+          "synthetic": {
+            "fluid": "R744",
+            "pressure": {
+              "value": 1000000.0,
+              "unit": "pascal"
+            },
+            "temperature": {
+              "value": 300.0,
+              "unit": "kelvin"
+            },
+            "enthalpy": {
+              "value": 100000.0,
+              "unit": "joule / kilogram"
+            },
+            "density": {
+              "value": 1.0,
+              "unit": "kilogram / meter ** 3"
+            },
+            "phase": "mock-synthetic",
+            "vapor_quality": null
+          }
+        },
+        "mass_flow": {
+          "value": 1.0,
+          "unit": "kilogram / second"
+        },
+        "compressor_power": {
+          "value": 1.0,
+          "unit": "watt"
+        },
+        "evaporator_capacity": {
+          "value": 1.0,
+          "unit": "watt"
+        },
+        "heat_rejection": {
+          "value": 1.0,
+          "unit": "watt"
+        },
+        "cop": 1.0,
+        "eer": null,
+        "pressure_drops": {},
+        "heat_exchanger_duties": {},
+        "energy_balance_error": 0.0,
+        "mass_balance_error": 0.0,
+        "active_constraints": [],
+        "envelope_margins": {},
+        "messages": [
+          "MOCK ONLY: deterministic P09 solver stub; no HVAC physics"
+        ]
+      },
+      "constraints": {
+        "design_id": "P09-WS-E-MOCK-p09-cd622e5c0dacfb18",
+        "checks": [
+          {
+            "rule_id": "P09_MOCK_FEASIBLE",
+            "passed": true,
+            "hard": true,
+            "message": "MOCK ONLY: no synthetic rejection configured",
+            "margin": null
+          }
+        ],
+        "feasible": true,
+        "is_mock": true
+      },
+      "objective_value": {
+        "value": 0.0,
+        "unit": "dimensionless"
+      }
+    },
+    {
+      "design": {
+        "design_id": "P09-WS-E-MOCK-p09-445b4b906523bcf1",
+        "requirements": {
+          "raw_prompt": "냉매 R744, 지정 배관 길이 50 cm (P00 구조 예제)",
+          "parameters": [
+            {
+              "name": "refrigerant",
+              "value": "R744",
+              "provenance": {
+                "source_type": "USER",
+                "source_ref": "Master Plan section 22 example",
+                "confidence": null,
+                "note": null
+              }
+            },
+            {
+              "name": "specified_pipe_length",
+              "value": {
+                "value": 0.5,
+                "unit": "meter"
+              },
+              "provenance": {
+                "source_type": "USER",
+                "source_ref": "Master Plan section 22 example",
+                "confidence": null,
+                "note": null
+              }
+            }
+          ],
+          "missing": [
+            {
+              "name": "target_capacity",
+              "classification": "essential",
+              "reason": "Not supplied; P00 fixture does not resolve design requirements"
+            }
+          ],
+          "requested_objective": null,
+          "mandatory_components": [],
+          "forbidden_components": [],
+          "hitl_mode": "REVIEW"
+        },
+        "refrigerant": {
+          "name": "refrigerant",
+          "value": "R744",
+          "provenance": {
+            "source_type": "USER",
+            "source_ref": "Master Plan section 22 example",
+            "confidence": null,
+            "note": null
+          }
+        },
+        "topology": {
+          "name": "topology",
+          "value": "mock-single-stage",
+          "provenance": {
+            "source_type": "AGENT_ASSUMPTION",
+            "source_ref": "P00 synthetic fixture; NOT PHYSICS",
+            "confidence": null,
+            "note": null
+          }
+        },
+        "fixed": [
+          {
+            "name": "specified_pipe_length",
+            "value": {
+              "value": 0.5,
+              "unit": "meter"
+            },
+            "provenance": {
+              "source_type": "USER",
+              "source_ref": "Master Plan section 22 example",
+              "confidence": null,
+              "note": null
+            }
+          },
+          {
+            "name": "synthetic_x",
+            "value": {
+              "value": 0.5,
+              "unit": "dimensionless"
+            },
+            "provenance": {
+              "source_type": "OPTIMIZED",
+              "source_ref": "p09-synthetic-grid-v1",
+              "confidence": 1.0,
+              "note": "MOCK ONLY: finite synthetic grid value"
+            }
+          }
+        ],
+        "boundary_conditions": [],
+        "decision_variables": [],
+        "objectives": [
+          {
+            "metric": "synthetic_score",
+            "direction": "minimize",
+            "provenance": {
+              "source_type": "AGENT_ASSUMPTION",
+              "source_ref": "P09 quadratic objective; NOT PHYSICS",
+              "confidence": null,
+              "note": null
+            }
+          }
+        ],
+        "constraints": [],
+        "selected_products": [],
+        "is_mock": true
+      },
+      "simulation": {
+        "design_id": "P09-WS-E-MOCK-p09-445b4b906523bcf1",
+        "status": "converged",
+        "is_mock": true,
+        "state_points": {
+          "synthetic": {
+            "fluid": "R744",
+            "pressure": {
+              "value": 1000000.0,
+              "unit": "pascal"
+            },
+            "temperature": {
+              "value": 300.0,
+              "unit": "kelvin"
+            },
+            "enthalpy": {
+              "value": 100000.0,
+              "unit": "joule / kilogram"
+            },
+            "density": {
+              "value": 1.0,
+              "unit": "kilogram / meter ** 3"
+            },
+            "phase": "mock-synthetic",
+            "vapor_quality": null
+          }
+        },
+        "mass_flow": {
+          "value": 1.0,
+          "unit": "kilogram / second"
+        },
+        "compressor_power": {
+          "value": 1.0,
+          "unit": "watt"
+        },
+        "evaporator_capacity": {
+          "value": 1.0,
+          "unit": "watt"
+        },
+        "heat_rejection": {
+          "value": 1.0,
+          "unit": "watt"
+        },
+        "cop": 1.0,
+        "eer": null,
+        "pressure_drops": {},
+        "heat_exchanger_duties": {},
+        "energy_balance_error": 0.0,
+        "mass_balance_error": 0.0,
+        "active_constraints": [],
+        "envelope_margins": {},
+        "messages": [
+          "MOCK ONLY: deterministic P09 solver stub; no HVAC physics"
+        ]
+      },
+      "constraints": {
+        "design_id": "P09-WS-E-MOCK-p09-445b4b906523bcf1",
+        "checks": [
+          {
+            "rule_id": "P09_MOCK_FEASIBLE",
+            "passed": true,
+            "hard": true,
+            "message": "MOCK ONLY: no synthetic rejection configured",
+            "margin": null
+          }
+        ],
+        "feasible": true,
+        "is_mock": true
+      },
+      "objective_value": {
+        "value": 0.25,
+        "unit": "dimensionless"
+      }
+    },
+    {
+      "design": {
+        "design_id": "P09-WS-E-MOCK-p09-5f023966765c49ba",
+        "requirements": {
+          "raw_prompt": "냉매 R744, 지정 배관 길이 50 cm (P00 구조 예제)",
+          "parameters": [
+            {
+              "name": "refrigerant",
+              "value": "R744",
+              "provenance": {
+                "source_type": "USER",
+                "source_ref": "Master Plan section 22 example",
+                "confidence": null,
+                "note": null
+              }
+            },
+            {
+              "name": "specified_pipe_length",
+              "value": {
+                "value": 0.5,
+                "unit": "meter"
+              },
+              "provenance": {
+                "source_type": "USER",
+                "source_ref": "Master Plan section 22 example",
+                "confidence": null,
+                "note": null
+              }
+            }
+          ],
+          "missing": [
+            {
+              "name": "target_capacity",
+              "classification": "essential",
+              "reason": "Not supplied; P00 fixture does not resolve design requirements"
+            }
+          ],
+          "requested_objective": null,
+          "mandatory_components": [],
+          "forbidden_components": [],
+          "hitl_mode": "REVIEW"
+        },
+        "refrigerant": {
+          "name": "refrigerant",
+          "value": "R744",
+          "provenance": {
+            "source_type": "USER",
+            "source_ref": "Master Plan section 22 example",
+            "confidence": null,
+            "note": null
+          }
+        },
+        "topology": {
+          "name": "topology",
+          "value": "mock-single-stage",
+          "provenance": {
+            "source_type": "AGENT_ASSUMPTION",
+            "source_ref": "P00 synthetic fixture; NOT PHYSICS",
+            "confidence": null,
+            "note": null
+          }
+        },
+        "fixed": [
+          {
+            "name": "specified_pipe_length",
+            "value": {
+              "value": 0.5,
+              "unit": "meter"
+            },
+            "provenance": {
+              "source_type": "USER",
+              "source_ref": "Master Plan section 22 example",
+              "confidence": null,
+              "note": null
+            }
+          },
+          {
+            "name": "synthetic_x",
+            "value": {
+              "value": -0.5,
+              "unit": "dimensionless"
+            },
+            "provenance": {
+              "source_type": "OPTIMIZED",
+              "source_ref": "p09-synthetic-grid-v1",
+              "confidence": 1.0,
+              "note": "MOCK ONLY: finite synthetic grid value"
+            }
+          }
+        ],
+        "boundary_conditions": [],
+        "decision_variables": [],
+        "objectives": [
+          {
+            "metric": "synthetic_score",
+            "direction": "minimize",
+            "provenance": {
+              "source_type": "AGENT_ASSUMPTION",
+              "source_ref": "P09 quadratic objective; NOT PHYSICS",
+              "confidence": null,
+              "note": null
+            }
+          }
+        ],
+        "constraints": [],
+        "selected_products": [],
+        "is_mock": true
+      },
+      "simulation": {
+        "design_id": "P09-WS-E-MOCK-p09-5f023966765c49ba",
+        "status": "converged",
+        "is_mock": true,
+        "state_points": {
+          "synthetic": {
+            "fluid": "R744",
+            "pressure": {
+              "value": 1000000.0,
+              "unit": "pascal"
+            },
+            "temperature": {
+              "value": 300.0,
+              "unit": "kelvin"
+            },
+            "enthalpy": {
+              "value": 100000.0,
+              "unit": "joule / kilogram"
+            },
+            "density": {
+              "value": 1.0,
+              "unit": "kilogram / meter ** 3"
+            },
+            "phase": "mock-synthetic",
+            "vapor_quality": null
+          }
+        },
+        "mass_flow": {
+          "value": 1.0,
+          "unit": "kilogram / second"
+        },
+        "compressor_power": {
+          "value": 1.0,
+          "unit": "watt"
+        },
+        "evaporator_capacity": {
+          "value": 1.0,
+          "unit": "watt"
+        },
+        "heat_rejection": {
+          "value": 1.0,
+          "unit": "watt"
+        },
+        "cop": 1.0,
+        "eer": null,
+        "pressure_drops": {},
+        "heat_exchanger_duties": {},
+        "energy_balance_error": 0.0,
+        "mass_balance_error": 0.0,
+        "active_constraints": [],
+        "envelope_margins": {},
+        "messages": [
+          "MOCK ONLY: deterministic P09 solver stub; no HVAC physics"
+        ]
+      },
+      "constraints": {
+        "design_id": "P09-WS-E-MOCK-p09-5f023966765c49ba",
+        "checks": [
+          {
+            "rule_id": "P09_MOCK_FEASIBLE",
+            "passed": true,
+            "hard": true,
+            "message": "MOCK ONLY: no synthetic rejection configured",
+            "margin": null
+          }
+        ],
+        "feasible": true,
+        "is_mock": true
+      },
+      "objective_value": {
+        "value": 0.25,
+        "unit": "dimensionless"
+      }
+    },
+    {
+      "design": {
+        "design_id": "P09-WS-E-MOCK-p09-375b859d2c3f7d6d",
+        "requirements": {
+          "raw_prompt": "냉매 R744, 지정 배관 길이 50 cm (P00 구조 예제)",
+          "parameters": [
+            {
+              "name": "refrigerant",
+              "value": "R744",
+              "provenance": {
+                "source_type": "USER",
+                "source_ref": "Master Plan section 22 example",
+                "confidence": null,
+                "note": null
+              }
+            },
+            {
+              "name": "specified_pipe_length",
+              "value": {
+                "value": 0.5,
+                "unit": "meter"
+              },
+              "provenance": {
+                "source_type": "USER",
+                "source_ref": "Master Plan section 22 example",
+                "confidence": null,
+                "note": null
+              }
+            }
+          ],
+          "missing": [
+            {
+              "name": "target_capacity",
+              "classification": "essential",
+              "reason": "Not supplied; P00 fixture does not resolve design requirements"
+            }
+          ],
+          "requested_objective": null,
+          "mandatory_components": [],
+          "forbidden_components": [],
+          "hitl_mode": "REVIEW"
+        },
+        "refrigerant": {
+          "name": "refrigerant",
+          "value": "R744",
+          "provenance": {
+            "source_type": "USER",
+            "source_ref": "Master Plan section 22 example",
+            "confidence": null,
+            "note": null
+          }
+        },
+        "topology": {
+          "name": "topology",
+          "value": "mock-single-stage",
+          "provenance": {
+            "source_type": "AGENT_ASSUMPTION",
+            "source_ref": "P00 synthetic fixture; NOT PHYSICS",
+            "confidence": null,
+            "note": null
+          }
+        },
+        "fixed": [
+          {
+            "name": "specified_pipe_length",
+            "value": {
+              "value": 0.5,
+              "unit": "meter"
+            },
+            "provenance": {
+              "source_type": "USER",
+              "source_ref": "Master Plan section 22 example",
+              "confidence": null,
+              "note": null
+            }
+          },
+          {
+            "name": "synthetic_x",
+            "value": {
+              "value": -1.0,
+              "unit": "dimensionless"
+            },
+            "provenance": {
+              "source_type": "OPTIMIZED",
+              "source_ref": "p09-synthetic-grid-v1",
+              "confidence": 1.0,
+              "note": "MOCK ONLY: finite synthetic grid value"
+            }
+          }
+        ],
+        "boundary_conditions": [],
+        "decision_variables": [],
+        "objectives": [
+          {
+            "metric": "synthetic_score",
+            "direction": "minimize",
+            "provenance": {
+              "source_type": "AGENT_ASSUMPTION",
+              "source_ref": "P09 quadratic objective; NOT PHYSICS",
+              "confidence": null,
+              "note": null
+            }
+          }
+        ],
+        "constraints": [],
+        "selected_products": [],
+        "is_mock": true
+      },
+      "simulation": {
+        "design_id": "P09-WS-E-MOCK-p09-375b859d2c3f7d6d",
+        "status": "converged",
+        "is_mock": true,
+        "state_points": {
+          "synthetic": {
+            "fluid": "R744",
+            "pressure": {
+              "value": 1000000.0,
+              "unit": "pascal"
+            },
+            "temperature": {
+              "value": 300.0,
+              "unit": "kelvin"
+            },
+            "enthalpy": {
+              "value": 100000.0,
+              "unit": "joule / kilogram"
+            },
+            "density": {
+              "value": 1.0,
+              "unit": "kilogram / meter ** 3"
+            },
+            "phase": "mock-synthetic",
+            "vapor_quality": null
+          }
+        },
+        "mass_flow": {
+          "value": 1.0,
+          "unit": "kilogram / second"
+        },
+        "compressor_power": {
+          "value": 1.0,
+          "unit": "watt"
+        },
+        "evaporator_capacity": {
+          "value": 1.0,
+          "unit": "watt"
+        },
+        "heat_rejection": {
+          "value": 1.0,
+          "unit": "watt"
+        },
+        "cop": 1.0,
+        "eer": null,
+        "pressure_drops": {},
+        "heat_exchanger_duties": {},
+        "energy_balance_error": 0.0,
+        "mass_balance_error": 0.0,
+        "active_constraints": [],
+        "envelope_margins": {},
+        "messages": [
+          "MOCK ONLY: deterministic P09 solver stub; no HVAC physics"
+        ]
+      },
+      "constraints": {
+        "design_id": "P09-WS-E-MOCK-p09-375b859d2c3f7d6d",
+        "checks": [
+          {
+            "rule_id": "P09_MOCK_FEASIBLE",
+            "passed": true,
+            "hard": true,
+            "message": "MOCK ONLY: no synthetic rejection configured",
+            "margin": null
+          }
+        ],
+        "feasible": true,
+        "is_mock": true
+      },
+      "objective_value": {
+        "value": 1.0,
+        "unit": "dimensionless"
+      }
+    },
+    {
+      "design": {
+        "design_id": "P09-WS-E-MOCK-p09-cdacb6038bb4d424",
+        "requirements": {
+          "raw_prompt": "냉매 R744, 지정 배관 길이 50 cm (P00 구조 예제)",
+          "parameters": [
+            {
+              "name": "refrigerant",
+              "value": "R744",
+              "provenance": {
+                "source_type": "USER",
+                "source_ref": "Master Plan section 22 example",
+                "confidence": null,
+                "note": null
+              }
+            },
+            {
+              "name": "specified_pipe_length",
+              "value": {
+                "value": 0.5,
+                "unit": "meter"
+              },
+              "provenance": {
+                "source_type": "USER",
+                "source_ref": "Master Plan section 22 example",
+                "confidence": null,
+                "note": null
+              }
+            }
+          ],
+          "missing": [
+            {
+              "name": "target_capacity",
+              "classification": "essential",
+              "reason": "Not supplied; P00 fixture does not resolve design requirements"
+            }
+          ],
+          "requested_objective": null,
+          "mandatory_components": [],
+          "forbidden_components": [],
+          "hitl_mode": "REVIEW"
+        },
+        "refrigerant": {
+          "name": "refrigerant",
+          "value": "R744",
+          "provenance": {
+            "source_type": "USER",
+            "source_ref": "Master Plan section 22 example",
+            "confidence": null,
+            "note": null
+          }
+        },
+        "topology": {
+          "name": "topology",
+          "value": "mock-single-stage",
+          "provenance": {
+            "source_type": "AGENT_ASSUMPTION",
+            "source_ref": "P00 synthetic fixture; NOT PHYSICS",
+            "confidence": null,
+            "note": null
+          }
+        },
+        "fixed": [
+          {
+            "name": "specified_pipe_length",
+            "value": {
+              "value": 0.5,
+              "unit": "meter"
+            },
+            "provenance": {
+              "source_type": "USER",
+              "source_ref": "Master Plan section 22 example",
+              "confidence": null,
+              "note": null
+            }
+          },
+          {
+            "name": "synthetic_x",
+            "value": {
+              "value": 1.0,
+              "unit": "dimensionless"
+            },
+            "provenance": {
+              "source_type": "OPTIMIZED",
+              "source_ref": "p09-synthetic-grid-v1",
+              "confidence": 1.0,
+              "note": "MOCK ONLY: finite synthetic grid value"
+            }
+          }
+        ],
+        "boundary_conditions": [],
+        "decision_variables": [],
+        "objectives": [
+          {
+            "metric": "synthetic_score",
+            "direction": "minimize",
+            "provenance": {
+              "source_type": "AGENT_ASSUMPTION",
+              "source_ref": "P09 quadratic objective; NOT PHYSICS",
+              "confidence": null,
+              "note": null
+            }
+          }
+        ],
+        "constraints": [],
+        "selected_products": [],
+        "is_mock": true
+      },
+      "simulation": {
+        "design_id": "P09-WS-E-MOCK-p09-cdacb6038bb4d424",
+        "status": "converged",
+        "is_mock": true,
+        "state_points": {
+          "synthetic": {
+            "fluid": "R744",
+            "pressure": {
+              "value": 1000000.0,
+              "unit": "pascal"
+            },
+            "temperature": {
+              "value": 300.0,
+              "unit": "kelvin"
+            },
+            "enthalpy": {
+              "value": 100000.0,
+              "unit": "joule / kilogram"
+            },
+            "density": {
+              "value": 1.0,
+              "unit": "kilogram / meter ** 3"
+            },
+            "phase": "mock-synthetic",
+            "vapor_quality": null
+          }
+        },
+        "mass_flow": {
+          "value": 1.0,
+          "unit": "kilogram / second"
+        },
+        "compressor_power": {
+          "value": 1.0,
+          "unit": "watt"
+        },
+        "evaporator_capacity": {
+          "value": 1.0,
+          "unit": "watt"
+        },
+        "heat_rejection": {
+          "value": 1.0,
+          "unit": "watt"
+        },
+        "cop": 1.0,
+        "eer": null,
+        "pressure_drops": {},
+        "heat_exchanger_duties": {},
+        "energy_balance_error": 0.0,
+        "mass_balance_error": 0.0,
+        "active_constraints": [],
+        "envelope_margins": {},
+        "messages": [
+          "MOCK ONLY: deterministic P09 solver stub; no HVAC physics"
+        ]
+      },
+      "constraints": {
+        "design_id": "P09-WS-E-MOCK-p09-cdacb6038bb4d424",
+        "checks": [
+          {
+            "rule_id": "P09_MOCK_FEASIBLE",
+            "passed": true,
+            "hard": true,
+            "message": "MOCK ONLY: no synthetic rejection configured",
+            "margin": null
+          }
+        ],
+        "feasible": true,
+        "is_mock": true
+      },
+      "objective_value": {
+        "value": 1.0,
+        "unit": "dimensionless"
+      }
+    }
+  ],
+  "messages": [
+    "MOCK ONLY: p09-synthetic-grid-v1; seed=73; grid_points=5; evaluated=5; rejected=0; no HVAC physics or product validation"
+  ],
+  "is_mock": true
+}

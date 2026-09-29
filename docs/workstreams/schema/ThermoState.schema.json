@@ -1,0 +1,167 @@
+{
+  "$defs": {
+    "Density": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "Density",
+      "type": "object"
+    },
+    "Pressure": {
+      "additionalProperties": false,
+      "description": "Absolute pressure; gauge values must be converted with explicit reference.",
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "Pressure",
+      "type": "object"
+    },
+    "SpecificEnthalpy": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "SpecificEnthalpy",
+      "type": "object"
+    },
+    "SpecificEntropy": {
+      "additionalProperties": false,
+      "description": "Finite mass-specific entropy; the backend decides state validity.",
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "SpecificEntropy",
+      "type": "object"
+    },
+    "Temperature": {
+      "additionalProperties": false,
+      "description": "Absolute thermodynamic temperature, strictly above zero kelvin.",
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "Temperature",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "fluid": {
+      "minLength": 1,
+      "title": "Fluid",
+      "type": "string"
+    },
+    "pressure": {
+      "$ref": "#/$defs/Pressure"
+    },
+    "temperature": {
+      "$ref": "#/$defs/Temperature"
+    },
+    "enthalpy": {
+      "$ref": "#/$defs/SpecificEnthalpy"
+    },
+    "density": {
+      "$ref": "#/$defs/Density"
+    },
+    "phase": {
+      "minLength": 1,
+      "title": "Phase",
+      "type": "string"
+    },
+    "vapor_quality": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Vapor Quality"
+    },
+    "entropy": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SpecificEntropy"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "fluid",
+    "pressure",
+    "temperature",
+    "enthalpy",
+    "density",
+    "phase"
+  ],
+  "title": "ThermoState",
+  "type": "object"
+}

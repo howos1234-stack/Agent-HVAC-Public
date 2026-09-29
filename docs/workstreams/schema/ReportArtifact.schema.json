@@ -1,0 +1,26 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "path": {
+      "minLength": 1,
+      "title": "Path",
+      "type": "string"
+    },
+    "media_type": {
+      "minLength": 1,
+      "title": "Media Type",
+      "type": "string"
+    },
+    "is_mock": {
+      "title": "Is Mock",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "path",
+    "media_type",
+    "is_mock"
+  ],
+  "title": "ReportArtifact",
+  "type": "object"
+}
