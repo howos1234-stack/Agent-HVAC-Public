@@ -7,6 +7,10 @@ from typing import Any
 
 import pytest
 
+from agent_hvac.components.candidate_trials import (
+    ComponentCandidateTrial,
+    evaluate_synthetic_component_trials,
+)
 from agent_hvac.components.expansion_valve_map import (
     ExpansionValveMapInput,
     evaluate_expansion_valve_map,
@@ -330,6 +334,33 @@ def test_failed_synthetic_candidate_cannot_reuse_previous_valve_result(
     assert repeated.outputs == first.outputs
     assert repeated.output_source_ids == first.output_source_ids
     assert repeated.is_mock is first.is_mock is True
+
+
+def test_valve_candidate_trial_keeps_property_failure_and_sources_separate(
+    product: ProductRecord,
+) -> None:
+    candidates = (
+        ComponentCandidateTrial("valve-a", _input(product)),
+        ComponentCandidateTrial("valve-b", _input(product, RecordingBackend(fail_pt=True))),
+        ComponentCandidateTrial("valve-c", _input(product)),
+    )
+
+    first, rejected, last = evaluate_synthetic_component_trials(candidates)
+
+    assert (first.status, rejected.status, last.status) == (
+        "EVALUATED",
+        "REJECTED",
+        "EVALUATED",
+    )
+    assert all(outcome.is_mock for outcome in (first, rejected, last))
+    assert all(outcome.record_id == "valve-map-1" for outcome in (first, rejected, last))
+    assert first.result is not None and last.result is not None
+    assert first.result.outputs == last.result.outputs
+    assert first.result.output_source_ids == last.result.output_source_ids
+    assert rejected.selected_source_ids == first.selected_source_ids
+    assert rejected.result is None
+    assert rejected.failure_type == "InvalidPropertyStateError"
+    assert "invalid inlet" in (rejected.failure_message or "")
 
 
 @pytest.mark.parametrize(
