@@ -17,7 +17,7 @@
 - Branch: `codex/ws-e/ljh67340/design-workbench-migration`; base `f19f2fefc05c78bb050e024b9e15651b0fd4bef4`.
 - Scope: public-safe P12 schematic workbench, direct six-condition baseline execution, component inlet/outlet state display, project-fingerprint result invalidation and synthetic-only regressions.
 - Existing public WS-D P09 implementation and tests match the reviewed private source snapshot; they are not duplicated in this GUI change. WS-C/Agent integration remains a separate PR.
-- Local Windows validation: WS-E 121 passed; base 669 passed; GUI 669 passed; Ruff, format, mypy, GUI mypy, 155-file manifest and package build passed.
+- Local Windows validation after merging latest integration: WS-E 121 passed; base 672 passed; GUI 672 passed; Ruff, format, mypy, GUI mypy, 155-file manifest and package build passed.
 - Actual Chromium 153 pointer validation passed for blank-canvas component creation, node drag, port drag closed loop, direct inputs, convergence/state display, result invalidation and unsupported connected-component blocking. Evidence: [record](docs/development_log/2026-09-29_WS-E_ljh67340_public-workbench-migration.md).
 - Remote CI and integration merge are pending. The pre-existing Ubuntu `network_map` failure remains separately tracked and no physical code or assertion was changed to suppress it.
 - This work does not imply manufacturer validation, production use, CV/P06 completion or Gate approval.

@@ -53,8 +53,8 @@
 | 착수 상태 | `git status --short --branch` | Windows / PowerShell | PASS | clean branch에서 시작 |
 | 집중 테스트 | `uv run --locked --extra gui pytest tests/ws_e/test_design_workbench.py tests/ws_e/test_streamlit_app.py -q` | Windows / Python 3.12 | PASS | 72 passed |
 | WS-E 전체 | `uv run --locked --extra gui pytest tests/ws_e -q` | Windows / Python 3.12 | PASS | 121 passed |
-| base 전체 | `uv run --locked pytest -q` | Windows / Python 3.12 | PASS | manifest 갱신 후 669 passed |
-| GUI 전체 | `uv run --locked --extra gui pytest -q` | Windows / Python 3.12 | PASS | 669 passed |
+| base 전체 | `uv run --locked pytest -q` | Windows / Python 3.12 | PASS | 최신 integration 반영 후 672 passed |
+| GUI 전체 | `uv run --locked --extra gui pytest -q` | Windows / Python 3.12 | PASS | 최신 integration 반영 후 672 passed |
 | Ruff | `uv run --locked ruff check .` / `uv run --locked ruff format --check .` | Windows | PASS | check pass, 155 files formatted |
 | mypy | `uv run --locked mypy` / `uv run --locked --extra gui mypy src/agent_hvac/app/streamlit_app.py` | Windows | PASS | 75 source files 및 GUI entrypoint 통과 |
 | manifest | `uv run --locked python scripts/source_manifest.py --check` | Windows | PASS | 155 files verified |
