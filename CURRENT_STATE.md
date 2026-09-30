@@ -43,6 +43,15 @@
 - This is mock synthetic input validation only. It does not add HVAC physics, manufacturer products, production selection or Gate approval.
 - Evidence: [record](docs/development_log/2026-09-30_WS-D_ljh67340_synthetic-candidate-identity.md).
 
+## Pending public WS-C Agent-to-workbench adapter
+
+- Public PR [#8](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/8), branch `codex/ws-c/ljh67340/workbench-agent-link`, starts from integration `d97edf1`, after WS-E PR #3 and WS-D PR #7 were integrated.
+- A deterministic structured adapter now converts the already-supported command vocabulary into a workbench project, preserves missing inputs, and runs the existing baseline solver only when `execute=true` and all six required conditions are present.
+- Ambiguous or unsupported input, incomplete input, project-only preparation, successful execution, and solver failure remain distinct outcomes. Wrong-dimension efficiency, every explicitly invalid efficiency value even when accompanied by a valid value, and conflicting duplicate conditions are rejected before solver invocation; nonconverged solver artifacts remain available as failed results. No LLM SDK or inferred engineering value is added.
+- Original head validation: WS-C 5 passed; base-command 688 passed; GUI 688 passed; Ruff, format, mypy, GUI entrypoint mypy, 159-file manifest and package build passed; remote CI run 36686253990 passed 4/4. Review-requested input guards are under new-head validation.
+- General baseline calculations remain distinct from manufacturer product validation, optimization, production and Gate approval.
+- Evidence: [record](docs/development_log/2026-09-30_WS-C_ljh67340_workbench-agent-link.md).
+
 ## WS-A 공개 이관 작업 (2026-09-29, 검토 대기)
 
 - 공개 `integration` `f19f2fe`에서 별도 브랜치 `codex/ws-a/public-pipe-closure`를 시작했다. 이전 비공개 작업 폴더와 Git 이력은 합치지 않았다.

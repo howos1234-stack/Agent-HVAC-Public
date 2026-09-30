@@ -72,6 +72,10 @@
     "sha256": "40bd06b3344e383eef8a0513b33785fcce77d0d2ce2b1ae20cab8c2b2a855490"
   },
   {
+    "path": "src/agent_hvac/agents/workbench.py",
+    "sha256": "5fe52ba143a7c90a0cfb93ec810f5701cd2cbee3c8524c17a0607823ca674dba"
+  },
+  {
     "path": "src/agent_hvac/app/__init__.py",
     "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
   },
@@ -109,7 +113,7 @@
   },
   {
     "path": "src/agent_hvac/app/workbench_command.py",
-    "sha256": "5d686464d14398cb2c144dbf03b0d168dc3ccd2018b39f0ed12ba14df0b419c6"
+    "sha256": "9f0112154acfc4488ec8577e662e9a686cb9c201e83dcb4966b0c4b63453c38d"
   },
   {
     "path": "src/agent_hvac/components/__init__.py",
@@ -598,6 +602,10 @@
   {
     "path": "tests/ws_b/test_product_record_v020.py",
     "sha256": "153f96a70056e358c0a7c11f0edb4338f0c3de4a55d2d62d28e5392cf23c2844"
+  },
+  {
+    "path": "tests/ws_c/test_workbench_agent.py",
+    "sha256": "d3568ac0355d2c2ad359a19eef6dd0477039d52ffb09dbfc114f283cc10ce4bf"
   },
   {
     "path": "tests/ws_d/test_synthetic_search.py",
