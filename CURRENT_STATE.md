@@ -24,7 +24,7 @@
 
 ## Pending public WS-E workbench edit history UX
 
-- Branch `codex/ws-e/ljh67340/workbench-ux-followup` started from integration `d97edf1f5854e44607d657d58710d320f5c8fa94` after public PR #7 merged.
+- Public PR [#9](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/9), branch `codex/ws-e/ljh67340/workbench-ux-followup`, started from integration `d97edf1f5854e44607d657d58710d320f5c8fa94` after public PR #7 merged.
 - The workbench records validated project JSON snapshots for up to 50 edits and exposes sidebar Undo/Redo plus canvas `Ctrl+Z`, `Ctrl+Y` and `Ctrl+Shift+Z` shortcuts. Restoring history invalidates any previous calculation result.
 - The direct condition editor now opens automatically while required baseline inputs are missing, so the default 4/6 input state exposes the two missing values without an extra click.
 - Actual in-app Chromium verification confirmed component addition and sidebar Undo restoration. AppTest covers add/undo/redo, delete/undo with stale-result invalidation, missing-input expansion and shortcut asset wiring.

@@ -67,4 +67,4 @@
 - 다음 담당자와 첫 실행 작업: 관리자가 PR diff와 원격 CI를 검토한다.
 - `CURRENT_STATE.md` 갱신 여부: 완료.
 - Phase checklist / Gate 상태와 증거: GUI 편집 UX이며 production·CV·Gate 승인 아님.
-- PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): PR과 원격 CI는 제출 전.
+- PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): 공개 PR #9 제출, 검토·원격 CI 대기, integration 미병합.
