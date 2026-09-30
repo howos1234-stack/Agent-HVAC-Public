@@ -1090,6 +1090,95 @@ def test_streamlit_natural_language_builder_runs_real_baseline_result() -> None:
     assert len(app.get("vega_lite_chart")) == 2
 
 
+def _completed_agent_workbench_app():
+    from streamlit.testing.v1 import AppTest
+
+    root = Path(__file__).resolve().parents[2]
+    app = AppTest.from_file(str(root / "src/agent_hvac/app/design_workbench_app.py")).run(
+        timeout=20
+    )
+    execute = next(button for button in app.button if button.label == "명시적 계산 실행")
+    app = execute.click().run(timeout=20)
+    assert "workbench_result" in app.session_state.filtered_state
+    assert "agent_command_response" in app.session_state.filtered_state
+    assert any("Agent 상태 · 계산 완료" in item.value for item in app.success)
+    return app
+
+
+def _assert_agent_execution_invalidated(app) -> None:
+    _assert_workbench_result_invalidated(app)
+    assert "agent_command_response" not in app.session_state.filtered_state
+    assert "agent_command_response_prompt" not in app.session_state.filtered_state
+    assert not any("Agent 상태 · 계산 완료" in item.value for item in app.success)
+
+
+def _assert_project_apply_does_not_restore_result_then_reexecute(app) -> None:
+    analyze = next(button for button in app.button if button.label == "Agent 입력 확인")
+    app = analyze.click().run(timeout=20)
+    assert any("Agent 상태 · 프로젝트 준비" in item.value for item in app.info)
+    apply = next(button for button in app.button if button.label == "캔버스에 구성")
+    app = apply.click().run(timeout=20)
+    _assert_agent_execution_invalidated(app)
+
+    execute = next(button for button in app.button if button.label == "명시적 계산 실행")
+    app = execute.click().run(timeout=20)
+    assert "workbench_result" in app.session_state.filtered_state
+    assert any("Agent 상태 · 계산 완료" in item.value for item in app.success)
+
+
+def test_agent_completion_is_invalidated_by_undo_redo_and_not_restored_by_apply() -> None:
+    pytest.importorskip("streamlit")
+    app = _completed_agent_workbench_app()
+
+    undo = next(button for button in app.button if button.label == "↶ 실행 취소")
+    app = undo.click().run(timeout=20)
+    _assert_agent_execution_invalidated(app)
+    redo = next(button for button in app.button if button.label == "↷ 다시 실행")
+    app = redo.click().run(timeout=20)
+    _assert_agent_execution_invalidated(app)
+
+    _assert_project_apply_does_not_restore_result_then_reexecute(app)
+
+
+def test_agent_completion_is_invalidated_by_condition_edit_before_apply() -> None:
+    pytest.importorskip("streamlit")
+    app = _completed_agent_workbench_app()
+    mass_flow = next(item for item in app.text_input if "냉매 질량유량" in item.label)
+    mass_flow.set_value("0.06")
+    apply_conditions = next(button for button in app.button if button.label == "설계조건 적용")
+    app = apply_conditions.click().run(timeout=20)
+
+    _assert_agent_execution_invalidated(app)
+    _assert_project_apply_does_not_restore_result_then_reexecute(app)
+
+
+def test_agent_completion_is_invalidated_by_component_delete_before_apply() -> None:
+    pytest.importorskip("streamlit")
+    app = _completed_agent_workbench_app()
+    open_editor = next(button for button in app.button if button.label == "속성 열기")
+    app = open_editor.click().run(timeout=20)
+    remove = next(button for button in app.button if button.label == "선택 부품 제거")
+    app = remove.click().run(timeout=20)
+
+    _assert_agent_execution_invalidated(app)
+    _assert_project_apply_does_not_restore_result_then_reexecute(app)
+
+
+def test_agent_completion_is_invalidated_by_json_upload_before_apply() -> None:
+    pytest.importorskip("streamlit")
+    app = _completed_agent_workbench_app()
+    uploaded_project = default_r744_project()
+    uploader = app.get("file_uploader")[0]
+    app = uploader.upload(
+        "r744-workbench.json",
+        project_json(uploaded_project).encode("utf-8"),
+        "application/json",
+    ).run(timeout=20)
+
+    _assert_agent_execution_invalidated(app)
+    _assert_project_apply_does_not_restore_result_then_reexecute(app)
+
+
 def test_streamlit_agent_missing_inputs_can_be_completed_then_run() -> None:
     pytest.importorskip("streamlit")
     from streamlit.testing.v1 import AppTest

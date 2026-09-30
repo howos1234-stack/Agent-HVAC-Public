@@ -158,6 +158,8 @@ def _project_fingerprint(project: WorkbenchProject) -> str:
 def _invalidate_workbench_result() -> None:
     st.session_state.pop("workbench_result", None)
     st.session_state.pop("workbench_result_project_fingerprint", None)
+    st.session_state.pop(_COMMAND_RESPONSE_KEY, None)
+    st.session_state.pop(_COMMAND_RESPONSE_PROMPT_KEY, None)
 
 
 def _sync_project_history(project: WorkbenchProject) -> None:
@@ -246,7 +248,9 @@ def _basic_project(refrigerant: Literal["R744", "R134a", "R410A"]) -> WorkbenchP
     return project_from_command(interpret_command(f"{refrigerant} 기본 냉동사이클을 구성해줘"))
 
 
-def _store_command_project(response: WorkbenchCommandResponse) -> None:
+def _store_command_project(
+    response: WorkbenchCommandResponse, *, register_result: bool = False
+) -> None:
     project = response.project
     if project is None:
         return
@@ -254,7 +258,7 @@ def _store_command_project(response: WorkbenchCommandResponse) -> None:
     st.session_state.workbench_project = project
     _sync_project_history(project)
     _invalidate_workbench_result()
-    if response.result is not None:
+    if register_result and response.result is not None:
         st.session_state.workbench_result = response.result
         st.session_state.workbench_result_project_fingerprint = _project_fingerprint(project)
 
@@ -384,9 +388,9 @@ def _render_command_builder() -> None:
             except ValidationError as error:
                 st.error(f"입력 거부: {error.errors()[0]['msg']}")
             else:
+                _store_command_project(response, register_result=True)
                 st.session_state[_COMMAND_RESPONSE_KEY] = response
                 st.session_state[_COMMAND_RESPONSE_PROMPT_KEY] = prompt
-                _store_command_project(response)
                 st.rerun()
 
     if isinstance(response, WorkbenchCommandResponse):
@@ -891,6 +895,7 @@ def main() -> None:
                 st.session_state.workbench_project = uploaded_project
                 st.session_state[_IMPORTED_UPLOAD_KEY] = upload_id
                 _sync_project_history(uploaded_project)
+                st.rerun()
             except (ValidationError, ValueError) as error:
                 st.sidebar.error("워크벤치 JSON 검증 실패")
                 st.sidebar.text(str(error))

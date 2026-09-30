@@ -66,6 +66,7 @@
 - The natural-language panel now calls the integrated deterministic WS-C adapter and displays rejected, needs-input, project-ready, completed and failed outcomes separately. It does not infer missing engineering values.
 - An adapter-created project enters the existing full-project edit history. Explicit adapter execution stores a result only against the matching project fingerprint; later condition, JSON, component or history changes retain existing stale-result invalidation.
 - Completed execution is labelled as calculation-flow completion only, separate from design-target achievement and product suitability.
+- PR #12 review follow-up invalidates the cached Agent completion/result together with the workbench result on project, history, condition, component and JSON-import changes. Applying a cached command now applies only its project; only a new explicit execution may register a result.
 - This GUI connection does not add an LLM/API, product selection, manufacturer validation, production use, CV/P06 completion or Gate approval.
 - Evidence: [record](docs/development_log/2026-09-30_WS-C-E_ljh67340_agent-workbench-screen.md).
 
