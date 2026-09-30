@@ -61,6 +61,15 @@
 - 이 결과는 Git 추적 경로, 제한 확장자, 승인 template과 명시적 binary allowlist에 대한 제한적 검사다. 임의 이름·확장자의 텍스트에 포함된 민감 내용까지 없음을 보증하지 않는다. WS-A는 PR #5의 제품 소비 계약 무영향 범위를 최신 head에서 수용했다.
 - CV-1~CV-3, 실제 제조사 검증, P06 전체, production 및 Gate 상태는 변경하지 않는다.
 - Work record: [record](docs/development_log/2026-09-29_2334_WS-B_sangryul1208_public-data-boundary-guard.md).
+
+## WS-B 공개 합성 제품 bundle 전달 검증 (2026-09-30, 진행 중)
+
+- Branch: `codex/ws-b/public-loader-adapter-audit`, start `0d6f886046a1b8730ee6bf992d8dbac7ccec1d44`.
+- pytest 임시경로에서 compressor·expansion valve·gas cooler Excel schema 0.2.0 workbook을 각각 생성하고 모든 제품·source·record ID를 결정론적으로 분리한다.
+- 세 workbook을 한 `ExcelComponentRepository`에서 동시에 적재한 뒤 `is_mock=true`, 제품 간 product/map/rated-point/point/value ID 비충돌, source ID와 원단위 보존, compressor/valve map adapter 및 HX rated-point adapter 전달을 확인한다.
+- 공개 PR [#10](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/10), 최초 head `30f87573434b1a81e4c2b01f75a15dea7c849776`. 새 bundle 및 기존 장비별 Excel 통합 집중 회귀 7 passed, contracts·WS-B·WS-A 관련 회귀 344 passed다. Ruff·mypy 75 source files와 GUI entry·manifest 158개·공개자료 경계·build는 PASS다. [Foundation CI run 36694757988](https://github.com/howos1234-stack/Agent-HVAC-Public/actions/runs/36694757988)은 Windows/Ubuntu × base/gui 4/4 PASS다. 로컬 전체 GUI AppTest 중단은 원격 전체 GUI PASS와 구분해 BLOCKED 이력으로 유지한다.
+- 실제 제조사 자료·제품 수치·production DB를 사용하지 않으며 CV-1~CV-3, P06 전체, production 및 Gate 상태는 변경하지 않는다.
+- Work record: [record](docs/development_log/2026-09-30_WS-B_sangryul1208_public-loader-adapter-bundle.md).
 - 검증·공개 PR·최신 Windows/Ubuntu × base/gui CI는 작업 기록에서 개별 확인한다. CV-1~CV-3, P06 전체, production 및 Gate 승인은 이번 작업 범위가 아니다.
 
 - PR5 integration reconciliation: latest49dcfbc incorporated; WS-E GUI and WS-B boundary checks retained together. Manifest157; new-head CI required before merge.

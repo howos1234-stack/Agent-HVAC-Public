@@ -512,6 +512,10 @@
     "sha256": "d99099514da18ced36cc261befc2073e84fc1a9a2354b7f5690c8944894edb21"
   },
   {
+    "path": "tests/ws_a/test_excel_component_bundle_integration.py",
+    "sha256": "a0f14700b0eece3ffde32f145fd4fcf4cd64929bf205ba3e0c1e5899d5d94e9f"
+  },
+  {
     "path": "tests/ws_a/test_excel_compressor_integration.py",
     "sha256": "2960fe855dbe916aecafcd762dea26587999558af696031334afa5f06f1aed1e"
   },
