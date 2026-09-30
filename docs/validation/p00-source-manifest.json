@@ -177,7 +177,7 @@
   },
   {
     "path": "src/agent_hvac/optimization/synthetic_search.py",
-    "sha256": "8a3f5b243c40ef913ed5377b0618f820927a477cb6c67168daae222368809f07"
+    "sha256": "53a21838880b309e0c0428c1c322877bce647322c39ef4bfb40fb543aca30851"
   },
   {
     "path": "src/agent_hvac/physics/__init__.py",
@@ -573,7 +573,7 @@
   },
   {
     "path": "tests/ws_d/test_synthetic_search.py",
-    "sha256": "780f5be62ce13dac32dd9d2f87b40af62a1289312b7954ce803e9cd8044c497e"
+    "sha256": "406e8f92e746fb9d39ef487389dfdc5662a27ff3be9216ff54c256a2946e3794"
   },
   {
     "path": "tests/ws_e/test_analysis_screen.py",

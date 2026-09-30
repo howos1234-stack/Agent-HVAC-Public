@@ -10,7 +10,7 @@ import hashlib
 import itertools
 import json
 import random
-from collections import defaultdict
+from collections import Counter, defaultdict
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from typing import Protocol
@@ -293,6 +293,12 @@ class SyntheticGridOptimizer:
             return "P09 supports exactly one scalar objective"
         if problem.baseline.objectives[0].metric != self._objective.metric:
             return "objective metric does not match the configured synthetic evaluator"
+        product_id_counts = Counter(product.product_id for product in problem.candidate_products)
+        duplicate_product_ids = sorted(
+            product_id for product_id, count in product_id_counts.items() if count > 1
+        )
+        if duplicate_product_ids:
+            return f"candidate product_id must be unique: {', '.join(duplicate_product_ids)}"
         selected_types = {product.component_type for product in problem.baseline.selected_products}
         candidate_types = {product.component_type for product in problem.candidate_products}
         if selected_types & candidate_types:

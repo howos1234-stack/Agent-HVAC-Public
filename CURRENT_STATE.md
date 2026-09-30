@@ -25,6 +25,14 @@
 - PR #2 changes are documentation-only relative to latest integration. Checks 0 is `NOT_RUN` under the Markdown-only policy, not a billing failure.
 - Audit record: [record](docs/development_log/2026-09-29_2216_WS-B_sangryul1208_public-product-db-audit.md).
 
+## Pending public WS-D candidate-identity regression
+
+- Branch `codex/ws-d/ljh67340/synthetic-search-audit` starts from public integration `041121cf7036409d160f462aab87a163a05a8cc6` and is independent of pending WS-E PR #3.
+- P09 now rejects duplicate candidate `product_id` values before assignment/product-combination generation or solver invocation, preserving deterministic candidate identity without changing frozen schemas.
+- Local Windows validation: WS-D 10 passed; base-command 618 passed in the existing environment; GUI 618 passed; Ruff, format, mypy, 150-file manifest and package build passed.
+- This is mock synthetic input validation only. It does not add HVAC physics, manufacturer products, production selection or Gate approval.
+- Evidence: [record](docs/development_log/2026-09-30_WS-D_ljh67340_synthetic-candidate-identity.md).
+
 ## WS-A 공개 이관 작업 (2026-09-29, 검토 대기)
 
 - 공개 `integration` `f19f2fe`에서 별도 브랜치 `codex/ws-a/public-pipe-closure`를 시작했다. 이전 비공개 작업 폴더와 Git 이력은 합치지 않았다.
