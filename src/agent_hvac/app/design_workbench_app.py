@@ -138,6 +138,12 @@ _workbench_canvas = component(
     js=WORKBENCH_CANVAS_JS,
 )
 
+_HISTORY_CURRENT_KEY = "project_history_current"
+_HISTORY_UNDO_KEY = "project_history_undo"
+_HISTORY_REDO_KEY = "project_history_redo"
+_HISTORY_LIMIT = 50
+_IMPORTED_UPLOAD_KEY = "workbench_imported_upload"
+
 
 def _project_fingerprint(project: WorkbenchProject) -> str:
     return hashlib.sha256(project_json(project).encode("utf-8")).hexdigest()
@@ -146,6 +152,58 @@ def _project_fingerprint(project: WorkbenchProject) -> str:
 def _invalidate_workbench_result() -> None:
     st.session_state.pop("workbench_result", None)
     st.session_state.pop("workbench_result_project_fingerprint", None)
+
+
+def _sync_project_history(project: WorkbenchProject) -> None:
+    """Record project changes that occurred during the previous Streamlit run."""
+
+    current = project_json(project)
+    tracked = st.session_state.get(_HISTORY_CURRENT_KEY)
+    if not isinstance(tracked, str):
+        st.session_state[_HISTORY_CURRENT_KEY] = current
+        st.session_state[_HISTORY_UNDO_KEY] = []
+        st.session_state[_HISTORY_REDO_KEY] = []
+        return
+    if tracked == current:
+        return
+    undo = list(st.session_state.get(_HISTORY_UNDO_KEY, []))
+    undo.append(tracked)
+    st.session_state[_HISTORY_UNDO_KEY] = undo[-_HISTORY_LIMIT:]
+    st.session_state[_HISTORY_REDO_KEY] = []
+    st.session_state[_HISTORY_CURRENT_KEY] = current
+
+
+def _restore_project_history(direction: Literal["undo", "redo"]) -> None:
+    source_key = _HISTORY_UNDO_KEY if direction == "undo" else _HISTORY_REDO_KEY
+    target_key = _HISTORY_REDO_KEY if direction == "undo" else _HISTORY_UNDO_KEY
+    source = list(st.session_state.get(source_key, []))
+    current = st.session_state.get(_HISTORY_CURRENT_KEY)
+    if not source or not isinstance(current, str):
+        return
+    restored_json = source.pop()
+    target = list(st.session_state.get(target_key, []))
+    target.append(current)
+    restored = load_project(restored_json.encode("utf-8"))
+    st.session_state[source_key] = source
+    st.session_state[target_key] = target[-_HISTORY_LIMIT:]
+    st.session_state[_HISTORY_CURRENT_KEY] = restored_json
+    st.session_state.workbench_project = restored
+    _clear_project_widget_state()
+    _invalidate_workbench_result()
+    st.rerun()
+
+
+def _render_project_history_controls() -> None:
+    undo = st.session_state.get(_HISTORY_UNDO_KEY, [])
+    redo = st.session_state.get(_HISTORY_REDO_KEY, [])
+    left, right = st.sidebar.columns(2)
+    with left:
+        if st.button("↶ 실행 취소", disabled=not undo, use_container_width=True):
+            _restore_project_history("undo")
+    with right:
+        if st.button("↷ 다시 실행", disabled=not redo, use_container_width=True):
+            _restore_project_history("redo")
+    st.sidebar.caption(f"편집 기록 {len(undo)}단계 · 최대 {_HISTORY_LIMIT}단계")
 
 
 def _project_widget_suffix(project: WorkbenchProject) -> str:
@@ -275,8 +333,9 @@ def _render_condition_editor(project: WorkbenchProject) -> WorkbenchProject:
     required = required_solver_input_names()
     supplied = {name: condition_for_parameter(project, name) for name in required}
     completed = sum(condition is not None for condition in supplied.values())
+    missing = missing_solver_inputs(project)
     st.caption(f"계산 입력 {completed}/{len(required)} · 자연어 없이 직접 입력 가능")
-    with st.expander("설계조건 입력·수정", expanded=False):
+    with st.expander("설계조건 입력·수정", expanded=bool(missing)):
         entered: dict[str, tuple[str, str]] = {}
         with st.form(f"workbench-condition-form-{suffix}"):
             for name in required:
@@ -320,7 +379,6 @@ def _render_condition_editor(project: WorkbenchProject) -> WorkbenchProject:
                 st.session_state.workbench_project = changed
                 _invalidate_workbench_result()
                 st.rerun()
-    missing = missing_solver_inputs(project)
     if missing:
         st.warning("미입력: " + ", ".join(PARAMETER_PRESENTATION[name][0] for name in missing))
     return project
@@ -531,6 +589,10 @@ def _render_interactive_canvas(
     nonce = str(action.get("nonce", ""))
     if not nonce or st.session_state.get("workbench-last-canvas-action") == nonce:
         return project
+    action_type = action.get("type")
+    if action_type in {"undo", "redo"}:
+        st.session_state["workbench-last-canvas-action"] = nonce
+        _restore_project_history(cast(Literal["undo", "redo"], action_type))
     if action.get("type") == "select":
         component_id = action.get("component_id")
         known_ids = {component.component_id for component in project.components}
@@ -745,6 +807,7 @@ def main() -> None:
     else:
         project = WorkbenchProject.model_validate(stored_project)
     st.session_state.workbench_project = project
+    _sync_project_history(project)
 
     with st.expander("자연어로 빠르게 구성 (선택)", expanded=False):
         _render_command_builder()
@@ -752,15 +815,23 @@ def main() -> None:
 
     uploaded = st.sidebar.file_uploader("워크벤치 JSON 열기", type=["json"])
     if uploaded is not None:
-        try:
-            uploaded_project = load_project(uploaded.getvalue())
-            if _project_fingerprint(uploaded_project) != _project_fingerprint(project):
-                _invalidate_workbench_result()
-            project = uploaded_project
-            st.session_state.workbench_project = uploaded_project
-        except (ValidationError, ValueError) as error:
-            st.sidebar.error("워크벤치 JSON 검증 실패")
-            st.sidebar.text(str(error))
+        upload_bytes = uploaded.getvalue()
+        upload_id = hashlib.sha256(upload_bytes).hexdigest()
+        if st.session_state.get(_IMPORTED_UPLOAD_KEY) != upload_id:
+            try:
+                uploaded_project = load_project(upload_bytes)
+                if _project_fingerprint(uploaded_project) != _project_fingerprint(project):
+                    _invalidate_workbench_result()
+                project = uploaded_project
+                st.session_state.workbench_project = uploaded_project
+                st.session_state[_IMPORTED_UPLOAD_KEY] = upload_id
+                _sync_project_history(uploaded_project)
+            except (ValidationError, ValueError) as error:
+                st.sidebar.error("워크벤치 JSON 검증 실패")
+                st.sidebar.text(str(error))
+    else:
+        st.session_state.pop(_IMPORTED_UPLOAD_KEY, None)
+    _render_project_history_controls()
     if st.sidebar.button("기본 사이클로 초기화"):
         project = _basic_project(project.refrigerant)
         _clear_project_widget_state()

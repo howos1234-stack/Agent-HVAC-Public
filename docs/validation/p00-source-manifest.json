@@ -72,6 +72,10 @@
     "sha256": "40bd06b3344e383eef8a0513b33785fcce77d0d2ce2b1ae20cab8c2b2a855490"
   },
   {
+    "path": "src/agent_hvac/agents/workbench.py",
+    "sha256": "5fe52ba143a7c90a0cfb93ec810f5701cd2cbee3c8524c17a0607823ca674dba"
+  },
+  {
     "path": "src/agent_hvac/app/__init__.py",
     "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
   },
@@ -89,7 +93,7 @@
   },
   {
     "path": "src/agent_hvac/app/design_workbench_app.py",
-    "sha256": "5f093997f6a5386417bc30ca75692b7f21a6bd101b03d7fb9b9114950eba0fb4"
+    "sha256": "8d05c1c0a7d84e7f0ed3ff3cd79af6d59501f06582864bfdce5ae808c596a1c6"
   },
   {
     "path": "src/agent_hvac/app/result_view.py",
@@ -105,15 +109,19 @@
   },
   {
     "path": "src/agent_hvac/app/workbench_canvas_component.py",
-    "sha256": "f895d457e0f206c9f5de2e721b5bb7a81bc53856223f2b83cb382b86205ed2f8"
+    "sha256": "689a26666b864a9a8eede40f10a5fd89eb3e82df06539546545053994fe216d9"
   },
   {
     "path": "src/agent_hvac/app/workbench_command.py",
-    "sha256": "5d686464d14398cb2c144dbf03b0d168dc3ccd2018b39f0ed12ba14df0b419c6"
+    "sha256": "9f0112154acfc4488ec8577e662e9a686cb9c201e83dcb4966b0c4b63453c38d"
   },
   {
     "path": "src/agent_hvac/components/__init__.py",
     "sha256": "21426fdcb9a062da24c450df370d707f988a998a19a807d92a93bc511449eae7"
+  },
+  {
+    "path": "src/agent_hvac/components/candidate_trials.py",
+    "sha256": "268c4b30e4fac8eb1cf0a817dd4380e615f8f136ccfb015d3e7a19a92d4f6fc3"
   },
   {
     "path": "src/agent_hvac/components/compressor.py",
@@ -505,7 +513,7 @@
   },
   {
     "path": "tests/ws_a/test_compressor_map.py",
-    "sha256": "de639cfa412670048a30b88c6ee0c5c55571ee357d0cddadaee8ae974731d8c9"
+    "sha256": "e30086592bbbeb4540c1befbcd7f0c6abd88f8c4329367cf6aae46b709081713"
   },
   {
     "path": "tests/ws_a/test_coolprop_backend.py",
@@ -517,7 +525,7 @@
   },
   {
     "path": "tests/ws_a/test_excel_component_bundle_reload.py",
-    "sha256": "1ab40bab932d6c44572a35ab6b8818fead41ae2950d45a4caf5291075ed52203"
+    "sha256": "e87157a396c32e6809ab050f2ccacc840981daf29eca3766e6d463f1c6adb651"
   },
   {
     "path": "tests/ws_a/test_excel_compressor_integration.py",
@@ -533,7 +541,7 @@
   },
   {
     "path": "tests/ws_a/test_expansion_valve_map.py",
-    "sha256": "0555c9f63a0c561fd78a54a2f4264563f49ffaf6837fa7b0ca6c8489f7cd8db8"
+    "sha256": "ab10e59f572b9ab14004792ee6b0af50a8fca8679db28688dda71cadcd8a0f5f"
   },
   {
     "path": "tests/ws_a/test_heat_exchanger_1d.py",
@@ -541,7 +549,7 @@
   },
   {
     "path": "tests/ws_a/test_heat_exchanger_rated_point.py",
-    "sha256": "1dbd2b201a55278749b1a2d1ff752f8f81643fe96f934a9282e65aa7ee3f235d"
+    "sha256": "3c16dfa903abce64164dffe3b14f89b866fed68fc6306f0cb71c0d5e1f4afe9b"
   },
   {
     "path": "tests/ws_a/test_manufacturer_validation.py",
@@ -604,6 +612,10 @@
     "sha256": "153f96a70056e358c0a7c11f0edb4338f0c3de4a55d2d62d28e5392cf23c2844"
   },
   {
+    "path": "tests/ws_c/test_workbench_agent.py",
+    "sha256": "d3568ac0355d2c2ad359a19eef6dd0477039d52ffb09dbfc114f283cc10ce4bf"
+  },
+  {
     "path": "tests/ws_d/test_synthetic_search.py",
     "sha256": "406e8f92e746fb9d39ef487389dfdc5662a27ff3be9216ff54c256a2946e3794"
   },
@@ -613,7 +625,7 @@
   },
   {
     "path": "tests/ws_e/test_design_workbench.py",
-    "sha256": "140aa95f869bc2d57d1359467f6a233c99aa702af70d21318494b72b0579f429"
+    "sha256": "11c19625d6028636d64566db17f41403079ac0221ac454bdc4c0eb0b87d40e3f"
   },
   {
     "path": "tests/ws_e/test_file_generators.py",

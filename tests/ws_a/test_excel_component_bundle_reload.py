@@ -4,10 +4,23 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
 from openpyxl import load_workbook
 
+from agent_hvac.components.heat_exchanger_rated_point import (
+    HeatExchangerRatedPointError,
+    HeatExchangerRatedPointSelection,
+    select_heat_exchanger_rated_point,
+)
+from agent_hvac.components.product_adapter import adapt_product_performance_map
 from agent_hvac.database.index import ExcelComponentRepository
-from agent_hvac.schemas.components import ComponentType
+from agent_hvac.schemas.components import (
+    ComponentType,
+    OperatingMode,
+    ProductRecord,
+    ProductTopology,
+)
+from agent_hvac.utils.units import Quantity
 from tests.ws_a.test_excel_component_bundle_integration import _write_bundle
 
 
@@ -27,6 +40,21 @@ def _replace_product_id(path: Path, replacement: str) -> None:
                 sheet.cell(row=row, column=column).value = replacement
     workbook.save(path)
     workbook.close()
+
+
+def _gas_cooler_selection(product: ProductRecord) -> HeatExchangerRatedPointSelection:
+    return HeatExchangerRatedPointSelection(
+        product=product,
+        rated_point_id="gas-cooler-rated-1",
+        refrigerant="R744",
+        topology=ProductTopology.R744_TRANSCRITICAL,
+        operating_mode=OperatingMode.COOLING,
+        conditions={
+            "inlet_pressure": Quantity(value=90.0, unit="bar"),
+            "inlet_temperature": Quantity(value=375.0, unit="K"),
+            "mass_flow": Quantity(value=360.0, unit="kg/h"),
+        },
+    )
 
 
 def test_reload_removes_failed_product_and_restores_it_after_workbook_repair(
@@ -55,6 +83,13 @@ def test_reload_removes_failed_product_and_restores_it_after_workbook_repair(
         for product in repository.records
         for source in product.data_sources
     )
+    valve = next(
+        product
+        for product in repository.records
+        if product.component_type == ComponentType.EXPANSION_VALVE
+    )
+    valve_map = adapt_product_performance_map(valve, "valve-cmp-map-1")
+    assert valve_map.source_ids == ("valve-src-cmp-1",)
 
     compressor.write_bytes(original)
     recovered = repository.reload()
@@ -114,6 +149,8 @@ def test_bad_cross_workbook_source_reference_quarantines_only_its_parent_and_rec
     assert len(products[ComponentType.EXPANSION_VALVE].performance_maps) == 1
     assert products[ComponentType.GAS_COOLER].rated_points == ()
     assert any("source_id" in error for error in invalid.errors)
+    with pytest.raises(HeatExchangerRatedPointError, match="does not contain rated point"):
+        select_heat_exchanger_rated_point(_gas_cooler_selection(products[ComponentType.GAS_COOLER]))
 
     gas_cooler.write_bytes(original)
     recovered = repository.reload()
@@ -121,6 +158,10 @@ def test_bad_cross_workbook_source_reference_quarantines_only_its_parent_and_rec
     assert recovered.errors == ()
     restored = {record.component_type: record for record in repository.records}
     assert len(restored[ComponentType.GAS_COOLER].rated_points) == 1
+    rated = select_heat_exchanger_rated_point(
+        _gas_cooler_selection(restored[ComponentType.GAS_COOLER])
+    )
+    assert rated.rated_point_source_id == "gas-cooler-src-cmp-1"
 
 
 def test_reload_add_modify_delete_does_not_retain_removed_product_or_source(
