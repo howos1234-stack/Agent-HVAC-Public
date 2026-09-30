@@ -54,7 +54,7 @@
 | manifest | `python scripts/source_manifest.py --write`, `python scripts/source_manifest.py --check` | 기존 GUI 가상환경 | PASS | 151 files verified |
 | sdist/wheel | `python -m build --no-isolation --outdir '.artifact_work\dist-component-trials'` | 기존 GUI 가상환경 | PASS | sdist 및 wheel 생성. 최종 문서 반영 후 재실행 예정 |
 | locked base/gui 환경 재생성 | `uv sync --locked`, `uv sync --locked --extra gui` | 현재 호스트 | BLOCKED | `uv` 실행 파일을 찾지 못함. 기존 가상환경 결과를 locked 결과로 위장하지 않는다. |
-| 공개 원격 CI | [PR #6](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/6) 최신 head | GitHub Actions | NOT_RUN | 최초 head의 run 36589237467이 실행 중이며 완료 결과는 아직 확인하지 않았다. 실행 중은 PASS로 기록하지 않는다. |
+| 공개 원격 CI | [PR #6](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/6) head `6d92d5e8176576e3f1f6d662444a1aec7f725a5e`, [run 36589644366](https://github.com/howos1234-stack/Agent-HVAC-Public/actions/runs/36589644366) | GitHub Actions | PASS | Windows/Ubuntu × base/gui 4/4 SUCCESS. 최초 head의 실행 중 상태는 당시 이력이며 이 결과로 대체한다. 이후 integration 동기화 head의 CI는 별도로 확인한다. |
 
 - 수치 검증 기준값·단위·출처·허용오차·실제 오차(해당 시): 합성 fixture의 기존 기준을 사용한다.
 - 실패 재현 및 조치 / 미실행 이유: 첫 기본 전체 실행은 임시 폴더 상위 경로 누락에 따른 97개 setup 오류와 변경된 source manifest의 미갱신으로 실패했다. 상위 폴더 생성 및 manifest 재생성 후 전체를 재실행해 통과했다. `uv` 부재는 남은 환경 제한이다.
@@ -63,8 +63,8 @@
 ## 종료 및 인수인계
 
 - 완료한 범위: 공개 최신 integration 동기화, 합성 후보별 독립 평가 연결, 세 장비군 회귀 및 로컬 검증.
-- 남은 작업 / 알려진 한계 / blocker: PR #6 최신 head의 locked 원격 CI 및 리뷰. 실제 후보 비교 정책은 관리자 범위.
+- 남은 작업 / 알려진 한계 / blocker: PR #6 원래 head의 locked CI는 4/4 PASS였으며, 이후 최신 integration 동기화 head의 CI·리뷰는 별도 확인한다. 실제 후보 비교 정책은 관리자 범위.
 - 다음 담당자와 첫 실행 작업: 관리자에게 합성 전용 경계와 실패 격리, CI를 검토 요청한다.
 - `CURRENT_STATE.md` 갱신 여부: 갱신.
 - Phase checklist / Gate 상태와 증거: CV-1~CV-3, P06 전체, production, Gate 미승인 유지.
-- PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): 공개 [PR #6](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/6), REVIEW_PENDING, 미병합, 원격 CI run 36589237467 실행 중/결과 미확인.
+- PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): 공개 [PR #6](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/6), REVIEW_PENDING, 미병합. 기존 head `6d92d5e`의 원격 CI run 36589644366은 4/4 PASS, 동기화 head 결과는 별도 작업 기록을 따른다.

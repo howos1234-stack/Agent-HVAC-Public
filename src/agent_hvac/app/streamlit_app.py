@@ -124,24 +124,96 @@ def render_artifact(artifact: Artifact) -> None:
         if rows:
             st.dataframe(rows, hide_index=True)
             st.subheader("P-h 상태점")
+            states_in_order = list(result.state_points.items())
+            ph_points = [
+                {
+                    "state": name,
+                    "order": index,
+                    "h": state.enthalpy.value,
+                    "p": state.pressure.value,
+                }
+                for index, (name, state) in enumerate(states_in_order)
+            ]
+            if len(ph_points) > 1:
+                ph_points.append({**ph_points[0], "order": len(ph_points)})
             st.vega_lite_chart(
-                [
-                    {"h": state.enthalpy.value, "p": state.pressure.value}
-                    for state in result.state_points.values()
-                ],
+                ph_points,
                 {
                     "title": "MOCK · P-h states" if result.is_mock else "P-h states",
-                    "mark": "point",
+                    "mark": {"type": "line", "point": {"filled": True, "size": 80}},
                     "encoding": {
                         "x": {"field": "h", "type": "quantitative", "title": "h [J/kg]"},
-                        "y": {"field": "p", "type": "quantitative", "title": "p [Pa, absolute]"},
+                        "y": {
+                            "field": "p",
+                            "type": "quantitative",
+                            "title": "p [Pa, absolute]",
+                            "scale": {"type": "log"},
+                        },
+                        "order": {"field": "order", "type": "ordinal"},
+                        "tooltip": [
+                            {"field": "state", "type": "nominal", "title": "상태점"},
+                            {"field": "h", "type": "quantitative", "title": "h [J/kg]"},
+                            {"field": "p", "type": "quantitative", "title": "p [Pa(a)]"},
+                        ],
                     },
                 },
             )
-            st.caption("제공된 점만 표시합니다. 사이클 경로·포화선은 추정하지 않습니다.")
+            st.caption("제공된 상태점 순서를 연결합니다. 포화선은 임의 생성하지 않습니다.")
+
+            if states_in_order and all(state.entropy is not None for _, state in states_in_order):
+                st.subheader("T-s 상태점")
+                ts_points = [
+                    {
+                        "state": name,
+                        "order": index,
+                        "s": state.entropy.value,
+                        "temperature": state.temperature.value,
+                    }
+                    for index, (name, state) in enumerate(states_in_order)
+                    if state.entropy is not None
+                ]
+                if len(ts_points) > 1:
+                    ts_points.append({**ts_points[0], "order": len(ts_points)})
+                st.vega_lite_chart(
+                    ts_points,
+                    {
+                        "title": "MOCK · T-s states" if result.is_mock else "T-s states",
+                        "mark": {"type": "line", "point": {"filled": True, "size": 80}},
+                        "encoding": {
+                            "x": {
+                                "field": "s",
+                                "type": "quantitative",
+                                "title": "s [J/(kg·K)]",
+                                "scale": {"zero": False},
+                            },
+                            "y": {
+                                "field": "temperature",
+                                "type": "quantitative",
+                                "title": "T [K]",
+                                "scale": {"zero": False},
+                            },
+                            "order": {"field": "order", "type": "ordinal"},
+                            "tooltip": [
+                                {"field": "state", "type": "nominal", "title": "상태점"},
+                                {
+                                    "field": "s",
+                                    "type": "quantitative",
+                                    "title": "s [J/(kg·K)]",
+                                },
+                                {
+                                    "field": "temperature",
+                                    "type": "quantitative",
+                                    "title": "T [K]",
+                                },
+                            ],
+                        },
+                    },
+                )
+                st.caption("제공된 entropy 상태점만 사용합니다. 포화선은 임의 생성하지 않습니다.")
+            else:
+                st.info("T-s 그래프 대기 · 일부 상태점에 엔트로피 데이터가 없습니다.")
         else:
             st.info("제공된 상태점이 없습니다.")
-        st.info("T-s 그래프 대기 · 엔트로피 데이터가 제공되지 않았습니다.")
         st.json(
             {
                 "pressure_drops": {k: v.model_dump() for k, v in result.pressure_drops.items()},

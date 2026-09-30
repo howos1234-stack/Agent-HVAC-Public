@@ -5,7 +5,7 @@
   },
   {
     "path": ".github/workflows/ci.yml",
-    "sha256": "99b3a5f803abd9a428e7ec4606f199006cd711bb55cb72fc88439fe8994ba3f1"
+    "sha256": "e60291aa54cd29d8355bfb5d63320f3512c3d165b116cf2d682163286cd31c01"
   },
   {
     "path": ".python-version",
@@ -13,11 +13,15 @@
   },
   {
     "path": "pyproject.toml",
-    "sha256": "d3c1e05cf29efb3d810df5a1435561150dd78bc82876224da52cedfecfbc74b4"
+    "sha256": "3b14889751e6d5cc480de9bbf64a71467e422980ca6b048ee814670ea057aed6"
   },
   {
     "path": "scripts/analyze_design_study.py",
     "sha256": "d0482d39b66a926785b24567bedb152a39f15a307301f357eccfa5f2ddb0eda4"
+  },
+  {
+    "path": "scripts/check_public_data_boundary.py",
+    "sha256": "2ee046b3a47d1ec310c16ee725cd6ed0d6d4b1e88a736cf54bbf4bc3535b3d8c"
   },
   {
     "path": "scripts/check_work_record.py",
@@ -80,16 +84,32 @@
     "sha256": "dce31c947d54782dd56d1d8f1e37ce5540280245a176f928e14249df4be3351b"
   },
   {
+    "path": "src/agent_hvac/app/design_workbench.py",
+    "sha256": "1371216eae11839b2f3398dfebf51d56288ddd295128c8764d7c586dfad3616a"
+  },
+  {
+    "path": "src/agent_hvac/app/design_workbench_app.py",
+    "sha256": "5f093997f6a5386417bc30ca75692b7f21a6bd101b03d7fb9b9114950eba0fb4"
+  },
+  {
     "path": "src/agent_hvac/app/result_view.py",
     "sha256": "30cd5c7cbbd567629c119c985093907b8f2fb05d1e112892754e54a5d797c6c9"
   },
   {
     "path": "src/agent_hvac/app/streamlit_app.py",
-    "sha256": "9eb3e483d939b654f185591ddb69d452b26b174bda87c9a5f1ec99c4c739df47"
+    "sha256": "3ee5e2cfc8ff66fe0f2cad2882271f041ca7f7773883b233214bd5d6a7973f9f"
   },
   {
     "path": "src/agent_hvac/app/synthetic_flow.py",
     "sha256": "b3cd46f47f99c80a0b5365315d24e48d782d3ff05d4f5835e15a681cc3e03acf"
+  },
+  {
+    "path": "src/agent_hvac/app/workbench_canvas_component.py",
+    "sha256": "f895d457e0f206c9f5de2e721b5bb7a81bc53856223f2b83cb382b86205ed2f8"
+  },
+  {
+    "path": "src/agent_hvac/app/workbench_command.py",
+    "sha256": "5d686464d14398cb2c144dbf03b0d168dc3ccd2018b39f0ed12ba14df0b419c6"
   },
   {
     "path": "src/agent_hvac/components/__init__.py",
@@ -181,7 +201,7 @@
   },
   {
     "path": "src/agent_hvac/optimization/synthetic_search.py",
-    "sha256": "8a3f5b243c40ef913ed5377b0618f820927a477cb6c67168daae222368809f07"
+    "sha256": "53a21838880b309e0c0428c1c322877bce647322c39ef4bfb40fb543aca30851"
   },
   {
     "path": "src/agent_hvac/physics/__init__.py",
@@ -384,6 +404,10 @@
     "sha256": "10a3560f815a13741c1f4b865dbb2b98e3ded0054fe75784fe9f288696db03ab"
   },
   {
+    "path": "tests/contracts/test_public_data_boundary.py",
+    "sha256": "1f126c3445bcdf2266ec9fc06546eb8ed2dbc43d3ea4ceaac583a8cb4ce27580"
+  },
+  {
     "path": "tests/contracts/test_source_manifest.py",
     "sha256": "a2285fc7ff82a31d7cfa328190e59880ee7cd19768254801e8c6f8771b6b9014"
   },
@@ -492,6 +516,10 @@
     "sha256": "d99099514da18ced36cc261befc2073e84fc1a9a2354b7f5690c8944894edb21"
   },
   {
+    "path": "tests/ws_a/test_excel_component_bundle_integration.py",
+    "sha256": "a0f14700b0eece3ffde32f145fd4fcf4cd64929bf205ba3e0c1e5899d5d94e9f"
+  },
+  {
     "path": "tests/ws_a/test_excel_compressor_integration.py",
     "sha256": "2960fe855dbe916aecafcd762dea26587999558af696031334afa5f06f1aed1e"
   },
@@ -577,11 +605,15 @@
   },
   {
     "path": "tests/ws_d/test_synthetic_search.py",
-    "sha256": "780f5be62ce13dac32dd9d2f87b40af62a1289312b7954ce803e9cd8044c497e"
+    "sha256": "406e8f92e746fb9d39ef487389dfdc5662a27ff3be9216ff54c256a2946e3794"
   },
   {
     "path": "tests/ws_e/test_analysis_screen.py",
     "sha256": "0e30ca93f76401360ef251c44e5e621f6e33248dd96737163b54088794f8445d"
+  },
+  {
+    "path": "tests/ws_e/test_design_workbench.py",
+    "sha256": "140aa95f869bc2d57d1359467f6a233c99aa702af70d21318494b72b0579f429"
   },
   {
     "path": "tests/ws_e/test_file_generators.py",
@@ -593,7 +625,7 @@
   },
   {
     "path": "tests/ws_e/test_streamlit_app.py",
-    "sha256": "fddeb4ae5d51c412d4eb2795d5c1824662c06b75ed14d55f1ce5d817970a4b14"
+    "sha256": "554f22bc27faac424e8e7b8c589a3a54baf4cf769a8316392496624fba0034bc"
   },
   {
     "path": "tests/ws_e/test_synthetic_result_flow.py",
