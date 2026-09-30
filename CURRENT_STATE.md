@@ -92,9 +92,23 @@
 - Branch: `codex/ws-b/public-loader-adapter-audit`, start `0d6f886046a1b8730ee6bf992d8dbac7ccec1d44`.
 - pytest 임시경로에서 compressor·expansion valve·gas cooler Excel schema 0.2.0 workbook을 각각 생성하고 모든 제품·source·record ID를 결정론적으로 분리한다.
 - 세 workbook을 한 `ExcelComponentRepository`에서 동시에 적재한 뒤 `is_mock=true`, 제품 간 product/map/rated-point/point/value ID 비충돌, source ID와 원단위 보존, compressor/valve map adapter 및 HX rated-point adapter 전달을 확인한다.
-- 공개 PR [#10](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/10), 최초 head `30f87573434b1a81e4c2b01f75a15dea7c849776`, 최종 보완 head `3cc4db2bf09cd2b3b5625632e9a99ee5f7f97eb2`, integration 병합 `7277b75`. 새 bundle 및 기존 장비별 Excel 통합 집중 회귀 7 passed, contracts·WS-B·WS-A 관련 회귀 344 passed다. Ruff·mypy 75 source files와 GUI entry·manifest 158개·공개자료 경계·build는 PASS다. 최초 [CI run 36694757988](https://github.com/howos1234-stack/Agent-HVAC-Public/actions/runs/36694757988)과 보완 head의 [CI run 36704290398](https://github.com/howos1234-stack/Agent-HVAC-Public/actions/runs/36704290398)은 모두 Windows/Ubuntu × base/gui 4/4 PASS다. 로컬 전체 GUI AppTest 중단은 원격 전체 GUI PASS와 구분해 BLOCKED 이력으로 유지한다.
+- 공개 PR [#10](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/10), 최초 head `30f87573434b1a81e4c2b01f75a15dea7c849776`, 최종 보완 head `3cc4db2bf09cd2b3b5625632e9a99ee5f7f97eb2`, integration 병합 `7277b752ac8493d76cd8e7f1f8041cebdd7bb95c`. 새 bundle 및 기존 장비별 Excel 통합 집중 회귀 7 passed, contracts·WS-B·WS-A 관련 회귀 344 passed다. Ruff·mypy 75 source files와 GUI entry·manifest 158개·공개자료 경계·build는 PASS다. 최초 [CI run 36694757988](https://github.com/howos1234-stack/Agent-HVAC-Public/actions/runs/36694757988)과 보완 head의 [CI run 36704290398](https://github.com/howos1234-stack/Agent-HVAC-Public/actions/runs/36704290398)은 모두 Windows/Ubuntu × base/gui 4/4 PASS다. 로컬 전체 GUI AppTest 중단은 원격 전체 GUI PASS와 구분해 BLOCKED 이력으로 유지한다.
 - 실제 제조사 자료·제품 수치·production DB를 사용하지 않으며 CV-1~CV-3, P06 전체, production 및 Gate 상태는 변경하지 않는다.
 - Work record: [record](docs/development_log/2026-09-30_WS-B_sangryul1208_public-loader-adapter-bundle.md).
+- WS-A와 관리자가 합성 연결 검증 범위를 수용했으며 production·CV·Gate 승인은 별도다.
+
+- PR5 integration reconciliation: latest49dcfbc incorporated; WS-E GUI and WS-B boundary checks retained together. Manifest157; new-head CI required before merge.
+
+## WS-B 다중 workbook 오류 격리·reload 회귀 (2026-09-30, 진행 중)
+
+- Branch: `codex/ws-b/public-loader-reload-isolation`, start `7277b752ac8493d76cd8e7f1f8041cebdd7bb95c` (PR #10 integration merge).
+- PR #10의 정상 compressor·valve·gas-cooler 합성 bundle을 확장해 workbook fatal 오류, 파일 간 중복 `product_id`, 교차 workbook `source_id` 오류, 파일 add/modify/delete 및 수정 후 복구를 연속 reload로 검증한다.
+- 오류 reload 뒤 이전 제품·source가 남지 않고, 무관한 정상 제품과 adapter용 record가 유지되며, 원본 bytes 복구 시 최초 `database_version`과 제품 집합이 결정론적으로 복구되는지를 확인한다.
+- 공개 PR [#11](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/11), 최초 head `93ffe2165c3d07c0cca524baf7ab73aa22756383`. 새 합성 회귀 4 passed, bundle 및 기존 장비별 Excel 통합 11 passed, contracts·WS-B·WS-A 348 passed다. 최초 head의 [CI run 36710170632](https://github.com/howos1234-stack/Agent-HVAC-Public/actions/runs/36710170632)은 Windows/Ubuntu × base/gui 4/4 PASS다.
+- WS-A 요청에 따라 오류 후 정상 adapter 사용, 격리된 정격점 선택 실패, 복구 후 adapter 재사용을 명시하고 최신 integration `75755f9`을 반영했다. 보완 후 Excel 통합 11 passed, contracts·WS-B·WS-A 352 passed이며 새 head CI는 별도 확인한다.
+- production loader·ProductRecord·Schema·SI/단위 계약·WS-A adapter 구현은 변경하지 않는다. 제조사 자료나 실제 제품 수치는 사용하지 않는다.
+- CV-1~CV-3, 실제 제조사 검증, P06 전체, production 및 Gate 상태는 변경하지 않는다.
+- Work record: [record](docs/development_log/2026-09-30_2006_WS-B_sangryul1208_public-loader-reload-isolation.md).
 
 ## WS-A PR #6 최신 integration 동기화 (2026-09-30, 진행 중)
 
