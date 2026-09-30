@@ -2,6 +2,8 @@
 
 from unittest.mock import patch
 
+import pytest
+
 from agent_hvac.agents.workbench import (
     WorkbenchCommandRequest,
     run_workbench_command,
@@ -102,6 +104,20 @@ def test_wrong_efficiency_unit_is_rejected_before_solver_call() -> None:
     assert response.status == "rejected"
     assert "효율 단위" in response.messages[0]
     assert response.result is None
+    simulate.assert_not_called()
+
+
+@pytest.mark.parametrize("invalid_value", ["-0.7", "2.0"])
+def test_any_explicit_invalid_efficiency_rejects_the_complete_command(
+    invalid_value: str,
+) -> None:
+    command = COMPLETE_COMMAND + f" 등엔트로피 효율 {invalid_value}."
+    with patch("agent_hvac.agents.workbench.simulate_project") as simulate:
+        response = run_workbench_command(WorkbenchCommandRequest(prompt=command, execute=True))
+
+    assert response.status == "rejected"
+    assert response.result is None
+    assert response.messages == ("등엔트로피 효율은 0보다 크고 1 이하여야 합니다.",)
     simulate.assert_not_called()
 
 

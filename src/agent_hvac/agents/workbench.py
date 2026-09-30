@@ -14,6 +14,8 @@ from agent_hvac.schemas.base import ContractModel, NonEmptyStr
 from agent_hvac.schemas.results import SimulationResult, SolverStatus
 from agent_hvac.utils.exceptions import HVACError
 
+_INVALID_EFFICIENCY_MESSAGE = "등엔트로피 효율은 0보다 크고 1 이하여야 합니다."
+
 
 class WorkbenchCommandRequest(ContractModel):
     prompt: NonEmptyStr
@@ -36,6 +38,12 @@ def run_workbench_command(request: WorkbenchCommandRequest) -> WorkbenchCommandR
         plan = interpret_command(request.prompt)
     except ValueError as exc:
         return WorkbenchCommandResponse(status="rejected", messages=(str(exc),))
+    if _INVALID_EFFICIENCY_MESSAGE in plan.notes:
+        return WorkbenchCommandResponse(
+            status="rejected",
+            plan=plan,
+            messages=(_INVALID_EFFICIENCY_MESSAGE,),
+        )
 
     if plan.refrigerant is None:
         return WorkbenchCommandResponse(

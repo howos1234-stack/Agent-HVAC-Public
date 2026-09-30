@@ -28,6 +28,7 @@
 | `docs/validation/p00-source-manifest.json` | 신규 source와 test hash 반영 |
 | `src/agent_hvac/app/workbench_command.py` | 잘못된 효율 단위와 상충하는 중복 조건을 명령 해석 단계에서 명시적으로 거부 |
 | `tests/ws_c/test_workbench_agent.py` | 입력 거부 시 solver 미호출과 미수렴 결과 보존 회귀 추가 |
+| `src/agent_hvac/agents/workbench.py` | parser의 진단 note를 보존하면서 유효 효율과 함께 적힌 음수·1 초과 효율을 Agent 실행 경계에서 전체 거부 |
 
 ## 결정, 가정 및 출처
 
@@ -57,9 +58,13 @@
 | 보완 head base 전체 | `uv run --locked pytest -q` | Windows / 기존 GUI-capable 환경 | PASS | 691 passed; clean base-only 환경 증거로 사용하지 않음 |
 | 보완 head GUI 전체 | `uv run --locked --extra gui pytest -q` | Windows / GUI dependency | PASS | 691 passed |
 | 보완 head 품질·계약 | Ruff, format, mypy, GUI strict mypy, manifest 계약, build | Windows | PASS | 159-file manifest, 계약 9 passed, sdist/wheel 생성 |
+| 2차 검토 보완 집중검사 | `uv run --locked --extra gui pytest tests/ws_c/test_workbench_agent.py -q` | Windows / GUI | PASS | 10 passed; `0.75`와 `-0.7` 또는 `2.0` 혼합 입력 전체 거부 및 solver 미호출 |
+| 2차 보완 base 전체 | `uv run --locked pytest -q` | Windows / 기존 GUI-capable 환경 | PASS | 693 passed |
+| 2차 보완 GUI 전체 | `uv run --locked --extra gui pytest -q` | Windows / GUI | PASS | 693 passed |
+| 2차 보완 품질·계약 | Ruff, format, mypy, manifest 계약, build | Windows | PASS | 159-file manifest, 계약 9 passed, sdist/wheel 생성 |
 
 - 수치 검증 기준값·단위·출처·허용오차·실제 오차(해당 시): 제품 기준값 없음; 기존 합성 baseline 입력만 사용 예정.
-- 실패 재현 및 조치 / 미실행 이유: 최초 테스트의 잘못된 기대 2건은 기존 계약에 맞게 정정했다. 관리자 검토에서 효율의 잘못된 단위와 상충하는 중복 조건이 조용히 승인되는 결함을 재현해 실행 전 거부와 solver 미호출 회귀를 추가했다. 보완 head 로컬 검증은 모두 통과했고 원격 CI는 push 후 확인한다.
+- 실패 재현 및 조치 / 미실행 이유: 최초 테스트의 잘못된 기대 2건은 기존 계약에 맞게 정정했다. 1차 검토의 잘못된 효율 단위와 상충 조건에 이어, 2차 검토에서 유효 효율과 함께 적힌 범위 밖 효율이 무시되는 결함을 재현했다. parser에서 즉시 예외를 내는 첫 수정은 GUI가 진단 note를 보존하는 기존 회귀 3건을 깨뜨렸다. parser 계약을 복원하고 Agent 실행 경계에서 note를 거부하도록 좁혀 WS-C·WS-E 집중 64건을 통과했다.
 - diff 검토 결과: LLM SDK·공통 schema·물리 solver·제품 DB·lockfile 변경 없음. 일반 baseline 결과는 기존 계약대로 `is_mock=false`이며 제조사 제품 검증을 의미하지 않는다.
 
 ## 종료 및 인수인계
