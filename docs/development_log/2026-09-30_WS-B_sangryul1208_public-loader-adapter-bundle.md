@@ -23,7 +23,7 @@
 
 | 변경 파일 | 변경 내용 및 이유 |
 |---|---|
-| `tests/ws_a/test_excel_component_bundle_integration.py` | 세 합성 workbook의 동시 적재, 고유 ID/source 보존과 WS-A adapter 전달을 검증한다. |
+| `tests/ws_a/test_excel_component_bundle_integration.py` | 세 합성 workbook의 동시 적재, product/map/rated-point/point/value ID 비충돌, source·원단위 보존과 WS-A adapter 전달을 검증한다. |
 | `CURRENT_STATE.md` | 공개 bundle 검증 범위와 상태를 기록한다. |
 | `docs/validation/p00-source-manifest.json` | 새 합성 회귀와 작업 기록의 source hash를 반영한다. |
 
@@ -32,6 +32,7 @@
 | 항목 | 결정 또는 가정 | 근거/출처 | 영향 및 후속 확인 |
 |---|---|---|---|
 | 합성 전용 | 모든 workbook은 pytest 임시경로에서 생성하고 `is_mock=true`를 유지한다. | 공개 저장소 자료 경계와 기존 합성 fixture 계약. | 실제 제조사 검증·production 승인 근거로 사용하지 않는다. |
+| provenance 검증 범위 | bundle은 세 제품의 source ID, map/rated-point source와 map/rated 값의 원단위·값별 source prefix를 직접 확인한다. | PR #10 WS-A 검토 요청. | 파일·sheet·row 등 전체 provenance와 정확한 SI 값은 기존 장비별 Excel 통합 테스트가 검증하며 두 범위를 혼동하지 않는다. |
 
 - 단위 / 물리식 / 상관식 / 제품 데이터 영향: 없음.
 - public interface 영향 / ACR 링크: 없음. 기존 공개 계약의 통합 회귀만 추가한다.
@@ -50,10 +51,11 @@
 | 공개자료 경계 | `python scripts/check_public_data_boundary.py` | Windows | PASS | 허용 template·GUI 증빙 외 제한 artifact와 component data 없음. |
 | source manifest | `python scripts/source_manifest.py --write`, `--check` | Windows | PASS | 158 files. |
 | build | `python -m build --no-isolation` | Windows | PASS | sdist와 wheel 생성. |
-| 원격 CI | 공개 PR head | GitHub Actions | NOT_RUN | push 및 PR 제출 후 확인한다. |
+| 최초 원격 CI | PR #10 head `30f87573434b1a81e4c2b01f75a15dea7c849776`, [run 36694757988](https://github.com/howos1234-stack/Agent-HVAC-Public/actions/runs/36694757988) | GitHub Actions | PASS | Windows/Ubuntu × base/gui 4/4 PASS. manifest·공개자료 경계·pytest·build 단계 포함. |
+| 보완 head 원격 CI | PR #10 보완 head | GitHub Actions | NOT_RUN | ID·provenance assertion 보완 push 후 재실행한다. |
 
 - 수치 검증 기준값·단위·출처·허용오차·실제 오차(해당 시): 기존 합성 fixture 기준만 사용하며 실제 제품 허용오차와 무관하다.
-- 실패 재현 및 조치 / 미실행 이유: 최초 Ruff 검사에서 긴 assertion 1건을 확인해 formatter로 정정했다. 첫 전체 테스트는 재사용 venv가 private editable package를 우선 참조해 공개 WS-E module collection이 실패하여 `PYTHONPATH=src`로 수정했다. 이후 전체 GUI 실행은 WS-E AppTest 장시간 정체로 중단했으나 직접 관련된 contracts·WS-B·WS-A 344개는 완주했다.
+- 실패 재현 및 조치 / 미실행 이유: 최초 Ruff 검사에서 긴 assertion 1건을 확인해 formatter로 정정했다. 첫 전체 테스트는 재사용 venv가 private editable package를 우선 참조해 공개 WS-E module collection이 실패하여 `PYTHONPATH=src`로 수정했다. 이후 전체 GUI 실행은 WS-E AppTest 장시간 정체로 중단했으나 직접 관련된 contracts·WS-B·WS-A 344개는 완주했다. WS-A 보완 후 첫 관련 회귀는 manifest 갱신 전이라 343 passed/manifest 1 failed였고 `source_manifest.py --write` 후 344 passed로 재확인했다.
 - diff 검토 결과: production loader·ProductRecord·WS-A adapter 구현은 변경하지 않고 합성 통합 회귀와 기록만 추가한다.
 
 ## 종료 및 인수인계
@@ -63,4 +65,4 @@
 - 다음 담당자와 첫 실행 작업: WS-A는 기존 adapter 소비 계약 유지 여부를 검토한다.
 - `CURRENT_STATE.md` 갱신 여부: 갱신.
 - Phase checklist / Gate 상태와 증거: CV-1~CV-3, P06 전체, production 및 Gate 상태 변경 없음.
-- PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): PR 미제출, REVIEW_PENDING, 미병합, CI NOT_RUN.
+- PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): 공개 PR #10, WS-A 보완 요청 반영 중, 미병합. 최초 head CI 4/4 PASS, 보완 head CI NOT_RUN.
