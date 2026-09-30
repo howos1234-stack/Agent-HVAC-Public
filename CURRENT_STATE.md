@@ -12,14 +12,14 @@
 - Next: independently investigate the cross-platform failure in a separate PR; transfer only reviewed public-safe changes.
 - Initial export record: [record](docs/development_log/2026-09-29_public-export.md).
 
-## Pending public WS-E workbench PR
+## Integrated public WS-E workbench
 
 - Branch: `codex/ws-e/ljh67340/design-workbench-migration`; base `f19f2fefc05c78bb050e024b9e15651b0fd4bef4`.
 - Scope: public-safe P12 schematic workbench, direct six-condition baseline execution, component inlet/outlet state display, project-fingerprint result invalidation and synthetic-only regressions.
 - Existing public WS-D P09 implementation and tests match the reviewed private source snapshot; they are not duplicated in this GUI change. WS-C/Agent integration remains a separate PR.
 - Local Windows validation after merging latest integration: WS-E 121 passed; base-command 672 passed in the existing GUI-capable `.venv`; GUI 672 passed; Ruff, format, mypy, both GUI entry-point mypy checks, 155-file manifest and package build passed. The local base command was not a clean base-only environment.
 - Actual Chromium 153 pointer validation passed for blank-canvas component creation, node drag, port drag closed loop, direct inputs, convergence/state display, result invalidation and unsupported connected-component blocking. Evidence: [record](docs/development_log/2026-09-29_WS-E_ljh67340_public-workbench-migration.md).
-- Public PR [#3](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/3) is `REVIEW_PENDING`. [Remote CI run 36579413223](https://github.com/howos1234-stack/Agent-HVAC-Public/actions/runs/36579413223) passed Windows/Ubuntu × base/gui 4/4 at head `9d5bcbd`; the clean remote base jobs passed 634 tests with 14 skips, while GUI jobs passed 672 tests. Integration merge remains pending.
+- Public PR [#3](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/3) was approved and merged to integration as `49dcfbc522f798b1567e61aeabe198c7502bbf27`. Its latest-head Windows/Ubuntu × base/gui CI passed 4/4; post-merge CI is tracked separately.
 - This work does not imply manufacturer validation, production use, CV/P06 completion or Gate approval.
 
 ## WS-B public product-database audit
@@ -37,7 +37,7 @@
 
 ## Pending public WS-D candidate-identity regression
 
-- Branch `codex/ws-d/ljh67340/synthetic-search-audit` starts from public integration `041121cf7036409d160f462aab87a163a05a8cc6` and is independent of pending WS-E PR #3.
+- Public PR [#7](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/7) started from integration `041121cf7036409d160f462aab87a163a05a8cc6` and then merged latest integration `49dcfbc522f798b1567e61aeabe198c7502bbf27`; it is independent of the integrated WS-E implementation.
 - P09 now rejects duplicate candidate `product_id` values before assignment/product-combination generation or solver invocation, preserving deterministic candidate identity without changing frozen schemas.
 - Local Windows validation: WS-D 10 passed; base-command 618 passed in the existing environment; GUI 618 passed; Ruff, format, mypy, 150-file manifest and package build passed.
 - This is mock synthetic input validation only. It does not add HVAC physics, manufacturer products, production selection or Gate approval.

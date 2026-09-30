@@ -5,10 +5,10 @@
 - 시작 / 종료 시각 및 시간대: 2026-09-30 13:45 +09:00 / 2026-09-30 13:58 +09:00 (Asia/Seoul)
 - 수행자 / human owner: LJH / @ljh67340
 - Phase / Workstream: P09 / WS-D
-- 작업 상태: LOCAL_VALIDATED / PR 준비
+- 작업 상태: REVIEW_PENDING (public PR #7)
 - 사용자 요청과 목표: 공개 PR #3 관리자 검토 대기 중 독립적으로 진행 가능한 작업을 조사하고, P09 synthetic 탐색의 후보 식별성 공백을 보강한다.
 - 허용 파일 / 제외 파일: P09 synthetic optimizer·합성 회귀 테스트·공개 작업 기록·manifest·현재 상태 / WS-E PR #3 파일, 공통 schema, 물리 solver, 제품 DB, lockfile 제외
-- branch / 시작 commit / 종료 checkpoint(확인된 경우): `codex/ws-d/ljh67340/synthetic-search-audit` / `041121cf7036409d160f462aab87a163a05a8cc6` / 미정
+- branch / 시작 commit / 종료 checkpoint(확인된 경우): `codex/ws-d/ljh67340/synthetic-search-audit` / `041121cf7036409d160f462aab87a163a05a8cc6` / 구현 commit `f5d95cb19dee5b75ec2d91e3e82b77db88f812db`
 - 시작 시 기존 변경: 없음
 - 읽은 문서 및 버전: `AGENTS.md`, `CURRENT_STATE.md`, `docs/development/WORK_PROTOCOL.md`, P09 구현·테스트 @ `041121c`
 - 의존 작업 / frozen interface: 기존 `DesignOptimizer`, `DesignProblem`, `OptimizationResult` 계약 유지
@@ -49,6 +49,8 @@
 | 정적 검사 | `uv run --locked ruff check .`; `ruff format --check .`; `mypy` | Windows | PASS | 151 files formatted, 72 source files typed |
 | manifest | `uv run --locked python scripts/source_manifest.py --check` | Windows | PASS | 150 files verified |
 | build | `uv build --no-build-isolation` | Windows | PASS | sdist와 wheel 생성 |
+| 최신 integration 집중검사 | `uv run --locked pytest tests/ws_d/test_synthetic_search.py tests/ws_e -q` | Windows / Python 3.12 | PASS | PR #3 병합 commit `49dcfbc` 반영 후 131 passed |
+| GUI 진입점 mypy | `uv run --locked --extra gui mypy src/agent_hvac/app/streamlit_app.py src/agent_hvac/app/design_workbench_app.py` | Windows | PASS | 최신 integration의 두 GUI entrypoint 통과 |
 
 - 수치 검증 기준값·단위·출처·허용오차·실제 오차(해당 시): 해당 없음.
 - 실패 재현 및 조치 / 미실행 이유: 같은 `product_id`를 가진 서로 다른 mock 제품 두 개가 기존에는 같은 candidate design ID를 생성할 수 있었다. 새 검증은 탐색 materialization 전에 failed 결과를 반환한다. 원격 CI는 PR push 후 확인 예정.
@@ -57,8 +59,8 @@
 ## 종료 및 인수인계
 
 - 완료한 범위: P09 후보 식별자 중복 사전 거부, 회귀 테스트, 로컬 전체 검증.
-- 남은 작업 / 알려진 한계 / blocker: 공개 integration 대상 PR과 원격 CI·관리자 리뷰.
+- 남은 작업 / 알려진 한계 / blocker: public PR #7의 최신 integration 반영 head 원격 CI와 관리자 리뷰.
 - 다음 담당자와 첫 실행 작업: 관리자가 새 PR의 중복 후보 거부 범위와 원격 CI를 검토한다.
 - `CURRENT_STATE.md` 갱신 여부: 완료.
 - Phase checklist / Gate 상태와 증거: mock synthetic 범위이며 실제 HVAC·production·Gate 승인 아님.
-- PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): PR 준비; 원격 CI·리뷰·병합 미수행.
+- PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): public PR #7 REVIEW_PENDING; 최초 head 원격 CI 실행 중에 integration이 전진해 최신 `49dcfbc`를 merge했으며 새 head CI 재실행 예정; integration 미병합.
