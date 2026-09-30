@@ -26,6 +26,8 @@
 | `src/agent_hvac/app/design_workbench_app.py` | 검증된 프로젝트 JSON snapshot 기반 50단계 Undo/Redo와 결과 무효화, 누락 조건 자동 펼침 |
 | `src/agent_hvac/app/workbench_canvas_component.py` | 캔버스 `Ctrl+Z`, `Ctrl+Y`, `Ctrl+Shift+Z` 단축키와 도움말 |
 | `tests/ws_e/test_design_workbench.py` | 추가/삭제 Undo, Redo, 결과 무효화, 초기 입력 준비도, 단축키 wiring 회귀 |
+| `src/agent_hvac/app/design_workbench_app.py` | 업로드 파일을 내용 해시별 한 번의 import 동작으로 처리해 Undo 후 재적용 방지 |
+| `tests/ws_e/test_design_workbench.py` | JSON 업로드 직후 Undo가 기존 프로젝트를 복원하고 Redo를 활성화하는 회귀 보강 |
 | `CURRENT_STATE.md` | 검토 대기 범위와 한계 기록 |
 
 ## 결정, 가정 및 출처
@@ -55,9 +57,13 @@
 | 전체 GUI 최종 | `uv run --locked --extra gui pytest -q` | Windows / GUI | PASS | 684 passed |
 | 전체 품질 | `uv run --locked ruff check .`; `uv run --locked ruff format --check .`; `uv run --locked mypy src` | Windows | PASS | Ruff/format 162 files, mypy 75 source files 통과 |
 | package build | `uv build` | Windows | PASS | sdist와 wheel 생성 |
+| 검토 보완 집중검사 | `uv run --locked --extra gui pytest tests/ws_e/test_design_workbench.py -q` | Windows / GUI | PASS | 55 passed; 업로드 상태에서 Undo 복원 포함 |
+| 검토 보완 base 전체 | `uv run --locked pytest -q` | Windows / 기존 GUI-capable 환경 | PASS | 684 passed |
+| 검토 보완 GUI 전체 | `uv run --locked --extra gui pytest -q` | Windows / GUI | PASS | 684 passed |
+| 검토 보완 품질·계약 | Ruff, format, mypy, GUI strict mypy, manifest 계약, build | Windows | PASS | 157-file manifest, 계약 9 passed, sdist/wheel 생성 |
 
 - 수치 검증 기준값·단위·출처·허용오차·실제 오차(해당 시): 해당 없음.
-- 실패 재현 및 조치 / 미실행 이유: 전체 사전 검사에서 새 테스트 때문에 source manifest만 불일치했다. manifest를 157 files로 갱신한 뒤 계약 검사와 전체 base/GUI를 재실행해 모두 통과했다.
+- 실패 재현 및 조치 / 미실행 이유: 최초 전체 검사에서는 manifest만 갱신해 정상화했다. 관리자 재검토에서 file uploader 값이 rerun마다 다시 적용되어 Undo 복원을 덮는 결함을 재현했다. 선택된 파일 내용별로 한 번만 import하고 업로드가 제거되면 식별자를 초기화하도록 보완했다.
 - diff 검토 결과: 공통 schema, solver, 제품 DB, lockfile 변경 없음.
 
 ## 종료 및 인수인계

@@ -1298,3 +1298,12 @@ def test_streamlit_json_upload_invalidates_previous_result() -> None:
 
     _assert_workbench_result_invalidated(app)
     assert any("냉매 R134a" in item.value for item in app.caption)
+
+    undo = next(button for button in app.button if button.label == "↶ 실행 취소")
+    assert not undo.disabled
+    app = undo.click().run(timeout=20)
+
+    _assert_workbench_result_invalidated(app)
+    assert any("냉매 R744" in item.value for item in app.caption)
+    redo = next(button for button in app.button if button.label == "↷ 다시 실행")
+    assert not redo.disabled

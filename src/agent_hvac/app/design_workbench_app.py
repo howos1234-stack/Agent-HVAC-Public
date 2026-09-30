@@ -142,6 +142,7 @@ _HISTORY_CURRENT_KEY = "project_history_current"
 _HISTORY_UNDO_KEY = "project_history_undo"
 _HISTORY_REDO_KEY = "project_history_redo"
 _HISTORY_LIMIT = 50
+_IMPORTED_UPLOAD_KEY = "workbench_imported_upload"
 
 
 def _project_fingerprint(project: WorkbenchProject) -> str:
@@ -814,15 +815,22 @@ def main() -> None:
 
     uploaded = st.sidebar.file_uploader("워크벤치 JSON 열기", type=["json"])
     if uploaded is not None:
-        try:
-            uploaded_project = load_project(uploaded.getvalue())
-            if _project_fingerprint(uploaded_project) != _project_fingerprint(project):
-                _invalidate_workbench_result()
-            project = uploaded_project
-            st.session_state.workbench_project = uploaded_project
-        except (ValidationError, ValueError) as error:
-            st.sidebar.error("워크벤치 JSON 검증 실패")
-            st.sidebar.text(str(error))
+        upload_bytes = uploaded.getvalue()
+        upload_id = hashlib.sha256(upload_bytes).hexdigest()
+        if st.session_state.get(_IMPORTED_UPLOAD_KEY) != upload_id:
+            try:
+                uploaded_project = load_project(upload_bytes)
+                if _project_fingerprint(uploaded_project) != _project_fingerprint(project):
+                    _invalidate_workbench_result()
+                project = uploaded_project
+                st.session_state.workbench_project = uploaded_project
+                st.session_state[_IMPORTED_UPLOAD_KEY] = upload_id
+                _sync_project_history(uploaded_project)
+            except (ValidationError, ValueError) as error:
+                st.sidebar.error("워크벤치 JSON 검증 실패")
+                st.sidebar.text(str(error))
+    else:
+        st.session_state.pop(_IMPORTED_UPLOAD_KEY, None)
     _render_project_history_controls()
     if st.sidebar.button("기본 사이클로 초기화"):
         project = _basic_project(project.refrigerant)
