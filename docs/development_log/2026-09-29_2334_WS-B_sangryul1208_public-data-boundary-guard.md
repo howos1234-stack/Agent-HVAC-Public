@@ -38,6 +38,7 @@
 | component data | `data/components`에는 `.gitkeep`만 허용한다. | 실제 제조사 데이터는 private 저장소에 유지한다는 공개 경계. | JSON이라도 실제 제품 DB로 오해될 파일은 공개 data 경로에서 차단된다. |
 | 제한 artifact | Git 추적 파일 전체에서 PDF, Excel 변형, 이미지, ZIP을 검사한다. 빈 template과 WS-E 공개 GUI 검증 이미지 3개만 경로 기반으로 허용한다. | 제조사 원본·조사 workbook·스크린샷을 공개하지 않는 승인 정책과 PR #3 공개 증빙. | `docs/build` 등 디렉터리명으로 우회할 수 없다. 새 공개 binary는 코드 리뷰로 allowlist 변경 근거가 필요하다. |
 | 공개 시점 한계 | CI는 공개 push 뒤 실행되며 최초 공개 자체를 사전에 차단하지 못한다. | PR #5 관리자 수정 요청. | push 전 로컬 검사 필수. 이미 공개된 민감 자료는 이 검사만으로 회수할 수 없고 별도 이력 정화가 필요하다. |
+| 검사 보증 범위 | Git 추적 경로, 제한 확장자, 승인 template hash와 명시적 binary allowlist만 구조적으로 검사한다. | PR #5 WS-A 재검토. | 임의 이름·확장자의 텍스트 파일 내부에 민감 내용이 없음을 보증하지 않으며 human review를 대체하지 않는다. |
 
 - 단위 / 물리식 / 상관식 / 제품 데이터 영향: 없음. 제품 수치, SI 변환, validator 및 loader 동작을 변경하지 않는다.
 - public interface 영향 / ACR 링크: 없음. 개발·CI 검사만 추가한다.
@@ -57,7 +58,8 @@
 | source manifest | `python scripts\\source_manifest.py --write`, `--check` | Windows | PASS | 152 source files. |
 | build | `python -m build --no-isolation` | Windows | PASS | sdist와 wheel 생성. |
 | 최초 원격 CI | PR #5 최초 head `d7dc54c854eb890e9926ffa69a56fbce80748872` | GitHub Actions | PASS | 관리자 확인 기준 Windows/Ubuntu × base/gui 4개 통과. 보완 head CI와 구분한다. |
-| 보완 원격 CI | PR #5 보완 head | GitHub Actions | NOT_RUN | push 후 새 head에서 다시 확인한다. |
+| 보완 원격 CI | PR #5 head `c1a29eb1faa7e17479217f0c2fc2a50bdb357d8b`, [run 36667231659](https://github.com/howos1234-stack/Agent-HVAC-Public/actions/runs/36667231659) | GitHub Actions | PASS | Windows/Ubuntu × base/gui 4/4 PASS. 각 job에서 공개자료 경계 검사 통과. |
+| WS-A 독립 검증 | 공개자료 경계, WS-A product adapter 및 performance-map 집중 실행 | WS-A | PASS | 34 passed. ProductRecord·Schema·loader·SI 변환·map/envelope evaluator·장비 adapter 무변경과 소비 계약 무영향을 확인하고 수용했다. |
 
 - 수치 검증 기준값·단위·출처·허용오차·실제 오차(해당 시): 제품 수치를 사용하지 않아 해당 없음.
 - 실패 재현 및 조치 / 미실행 이유: 첫 집중 실행에서 test directory 생성의 `exist_ok` 누락과 `.artifact_work` 미제외를 확인해 수정했다. 남은 권한 제한 pytest 임시 폴더 때문에 첫 전체 Ruff format 검사가 중단됐으며 해당 임시 폴더만 제거한 뒤 153개 파일 검사가 통과했다.
@@ -66,8 +68,8 @@
 ## 종료 및 인수인계
 
 - 완료한 범위: 경계 검사, 합성 회귀, CI 연결, 작업 기록 및 로컬 품질·build 검증.
-- 남은 작업 / 알려진 한계 / blocker: PR #5 보완 head의 원격 Windows/Ubuntu × base/gui CI와 재검토. 공개 push 뒤 CI이므로 최초 공개 전 차단은 별도 로컬 실행과 contributor 절차에 의존한다.
+- 남은 작업 / 알려진 한계 / blocker: 관리자 최종 검토와 integration 병합 판단. 공개 push 뒤 CI이므로 최초 공개 전 차단은 별도 로컬 실행과 contributor 절차에 의존하며, 임의 이름의 텍스트 내용은 자동 보증하지 않는다.
 - 다음 담당자와 첫 실행 작업: WS-A는 제품 소비 계약 변경이 없음을 확인하고 관리자는 공개자료 경계 정책을 검토한다.
 - `CURRENT_STATE.md` 갱신 여부: 갱신.
 - Phase checklist / Gate 상태와 증거: CV-1~CV-3, P06 전체, production 및 Gate 상태 변경 없음.
-- PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): 공개 PR #5, CHANGES_REQUESTED 보완 중, 미병합. 최초 head CI 4/4 PASS, 보완 head CI NOT_RUN.
+- PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): 공개 PR #5, WS-A 소비 계약 범위 수용, 관리자 최종 판단 대기, 미병합. 최초·보완 head CI 모두 4/4 PASS.

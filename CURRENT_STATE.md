@@ -38,7 +38,8 @@
 - 공개 저장소의 Git 추적 파일을 기준으로 binary allowlist를 검사한다. 제품자료는 승인된 15-sheet Excel schema 0.2.0 template 한 개만 허용하고, WS-E 공개 GUI 검증 이미지 3개는 경로를 명시해 별도 허용한다.
 - 빈 template은 승인 SHA-256 `6043d727...aeb2cd`, sheet 순서, 모든 첫 행 header와 2행 이후 공백을 모두 검증한다. 따라서 cell 밖 comment·embedded payload를 포함한 binary 변조도 거부한다. 제조사 PDF·추가 Excel·승인되지 않은 이미지·ZIP과 `data/components`의 실제 record는 CI에서 거부한다. pytest가 임시 생성하는 합성 workbook은 repository에 저장하지 않는다.
 - ProductRecord, schema, loader, 단위 변환, WS-A adapter 및 실제 제품 데이터는 변경하지 않는다.
-- 관리자 재현 3건(`docs/build` 우회, template 첫 행·비셀 payload 변조, 공개 GUI 이미지 오탐)을 보완했다. 집중 합성 회귀: 10 passed. 전체 품질 검사와 공개 matrix CI는 후속 확인한다.
+- 관리자 재현 3건(`docs/build` 우회, template 첫 행·비셀 payload 변조, 공개 GUI 이미지 오탐)을 보완했다. 집중 합성 회귀 10 passed, contracts·WS-B 회귀 116 passed, Ruff·mypy·manifest 152개·build PASS다. 최신 head `c1a29eb1faa7e17479217f0c2fc2a50bdb357d8b`의 [Foundation CI run 36667231659](https://github.com/howos1234-stack/Agent-HVAC-Public/actions/runs/36667231659)은 Windows/Ubuntu × base/gui 4/4 PASS이며 각 job의 경계 검사도 통과했다.
 - 이 검사는 로컬 실행과 공개 push 뒤 CI에서 동작한다. GitHub에 최초 push되는 순간의 공개를 사전에 막지 못하므로, contributor는 push 전에 로컬 검사를 실행해야 하며 민감 자료가 이미 공개됐다면 별도 이력 정화·자격 증명 폐기 절차가 필요하다.
+- 이 결과는 Git 추적 경로, 제한 확장자, 승인 template과 명시적 binary allowlist에 대한 제한적 검사다. 임의 이름·확장자의 텍스트에 포함된 민감 내용까지 없음을 보증하지 않는다. WS-A는 PR #5의 제품 소비 계약 무영향 범위를 최신 head에서 수용했다.
 - CV-1~CV-3, 실제 제조사 검증, P06 전체, production 및 Gate 상태는 변경하지 않는다.
 - Work record: [record](docs/development_log/2026-09-29_2334_WS-B_sangryul1208_public-data-boundary-guard.md).
