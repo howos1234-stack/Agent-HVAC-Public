@@ -5,7 +5,7 @@
 - 시작 / 종료 시각 및 시간대: 2026-09-30 17:10 +09:00 / 2026-09-30 17:45 +09:00 (Asia/Seoul)
 - 수행자 / human owner: LJH / @ljh67340
 - Phase / Workstream: P12 / WS-E
-- 작업 상태: LOCAL_VALIDATED
+- 작업 상태: REVIEW_PENDING
 - 사용자 요청과 목표: 관리자 검토 대기 중 GUI 사용성을 실제 브라우저에서 점검하고 편집 실수 복구와 누락 입력 발견성을 개선한다.
 - 허용 파일 / 제외 파일: WS-E app·canvas asset·합성 GUI 테스트·공개 기록·manifest / 공통 schema, 물리 solver, 제품 DB, lockfile 제외
 - branch / 시작 commit / 종료 checkpoint(확인된 경우): `codex/ws-e/ljh67340/workbench-ux-followup` / `d97edf1f5854e44607d657d58710d320f5c8fa94` / 미정
@@ -50,18 +50,21 @@
 | GUI strict mypy | `uv run --locked --extra gui mypy --strict src/agent_hvac/app/streamlit_app.py src/agent_hvac/app/design_workbench_app.py` | Windows / GUI | PASS | 2개 진입점 통과 |
 | 전체 base 사전 실행 | `uv run --locked pytest -q` | Windows / 기존 GUI-capable 환경 | FAIL | 683 passed, manifest 갱신 전 계약 검사 1건만 실패 |
 | 전체 GUI 사전 실행 | `uv run --locked --extra gui pytest -q` | Windows / GUI | FAIL | 683 passed, manifest 갱신 전 계약 검사 1건만 실패 |
+| source manifest와 계약 | `uv run --locked python scripts/source_manifest.py --write`; 계약 집중 검사 | Windows | PASS | 157 files, 계약 9 passed |
+| 전체 base 최종 | `uv run --locked pytest -q` | Windows / 기존 GUI-capable 환경 | PASS | 684 passed |
+| 전체 GUI 최종 | `uv run --locked --extra gui pytest -q` | Windows / GUI | PASS | 684 passed |
 | 전체 품질 | `uv run --locked ruff check .`; `uv run --locked ruff format --check .`; `uv run --locked mypy src` | Windows | PASS | Ruff/format 162 files, mypy 75 source files 통과 |
 | package build | `uv build` | Windows | PASS | sdist와 wheel 생성 |
 
 - 수치 검증 기준값·단위·출처·허용오차·실제 오차(해당 시): 해당 없음.
-- 실패 재현 및 조치 / 미실행 이유: 전체 검사에서 새 테스트 때문에 source manifest만 불일치했다. manifest 갱신 후 계약 및 전체 검사를 재실행한다.
+- 실패 재현 및 조치 / 미실행 이유: 전체 사전 검사에서 새 테스트 때문에 source manifest만 불일치했다. manifest를 157 files로 갱신한 뒤 계약 검사와 전체 base/GUI를 재실행해 모두 통과했다.
 - diff 검토 결과: 공통 schema, solver, 제품 DB, lockfile 변경 없음.
 
 ## 종료 및 인수인계
 
 - 완료한 범위: 프로젝트 편집 history, 단축키, 누락 입력 자동 펼침과 합성 회귀.
-- 남은 작업 / 알려진 한계 / blocker: 최신 integration 대조, PR과 원격 CI. 브라우저에서 sidebar 동작은 확인했으며 OS별 단축키 실제 키 입력은 자동 회귀로 보완했다.
-- 다음 담당자와 첫 실행 작업: LJH가 최신 integration 대상 PR과 CI 근거를 완료한다.
+- 남은 작업 / 알려진 한계 / blocker: 원격 CI와 관리자 검토. 브라우저에서 sidebar 동작은 확인했으며 OS별 단축키 실제 키 입력은 자동 회귀로 보완했다.
+- 다음 담당자와 첫 실행 작업: 관리자가 PR diff와 원격 CI를 검토한다.
 - `CURRENT_STATE.md` 갱신 여부: 완료.
 - Phase checklist / Gate 상태와 증거: GUI 편집 UX이며 production·CV·Gate 승인 아님.
 - PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): PR과 원격 CI는 제출 전.
