@@ -22,6 +22,14 @@
 - Public PR [#3](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/3) was approved and merged to integration as `49dcfbc522f798b1567e61aeabe198c7502bbf27`. Its latest-head Windows/Ubuntu × base/gui CI passed 4/4; post-merge CI is tracked separately.
 - This work does not imply manufacturer validation, production use, CV/P06 completion or Gate approval.
 
+## Pending public WS-E workbench edit history UX
+
+- Public PR [#9](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/9), branch `codex/ws-e/ljh67340/workbench-ux-followup`, started from integration `d97edf1f5854e44607d657d58710d320f5c8fa94` after public PR #7 merged.
+- The workbench records validated project JSON snapshots for up to 50 edits and exposes sidebar Undo/Redo plus canvas `Ctrl+Z`, `Ctrl+Y` and `Ctrl+Shift+Z` shortcuts. Restoring history invalidates any previous calculation result. An uploaded JSON is applied once per selected file content so reruns and Undo do not silently re-import it.
+- The direct condition editor now opens automatically while required baseline inputs are missing, so the default 4/6 input state exposes the two missing values without an extra click.
+- Actual in-app Chromium verification confirmed component addition and sidebar Undo restoration. AppTest covers add/undo/redo, delete/undo with stale-result invalidation, missing-input expansion and shortcut asset wiring.
+- This is GUI editing usability and synthetic regression work only. HVAC physics, product data, production use, CV/P06 and Gate status are unchanged.
+
 ## WS-B public product-database audit
 
 - Public PR: [#2](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/2), branch `codex/ws-b/public-product-db-audit`; original audit basis `f19f2fefc05c78bb050e024b9e15651b0fd4bef4`, latest integration merge basis `a200c7bec109cb475c8283e7a1f9a2d9733fb743`.
