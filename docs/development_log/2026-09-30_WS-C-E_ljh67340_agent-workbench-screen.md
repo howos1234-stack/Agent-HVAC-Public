@@ -65,4 +65,3 @@
 - `CURRENT_STATE.md` 갱신 여부: 완료.
 - Phase checklist / Gate 상태와 증거: GUI 연결 검증이며 CV·P06 전체·production·Gate 승인 아님.
 - PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): 공개 PR #12 제출, 상태 `REVIEW_PENDING`; 원격 Foundation CI run 36710699083 실행 중; 리뷰·병합 미수행.
-
