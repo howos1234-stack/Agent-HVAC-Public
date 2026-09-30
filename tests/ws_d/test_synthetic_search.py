@@ -163,6 +163,48 @@ def test_candidate_limit_fails_before_generation_or_solver_call(fixture_data):
     solver.simulate.assert_not_called()
 
 
+def test_duplicate_candidate_product_ids_fail_before_generation_or_solver_call(fixture_data):
+    problem, _ = _problem(fixture_data)
+    design = problem.baseline.model_copy(update={"decision_variables": ()})
+    product = ProductRecord.model_validate(fixture_data("design_spec_r744")["selected_products"][0])
+    duplicate = ProductRecord.model_validate(
+        {**product.model_dump(), "model": "different synthetic model"}
+    )
+    solver = Mock(spec=DeterministicSolverStub)
+    optimizer = SyntheticGridOptimizer(
+        solver=solver,
+        constraints=UpperBoundConstraintStub(),
+        objective=QuadraticObjectiveStub(targets={}),
+    )
+
+    with (
+        patch.object(
+            SyntheticGridOptimizer,
+            "_assignments",
+            side_effect=AssertionError("assignment generation must not run"),
+        ) as assignments,
+        patch.object(
+            SyntheticGridOptimizer,
+            "_product_combinations",
+            side_effect=AssertionError("product combination generation must not run"),
+        ) as product_combinations,
+    ):
+        result = optimizer.optimize(
+            DesignProblem(
+                baseline=design,
+                candidate_products=(product, duplicate),
+                random_seed=9,
+            )
+        )
+
+    assert result.status == "failed"
+    assert result.ranked_designs == ()
+    assert f"candidate product_id must be unique: {product.product_id}" in result.messages[0]
+    assignments.assert_not_called()
+    product_combinations.assert_not_called()
+    solver.simulate.assert_not_called()
+
+
 def test_component_type_product_combinations_are_complete_and_ranked(fixture_data):
     problem, _ = _problem(fixture_data)
     design = problem.baseline.model_copy(update={"decision_variables": ()})
