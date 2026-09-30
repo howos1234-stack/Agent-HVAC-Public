@@ -73,3 +73,9 @@
 - `CURRENT_STATE.md` 갱신 여부: 갱신.
 - Phase checklist / Gate 상태와 증거: CV-1~CV-3, P06 전체, production 및 Gate 상태 변경 없음.
 - PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): 공개 PR #5, WS-A 소비 계약 범위 수용, 관리자 최종 판단 대기, 미병합. 최초·보완 head CI 모두 4/4 PASS.
+
+## Integration reconciliation (2026-09-30)
+- PR #5 c16bf8a CI36670014648 passed4/4. After PR3 integration merge49dcfbc, CURRENT_STATE and manifest conflicted.
+- Maintainer preserved both histories, retained both GUI mypy entries and public boundary CI, and regenerated manifest157.
+- Local combined boundary+WS-E run:130passed/1FAIL (AppTest3s timeout in candidate preview). No timeout/assertion change; isolated rerun result recorded in PR follow-up.
+- Boundary check, Ruff check/format and GUI mypy2entries passed. This reconciliation requires new-head CI; previous head success is not new-head evidence.
