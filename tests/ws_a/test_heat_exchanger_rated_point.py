@@ -10,6 +10,11 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
+from agent_hvac.components.candidate_trials import (
+    ComponentCandidateTrial,
+    HeatExchangerTrialInput,
+    evaluate_synthetic_component_trials,
+)
 from agent_hvac.components.heat_exchanger_1d import (
     HeatExchanger1DInput,
     HeatExchanger1DResult,
@@ -401,6 +406,39 @@ def test_p05_calculation_failures_are_not_hidden(
             rated,
             _boundaries(secondary_temperature_k=400.0),
         )
+
+
+def test_hx_candidate_trial_does_not_reuse_prior_prediction_on_failure(
+    product: ProductRecord,
+    conditions: dict[str, Quantity],
+) -> None:
+    selection = _selection(product, conditions)
+    backend = CoolPropBackend()
+    candidates = (
+        ComponentCandidateTrial("hx-a", HeatExchangerTrialInput(backend, selection, _boundaries())),
+        ComponentCandidateTrial(
+            "hx-b",
+            HeatExchangerTrialInput(backend, selection, _boundaries(secondary_temperature_k=400.0)),
+        ),
+        ComponentCandidateTrial("hx-c", HeatExchangerTrialInput(backend, selection, _boundaries())),
+    )
+
+    first, rejected, last = evaluate_synthetic_component_trials(candidates)
+
+    assert (first.status, rejected.status, last.status) == (
+        "EVALUATED",
+        "REJECTED",
+        "EVALUATED",
+    )
+    assert all(outcome.is_mock for outcome in (first, rejected, last))
+    assert all(outcome.record_id == "hx-rated-1" for outcome in (first, rejected, last))
+    assert rejected.selected_source_ids == ("src-rated-parent",)
+    assert first.result is not None and last.result is not None
+    assert first.result.calculation == last.result.calculation
+    assert first.result.rated_data.rated_point_source_id == "src-rated-parent"
+    assert rejected.result is None
+    assert rejected.failure_type == "InfeasibleDesignError"
+    assert "colder than the refrigerant" in (rejected.failure_message or "")
 
 
 def test_boundary_refrigerant_must_match_selected_rated_point(

@@ -8,6 +8,10 @@ from typing import Any
 
 import pytest
 
+from agent_hvac.components.candidate_trials import (
+    ComponentCandidateTrial,
+    evaluate_synthetic_component_trials,
+)
 from agent_hvac.components.compressor_map import (
     CompressorMapInput,
     evaluate_compressor_map,
@@ -192,6 +196,52 @@ def test_failed_synthetic_candidate_cannot_reuse_previous_map_result(
     assert repeated.outputs == first.outputs
     assert repeated.output_source_ids == first.output_source_ids
     assert repeated.is_mock is first.is_mock is True
+
+
+def test_compressor_candidate_trial_keeps_failure_separate_from_success(
+    product: ProductRecord,
+) -> None:
+    candidates = (
+        ComponentCandidateTrial("compressor-a", _input(product)),
+        ComponentCandidateTrial(
+            "compressor-b",
+            _input(product, frequency=Quantity(value=60.0, unit="Hz")),
+        ),
+        ComponentCandidateTrial("compressor-c", _input(product)),
+    )
+
+    first, rejected, last = evaluate_synthetic_component_trials(candidates)
+
+    assert (first.status, rejected.status, last.status) == (
+        "EVALUATED",
+        "REJECTED",
+        "EVALUATED",
+    )
+    assert all(outcome.is_mock for outcome in (first, rejected, last))
+    assert all(outcome.record_id == "cmp-map-1" for outcome in (first, rejected, last))
+    assert first.result is not None and last.result is not None
+    assert first.result.outputs == last.result.outputs
+    assert first.result.output_source_ids == last.result.output_source_ids
+    assert rejected.selected_source_ids == first.selected_source_ids
+    assert rejected.result is None
+    assert rejected.failure_type == "PerformanceMapError"
+    assert "does not exactly match" in (rejected.failure_message or "")
+
+
+def test_candidate_trial_rejects_ambiguous_ids_and_nonmock_product(
+    product: ProductRecord,
+) -> None:
+    with pytest.raises(ValueError, match="unique"):
+        evaluate_synthetic_component_trials(
+            (
+                ComponentCandidateTrial("same", _input(product)),
+                ComponentCandidateTrial("same", _input(product)),
+            )
+        )
+
+    nonmock = product.model_copy(update={"is_mock": False})
+    with pytest.raises(ValueError, match="require mock"):
+        evaluate_synthetic_component_trials((ComponentCandidateTrial("real", _input(nonmock)),))
 
 
 def test_non_compressive_pressure_direction_is_rejected(product: ProductRecord) -> None:
