@@ -10,6 +10,11 @@ import streamlit as st
 from pydantic import ValidationError
 from streamlit.components.v2 import component
 
+from agent_hvac.agents.workbench import (
+    WorkbenchCommandRequest,
+    WorkbenchCommandResponse,
+    run_workbench_command,
+)
 from agent_hvac.app.design_workbench import (
     ComponentKind,
     WorkbenchProject,
@@ -38,7 +43,6 @@ from agent_hvac.app.workbench_canvas_component import (
     WORKBENCH_CANVAS_JS,
 )
 from agent_hvac.app.workbench_command import (
-    CommandPlan,
     interpret_command,
     missing_solver_inputs,
     project_from_command,
@@ -143,6 +147,8 @@ _HISTORY_UNDO_KEY = "project_history_undo"
 _HISTORY_REDO_KEY = "project_history_redo"
 _HISTORY_LIMIT = 50
 _IMPORTED_UPLOAD_KEY = "workbench_imported_upload"
+_COMMAND_RESPONSE_KEY = "agent_command_response"
+_COMMAND_RESPONSE_PROMPT_KEY = "agent_command_response_prompt"
 
 
 def _project_fingerprint(project: WorkbenchProject) -> str:
@@ -152,6 +158,8 @@ def _project_fingerprint(project: WorkbenchProject) -> str:
 def _invalidate_workbench_result() -> None:
     st.session_state.pop("workbench_result", None)
     st.session_state.pop("workbench_result_project_fingerprint", None)
+    st.session_state.pop(_COMMAND_RESPONSE_KEY, None)
+    st.session_state.pop(_COMMAND_RESPONSE_PROMPT_KEY, None)
 
 
 def _sync_project_history(project: WorkbenchProject) -> None:
@@ -240,6 +248,69 @@ def _basic_project(refrigerant: Literal["R744", "R134a", "R410A"]) -> WorkbenchP
     return project_from_command(interpret_command(f"{refrigerant} 기본 냉동사이클을 구성해줘"))
 
 
+def _store_command_project(
+    response: WorkbenchCommandResponse, *, register_result: bool = False
+) -> None:
+    project = response.project
+    if project is None:
+        return
+    _clear_project_widget_state()
+    st.session_state.workbench_project = project
+    _sync_project_history(project)
+    _invalidate_workbench_result()
+    if register_result and response.result is not None:
+        st.session_state.workbench_result = response.result
+        st.session_state.workbench_result_project_fingerprint = _project_fingerprint(project)
+
+
+def _render_command_response(response: WorkbenchCommandResponse) -> None:
+    status_label = {
+        "rejected": "입력 거부",
+        "needs_input": "추가 입력 필요",
+        "project_ready": "프로젝트 준비",
+        "completed": "계산 완료",
+        "failed": "계산 실패",
+    }[response.status]
+    if response.status == "rejected":
+        st.error(f"Agent 상태 · {status_label}")
+    elif response.status == "needs_input":
+        st.warning(f"Agent 상태 · {status_label}")
+    elif response.status == "project_ready":
+        st.info(f"Agent 상태 · {status_label}")
+    elif response.status == "completed":
+        st.success(f"Agent 상태 · {status_label}")
+        st.caption("계산 흐름이 완료됐습니다. 설계 목표 달성이나 제품 적합 판정은 아닙니다.")
+    else:
+        st.error(f"Agent 상태 · {status_label}")
+    if response.missing_inputs:
+        missing_labels = [
+            PARAMETER_PRESENTATION.get(name, (name, ""))[0] for name in response.missing_inputs
+        ]
+        st.warning("사용자 보완 필요: " + ", ".join(missing_labels))
+    for message in response.messages:
+        st.caption(
+            "명시적 계산 실행 전입니다." if message == "Calculation was not requested." else message
+        )
+
+    plan = response.plan
+    if plan is None:
+        return
+    refrigerant = plan.refrigerant or "확인 필요"
+    model = plan.compressor_model or "미지정"
+    first, second, third = st.columns(3)
+    first.metric("감지 냉매", refrigerant)
+    second.metric("압축기 모델", model)
+    third.metric("감지 조건", len(plan.conditions))
+    if plan.conditions:
+        st.dataframe(
+            [
+                {"조건": item.name, "값": item.value, "원문 단위": item.unit}
+                for item in plan.conditions
+            ],
+            hide_index=True,
+        )
+
+
 def _render_command_builder() -> None:
     st.subheader("자연어 사이클 구성")
     st.caption("지원 냉매: R134a, R410A, R744 · 명령에 없는 공학 수치는 자동으로 만들지 않습니다.")
@@ -273,59 +344,57 @@ def _render_command_builder() -> None:
         )
         if st.button("예시 사용", key="use-natural-language-example"):
             st.session_state[command_key] = default_prompt
-            st.session_state.pop("command_plan", None)
+            st.session_state.pop(_COMMAND_RESPONSE_KEY, None)
+            st.session_state.pop(_COMMAND_RESPONSE_PROMPT_KEY, None)
             st.rerun()
     prompt = st.text_area(
         "설계 명령",
         height=95,
         key=command_key,
     )
-    analyze, apply = st.columns(2)
+    response = st.session_state.get(_COMMAND_RESPONSE_KEY)
+    response_prompt = st.session_state.get(_COMMAND_RESPONSE_PROMPT_KEY)
+    if response_prompt != prompt:
+        response = None
+    analyze, apply, execute = st.columns(3)
     with analyze:
-        if st.button("명령 해석", use_container_width=True):
+        if st.button("Agent 입력 확인", use_container_width=True):
             try:
-                st.session_state.command_plan = interpret_command(prompt)
-            except ValueError as error:
-                st.error(str(error))
-    plan = st.session_state.get("command_plan")
+                response = run_workbench_command(
+                    WorkbenchCommandRequest(prompt=prompt, execute=False)
+                )
+            except ValidationError as error:
+                st.error(f"입력 거부: {error.errors()[0]['msg']}")
+            else:
+                st.session_state[_COMMAND_RESPONSE_KEY] = response
+                st.session_state[_COMMAND_RESPONSE_PROMPT_KEY] = prompt
     with apply:
         if st.button(
             "캔버스에 구성",
             use_container_width=True,
-            disabled=not isinstance(plan, CommandPlan) or plan.refrigerant is None,
+            disabled=(
+                not isinstance(response, WorkbenchCommandResponse) or response.project is None
+            ),
         ):
-            assert isinstance(plan, CommandPlan)
+            assert isinstance(response, WorkbenchCommandResponse)
+            _store_command_project(response)
+            st.rerun()
+    with execute:
+        if st.button("명시적 계산 실행", type="primary", use_container_width=True):
             try:
-                project = project_from_command(plan)
-            except ValueError as error:
-                st.error(str(error))
+                response = run_workbench_command(
+                    WorkbenchCommandRequest(prompt=prompt, execute=True)
+                )
+            except ValidationError as error:
+                st.error(f"입력 거부: {error.errors()[0]['msg']}")
             else:
-                _clear_project_widget_state()
-                st.session_state.workbench_project = project
-                _invalidate_workbench_result()
+                _store_command_project(response, register_result=True)
+                st.session_state[_COMMAND_RESPONSE_KEY] = response
+                st.session_state[_COMMAND_RESPONSE_PROMPT_KEY] = prompt
                 st.rerun()
 
-    if isinstance(plan, CommandPlan):
-        refrigerant = plan.refrigerant or "확인 필요"
-        model = plan.compressor_model or "미지정"
-        first, second, third = st.columns(3)
-        first.metric("감지 냉매", refrigerant)
-        second.metric("압축기 모델", model)
-        third.metric("감지 조건", len(plan.conditions))
-        if plan.conditions:
-            st.dataframe(
-                [
-                    {"조건": item.name, "값": item.value, "원문 단위": item.unit}
-                    for item in plan.conditions
-                ],
-                hide_index=True,
-            )
-        if plan.missing:
-            st.warning("계산 전 추가 입력 필요: " + ", ".join(plan.missing))
-        else:
-            st.success("baseline 계산에 필요한 입력을 모두 인식했습니다.")
-        for note in plan.notes:
-            st.caption(note)
+    if isinstance(response, WorkbenchCommandResponse):
+        _render_command_response(response)
 
 
 def _render_condition_editor(project: WorkbenchProject) -> WorkbenchProject:
@@ -826,6 +895,7 @@ def main() -> None:
                 st.session_state.workbench_project = uploaded_project
                 st.session_state[_IMPORTED_UPLOAD_KEY] = upload_id
                 _sync_project_history(uploaded_project)
+                st.rerun()
             except (ValidationError, ValueError) as error:
                 st.sidebar.error("워크벤치 JSON 검증 실패")
                 st.sidebar.text(str(error))
