@@ -8,7 +8,7 @@
 - 작업 상태: REVIEW_PENDING
 - 사용자 요청과 목표: 병합된 결정론적 WS-C adapter를 실제 WS-E 화면에 연결해 자연어 확인, 누락 안내, 사용자 보완, 명시적 실행과 결과 표시를 하나의 흐름으로 제공한다.
 - 허용 파일 / 제외 파일: GUI entrypoint·WS-E 합성 회귀·공개 기록·manifest / 공통 schema, 물리 solver, 제품 DB, 동결 계약, LLM/API, lockfile 제외
-- branch / 시작 commit / 종료 checkpoint(확인된 경우): `codex/ws-c-e/ljh67340/agent-workbench-screen` / `17570772eceb173399b2ab26d844dd0bc52a97ac` / 미정
+- branch / 시작 commit / 종료 checkpoint(확인된 경우): `codex/ws-c-e/ljh67340/agent-workbench-screen` / `17570772eceb173399b2ab26d844dd0bc52a97ac` / 구현 commit `549a2872c9687746f174e78e62e9cea43fa3c6ba`
 - 시작 시 기존 변경: 없음; 최신 integration 별도 worktree
 - 읽은 문서 및 버전: `README.md`, `AGENTS.md`, `CURRENT_STATE.md`, `WORK_PROTOCOL.md`, WS-C adapter, WS-E app/tests @ `1757077`
 - 의존 작업 / frozen interface: 공개 PR #8 merge `f26c5c2`, PR #9 merge `1757077`; 병합 후 CI run 36706621493 4/4 PASS
@@ -60,9 +60,9 @@
 ## 종료 및 인수인계
 
 - 완료한 범위: adapter 기반 자연어 상태 표시, 불완전 project 적용·사용자 보완, 명시적 실행·결과 표시, history·결과 무효화 회귀와 실제 브라우저 확인.
-- 남은 작업 / 알려진 한계 / blocker: 공개 PR 검토와 원격 CI. 자유형 LLM 이해, 실제 제품 자동선정, 목표 달성 판정은 미지원.
+- 남은 작업 / 알려진 한계 / blocker: 공개 PR #12 검토와 최신 head 원격 CI 완료 확인. 자유형 LLM 이해, 실제 제품 자동선정, 목표 달성 판정은 미지원.
 - 다음 담당자와 첫 실행 작업: 관리자가 PR diff, AppTest와 실제 브라우저 근거를 검토한다.
 - `CURRENT_STATE.md` 갱신 여부: 완료.
 - Phase checklist / Gate 상태와 증거: GUI 연결 검증이며 CV·P06 전체·production·Gate 승인 아님.
-- PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): PR 제출 전; 원격 CI·리뷰·병합 미수행.
+- PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): 공개 PR #12 제출, 상태 `REVIEW_PENDING`; 원격 Foundation CI run 36710699083 실행 중; 리뷰·병합 미수행.
 
