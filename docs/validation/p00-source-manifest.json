@@ -5,7 +5,7 @@
   },
   {
     "path": ".github/workflows/ci.yml",
-    "sha256": "8400055e20fe0d8b741ed570b380b3bf7ea0f9dd46e1e47692cbf4cd8cd62933"
+    "sha256": "e60291aa54cd29d8355bfb5d63320f3512c3d165b116cf2d682163286cd31c01"
   },
   {
     "path": ".python-version",
@@ -18,6 +18,10 @@
   {
     "path": "scripts/analyze_design_study.py",
     "sha256": "d0482d39b66a926785b24567bedb152a39f15a307301f357eccfa5f2ddb0eda4"
+  },
+  {
+    "path": "scripts/check_public_data_boundary.py",
+    "sha256": "2ee046b3a47d1ec310c16ee725cd6ed0d6d4b1e88a736cf54bbf4bc3535b3d8c"
   },
   {
     "path": "scripts/check_work_record.py",
@@ -394,6 +398,10 @@
   {
     "path": "tests/contracts/test_generated_schema.py",
     "sha256": "10a3560f815a13741c1f4b865dbb2b98e3ded0054fe75784fe9f288696db03ab"
+  },
+  {
+    "path": "tests/contracts/test_public_data_boundary.py",
+    "sha256": "1f126c3445bcdf2266ec9fc06546eb8ed2dbc43d3ea4ceaac583a8cb4ce27580"
   },
   {
     "path": "tests/contracts/test_source_manifest.py",
