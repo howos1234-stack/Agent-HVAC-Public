@@ -34,7 +34,7 @@
 | 항목 | 결정 또는 가정 | 근거/출처 | 영향 및 후속 확인 |
 |---|---|---|---|
 | 허용 workbook | `docs/product_data/templates/Agent-HVAC_ProductData_0.2.0_template.xlsx` 한 개만 허용한다. | PR #2 공개자료 감사와 관리자 승인 범위. | 합성 workbook은 pytest 임시경로에서 생성하며 repository에 commit하지 않는다. |
-| template 조건 | 승인된 15개 sheet 순서, 모든 첫 행 header와 2행 이후 cell의 공백을 요구한다. | Excel schema 0.2.0 공개 빈 양식 계약과 PR #5 관리자 재현. | 첫 행을 포함해 계약과 다른 값이 template에 저장되면 CI가 실패한다. |
+| template 조건 | 승인 SHA-256 `6043d7278a39a4ad5e482ddeb6df54f86fa0ac12e48bd3f5d654fa57d7aeb2cd`, 15개 sheet 순서, 모든 첫 행 header와 2행 이후 cell의 공백을 요구한다. | Excel schema 0.2.0 공개 빈 양식 계약과 PR #5 관리자 재현. | 첫 행, comment, embedded object를 포함한 binary 변조가 실패한다. 양식을 의도적으로 바꿀 때에는 공개 리뷰 후 hash와 구조 계약을 함께 갱신한다. |
 | component data | `data/components`에는 `.gitkeep`만 허용한다. | 실제 제조사 데이터는 private 저장소에 유지한다는 공개 경계. | JSON이라도 실제 제품 DB로 오해될 파일은 공개 data 경로에서 차단된다. |
 | 제한 artifact | Git 추적 파일 전체에서 PDF, Excel 변형, 이미지, ZIP을 검사한다. 빈 template과 WS-E 공개 GUI 검증 이미지 3개만 경로 기반으로 허용한다. | 제조사 원본·조사 workbook·스크린샷을 공개하지 않는 승인 정책과 PR #3 공개 증빙. | `docs/build` 등 디렉터리명으로 우회할 수 없다. 새 공개 binary는 코드 리뷰로 allowlist 변경 근거가 필요하다. |
 | 공개 시점 한계 | CI는 공개 push 뒤 실행되며 최초 공개 자체를 사전에 차단하지 못한다. | PR #5 관리자 수정 요청. | push 전 로컬 검사 필수. 이미 공개된 민감 자료는 이 검사만으로 회수할 수 없고 별도 이력 정화가 필요하다. |
@@ -48,10 +48,10 @@
 | 검증 대상 | 정확한 명령 또는 검사 방법 | 환경 | PASS/FAIL/NOT_RUN/BLOCKED | 결과 요약 및 증거 |
 |---|---|---|---|---|
 | 공개 저장소 경계 | `python scripts/check_public_data_boundary.py` | Windows | PASS | 빈 template 1개, 제한 artifact와 component data 없음. |
-| 집중 회귀 | `python -m pytest -q -p no:cacheprovider --basetemp=.artifact_work/pytest-boundary-fixed tests/contracts/test_public_data_boundary.py` | Windows | PASS | 9 passed. Git 추적 `docs/build` PDF 거부, 첫 행 변조 거부, GUI 증빙 allowlist 포함. |
+| 집중 회귀 | `python -m pytest -q -p no:cacheprovider --basetemp=.artifact_work/pytest-boundary-final tests/contracts/test_public_data_boundary.py` | Windows | PASS | 10 passed. Git 추적 `docs/build` PDF 거부, 첫 행·comment 변조 거부, GUI 증빙 allowlist 포함. |
 | Ruff | `ruff check ...`, `ruff format --check ...` | Windows | PASS | 새 script/test 통과. |
 | mypy | `mypy scripts/check_public_data_boundary.py` | Windows | PASS | 1 source file 통과. |
-| WS-B·contract 회귀 | `python -m pytest -q --tb=short -p no:cacheprovider --basetemp=.artifact_work/pytest-wsb-boundary-final tests/contracts tests/ws_b` | Windows | PASS | 115 passed. 최초 manifest 갱신 전 실행은 114 passed, manifest 차이 1 failed였으며 `source_manifest.py --write` 후 재실행해 모두 통과했다. |
+| WS-B·contract 회귀 | `python -m pytest -q --tb=short -p no:cacheprovider --basetemp=.artifact_work/pytest-wsb-boundary-final2 tests/contracts tests/ws_b` | Windows | PASS | 116 passed. 최초 보완 실행의 manifest 차이는 `source_manifest.py --write` 후 해소했고 최종 재실행에서 모두 통과했다. |
 | 전체 Ruff | `ruff check .`, `ruff format --check .` | Windows | PASS | 153 files formatted. |
 | 전체 mypy | `mypy`, `mypy src\\agent_hvac\\app\\streamlit_app.py` | Windows | PASS | 72 source files와 GUI entry 통과. |
 | source manifest | `python scripts\\source_manifest.py --write`, `--check` | Windows | PASS | 152 source files. |

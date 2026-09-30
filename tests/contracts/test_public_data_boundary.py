@@ -1,7 +1,8 @@
 import importlib.util
+import shutil
 from pathlib import Path
 
-from openpyxl import Workbook
+from openpyxl.comments import Comment
 
 ROOT = Path(__file__).parents[2]
 spec = importlib.util.spec_from_file_location(
@@ -14,13 +15,7 @@ spec.loader.exec_module(module)
 def write_blank_template(root: Path) -> Path:
     path = root / module.TEMPLATE
     path.parent.mkdir(parents=True)
-    workbook = Workbook()
-    workbook.remove(workbook.active)
-    for sheet_name in module.EXPECTED_SHEETS:
-        sheet = workbook.create_sheet(sheet_name)
-        sheet.append(module.EXPECTED_HEADERS[sheet_name])
-    workbook.save(path)
-    workbook.close()
+    shutil.copy2(ROOT / module.TEMPLATE, path)
     return path
 
 
@@ -58,7 +53,10 @@ def test_populated_public_template_is_rejected(tmp_path):
     workbook.save(path)
     workbook.close()
 
-    assert module.check(tmp_path, [path]) == ["Public template contains data: products!2"]
+    errors = module.check(tmp_path, [path])
+    assert len(errors) == 2
+    assert errors[0].startswith("Public template SHA-256 differs:")
+    assert errors[1] == "Public template contains data: products!2"
 
 
 def test_component_data_directory_accepts_only_gitkeep(tmp_path):
@@ -83,8 +81,9 @@ def test_template_sheet_contract_is_enforced(tmp_path):
     workbook.close()
 
     errors = module.check(tmp_path, [path])
-    assert len(errors) == 1
-    assert errors[0].startswith("Public template sheet contract differs:")
+    assert len(errors) == 2
+    assert errors[0].startswith("Public template SHA-256 differs:")
+    assert errors[1].startswith("Public template sheet contract differs:")
 
 
 def test_tracked_build_artifact_is_rejected(tmp_path):
@@ -106,8 +105,21 @@ def test_modified_template_header_is_rejected(tmp_path):
     workbook.close()
 
     errors = module.check(tmp_path, [path])
+    assert len(errors) == 2
+    assert errors[0].startswith("Public template SHA-256 differs:")
+    assert errors[1].startswith("Public template header differs: products!1;")
+
+
+def test_template_comment_payload_is_rejected(tmp_path):
+    path = write_blank_template(tmp_path)
+    workbook = module.load_workbook(path)
+    workbook["products"]["A1"].comment = Comment("arbitrary payload", "synthetic")
+    workbook.save(path)
+    workbook.close()
+
+    errors = module.check(tmp_path, [path])
     assert len(errors) == 1
-    assert errors[0].startswith("Public template header differs: products!1;")
+    assert errors[0].startswith("Public template SHA-256 differs:")
 
 
 def test_approved_gui_evidence_is_allowed(tmp_path):

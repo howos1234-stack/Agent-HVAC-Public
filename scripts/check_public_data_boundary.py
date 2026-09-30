@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+import hashlib
 import subprocess
 from pathlib import Path
 
 from openpyxl import load_workbook
 
 TEMPLATE = Path("docs/product_data/templates/Agent-HVAC_ProductData_0.2.0_template.xlsx")
+EXPECTED_TEMPLATE_SHA256 = "6043d7278a39a4ad5e482ddeb6df54f86fa0ac12e48bd3f5d654fa57d7aeb2cd"
 EXPECTED_SHEETS = (
     "products",
     "source_metadata",
@@ -282,9 +284,16 @@ def check_blank_template(root: Path) -> list[str]:
     if not path.is_file():
         return [f"Missing public blank template: {TEMPLATE.as_posix()}"]
 
+    errors: list[str] = []
+    actual_sha256 = hashlib.sha256(path.read_bytes()).hexdigest()
+    if actual_sha256 != EXPECTED_TEMPLATE_SHA256:
+        errors.append(
+            "Public template SHA-256 differs: "
+            f"expected {EXPECTED_TEMPLATE_SHA256}, got {actual_sha256}"
+        )
+
     workbook = load_workbook(path, read_only=False, data_only=False)
     try:
-        errors: list[str] = []
         if tuple(workbook.sheetnames) != EXPECTED_SHEETS:
             errors.append(
                 "Public template sheet contract differs: "

@@ -21,7 +21,7 @@
   },
   {
     "path": "scripts/check_public_data_boundary.py",
-    "sha256": "e7c772fb94d0e1d176cb8e89428b3306a4cf7fd511384e54405076c433b5d2a8"
+    "sha256": "2ee046b3a47d1ec310c16ee725cd6ed0d6d4b1e88a736cf54bbf4bc3535b3d8c"
   },
   {
     "path": "scripts/check_work_record.py",
@@ -385,7 +385,7 @@
   },
   {
     "path": "tests/contracts/test_public_data_boundary.py",
-    "sha256": "cbfb19bf12ff0c4a614064404ee17c1cdf6dfc65353da284c9133529ae4b9168"
+    "sha256": "1f126c3445bcdf2266ec9fc06546eb8ed2dbc43d3ea4ceaac583a8cb4ce27580"
   },
   {
     "path": "tests/contracts/test_source_manifest.py",
