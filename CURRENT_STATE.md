@@ -22,6 +22,19 @@
 - Public PR [#3](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/3) is `REVIEW_PENDING`. [Remote CI run 36579413223](https://github.com/howos1234-stack/Agent-HVAC-Public/actions/runs/36579413223) passed Windows/Ubuntu × base/gui 4/4 at head `9d5bcbd`; the clean remote base jobs passed 634 tests with 14 skips, while GUI jobs passed 672 tests. Integration merge remains pending.
 - This work does not imply manufacturer validation, production use, CV/P06 completion or Gate approval.
 
+## WS-B public product-database audit
+
+- Public PR: [#2](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/2), branch `codex/ws-b/public-product-db-audit`; original audit basis `f19f2fefc05c78bb050e024b9e15651b0fd4bef4`, latest integration merge basis `a200c7bec109cb475c8283e7a1f9a2d9733fb743`.
+- Public-ready scope confirmed: ProductRecord 0.2.0 typed models, generated Schema, Excel schema 0.2.0 loader, blank 15-sheet workbook template, synthetic WS-B fixtures and loader-to-WS-A compressor/valve/HX adapter tests.
+- No additional private code migration is currently required: the relevant tracked public files match the private worktree snapshot. Private Git history was not merged, mirrored, pushed or cherry-picked.
+- Public exclusion confirmed: no manufacturer PDF, selection-program export, research workbook, screenshot, performance table, private PR history or identified manufacturer/model value is tracked. The only tracked workbook is the empty public template.
+- Original audit at `f19f2fe`: WS-B and Excel adapter focus 90 passed; full GUI environment 614 passed; generated ProductRecord Schema match, Ruff, format, mypy, 150-file manifest and sdist/wheel build passed. These results are not presented as latest-head verification.
+- Locked base/gui environment recreation is BLOCKED locally because `uv` is not installed on this host. Public PR CI must provide the final separated base/gui result.
+- The historical Ubuntu `network_map` failure was fixed by WS-A PR #1 and merged as `a200c7b`; the post-merge CI result remains separate from the original audit result.
+- CV-1~CV-3, actual manufacturer validation, P06 completion, production approval and Gate status remain unchanged.
+- PR #2 changes are documentation-only relative to latest integration. Checks 0 is `NOT_RUN` under the Markdown-only policy, not a billing failure.
+- Audit record: [record](docs/development_log/2026-09-29_2216_WS-B_sangryul1208_public-product-db-audit.md).
+
 ## WS-A 공개 이관 작업 (2026-09-29, 검토 대기)
 
 - 공개 `integration` `f19f2fe`에서 별도 브랜치 `codex/ws-a/public-pipe-closure`를 시작했다. 이전 비공개 작업 폴더와 Git 이력은 합치지 않았다.
