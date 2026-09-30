@@ -11,7 +11,7 @@ Excel loader, 합성 최적화 및 Streamlit 결과 화면을 포함합니다.
 제조사 원본, 후보 조사표, 선정 출력의 수치 요약, 내부 작업 로그와 승인 기록은 제외했습니다.
 `docs/product_data/templates/`에는 테스트가 사용하는 빈 schema 양식만 있습니다.
 합성 제품의 ELIGIBLE은 실제 제품 승인이나 제조사 검증 PASS가 아닙니다.
-이 공개본은 미병합 WS-C Agent/WS-E 워크벤치 PR을 포함하지 않습니다.
+초기 공개 snapshot에는 미병합 WS-C Agent/WS-E 워크벤치가 없었습니다. 이후 기능은 공개 저장소의 독립 PR과 CI로 추가합니다.
 
 ## 실행
 
@@ -26,11 +26,13 @@ uv build --no-build-isolation
 
 uv sync --locked --extra gui
 uv run --locked --extra gui streamlit run src/agent_hvac/app/streamlit_app.py
+uv run --locked --extra gui streamlit run src/agent_hvac/app/design_workbench_app.py
 ```
 
 기본 실행·합성 테스트에는 API 키가 필요하지 않습니다.
 [시스템 예제](examples/system_cycle/README.md), [의존성](docs/architecture/DEPENDENCIES.md),
-[공개 개발 절차](docs/development/WORK_PROTOCOL.md)를 참조하세요.
+[공개 개발 절차](docs/development/WORK_PROTOCOL.md),
+[설계 워크벤치](docs/workstreams/ws_e/P12_DESIGN_WORKBENCH_PUBLIC.md)를 참조하세요.
 보존된 synthetic 검증 문서의 과거 실행·승인 표기는 원래 개발 당시 기록이며,
 공개 저장소에서 새로 검증한 결과는 Actions 및 CURRENT_STATE에 별도로 기록합니다.
 문서의 과거 내부 PR/개발 로그 링크는 공개본에서 제공되지 않을 수 있습니다.

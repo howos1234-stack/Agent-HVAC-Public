@@ -39,9 +39,12 @@ jobs:
       - run: uv run --locked ${{ matrix.extra }} ruff check .
       - run: uv run --locked ${{ matrix.extra }} ruff format --check .
       - run: uv run --locked ${{ matrix.extra }} mypy
-      - name: Type-check the optional Streamlit entry point
+      - name: Type-check the optional Streamlit entry points
         if: matrix.environment == 'gui'
-        run: uv run --locked --extra gui mypy src/agent_hvac/app/streamlit_app.py
+        run: >-
+          uv run --locked --extra gui mypy
+          src/agent_hvac/app/streamlit_app.py
+          src/agent_hvac/app/design_workbench_app.py
       - run: uv run --locked ${{ matrix.extra }} python scripts/source_manifest.py --check
       - run: uv run --locked ${{ matrix.extra }} pytest --junitxml=artifacts/pytest.xml
       - run: uv build --no-build-isolation
