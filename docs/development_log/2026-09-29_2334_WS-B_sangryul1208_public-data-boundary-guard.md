@@ -8,7 +8,7 @@
 - 작업 상태: REVIEW_PENDING
 - 사용자 요청과 목표: PR #2 병합 후 최신 공개 integration에서 후속 WS-B 작업을 수행한다. 공개 저장소에 제한된 제조사 자료나 실제 제품 DB가 실수로 반입되는 것을 CI에서 차단한다.
 - 허용 파일 / 제외 파일: 공개 검사 코드·합성 테스트·CI·상태 기록만 허용한다. 제조사 원본, 실제 제품 수치, private Git/PR 이력은 제외한다.
-- branch / 시작 commit / 종료 checkpoint(확인된 경우): `codex/ws-b/public-data-boundary-guard` / `041121cf7036409d160f462aab87a163a05a8cc6` / PR 제출 시 확정.
+- branch / 시작 commit / 종료 checkpoint(확인된 경우): `codex/ws-b/public-data-boundary-guard` / `041121cf7036409d160f462aab87a163a05a8cc6` / PR #5 보완 head에서 확정.
 - 시작 시 기존 변경: 없음.
 - 읽은 문서 및 버전: `README.md`, `AGENTS.md`, `CURRENT_STATE.md`, `docs/development/WORK_PROTOCOL.md`, PR #2 감사 기록, `pyproject.toml`, `.github/workflows/ci.yml` at `041121c`.
 - 의존 작업 / frozen interface: ProductRecord 0.2.0, Excel schema 0.2.0, loader 0.2.x와 WS-A adapter 계약을 변경하지 않는다.
@@ -17,7 +17,7 @@
 
 - 대상 모듈 및 의존성: 공개 artifact 검사 script, contract test, Foundation CI.
 - 예정 검증: 현재 저장소 통과, 제한 확장자·추가 workbook·채워진 template·component data 거부, Ruff, mypy, manifest, build 및 원격 matrix CI.
-- 위험과 대응: 파일명이나 제조사명을 기준으로 허용하지 않고 공개 저장소의 구조적 경계를 검사한다. `.artifact_work`, build, cache 등 로컬 산출물은 검사 대상에서 제외한다.
+- 위험과 대응: 파일명이나 제조사명을 기준으로 허용하지 않고 Git 추적 파일의 구조적 경계를 검사한다. 추적된 `build`·artifact 경로도 검사하며, Git 비추적 로컬 산출물은 검사 범위 밖이다.
 
 ## 수행 내용
 
@@ -34,9 +34,10 @@
 | 항목 | 결정 또는 가정 | 근거/출처 | 영향 및 후속 확인 |
 |---|---|---|---|
 | 허용 workbook | `docs/product_data/templates/Agent-HVAC_ProductData_0.2.0_template.xlsx` 한 개만 허용한다. | PR #2 공개자료 감사와 관리자 승인 범위. | 합성 workbook은 pytest 임시경로에서 생성하며 repository에 commit하지 않는다. |
-| template 조건 | 승인된 15개 sheet 순서와 모든 2행 이후 cell의 공백을 요구한다. | Excel schema 0.2.0 공개 빈 양식 계약. | 실제 제품값이나 합성값이 template에 저장되면 CI가 실패한다. |
+| template 조건 | 승인된 15개 sheet 순서, 모든 첫 행 header와 2행 이후 cell의 공백을 요구한다. | Excel schema 0.2.0 공개 빈 양식 계약과 PR #5 관리자 재현. | 첫 행을 포함해 계약과 다른 값이 template에 저장되면 CI가 실패한다. |
 | component data | `data/components`에는 `.gitkeep`만 허용한다. | 실제 제조사 데이터는 private 저장소에 유지한다는 공개 경계. | JSON이라도 실제 제품 DB로 오해될 파일은 공개 data 경로에서 차단된다. |
-| 제한 artifact | PDF, Excel 변형, 이미지, ZIP은 빈 template 예외 외에 거부한다. | 제조사 원본·조사 workbook·스크린샷을 공개하지 않는 승인 정책. | 새 공개 binary가 필요하면 코드 리뷰로 allowlist 변경 근거가 필요하다. |
+| 제한 artifact | Git 추적 파일 전체에서 PDF, Excel 변형, 이미지, ZIP을 검사한다. 빈 template과 WS-E 공개 GUI 검증 이미지 3개만 경로 기반으로 허용한다. | 제조사 원본·조사 workbook·스크린샷을 공개하지 않는 승인 정책과 PR #3 공개 증빙. | `docs/build` 등 디렉터리명으로 우회할 수 없다. 새 공개 binary는 코드 리뷰로 allowlist 변경 근거가 필요하다. |
+| 공개 시점 한계 | CI는 공개 push 뒤 실행되며 최초 공개 자체를 사전에 차단하지 못한다. | PR #5 관리자 수정 요청. | push 전 로컬 검사 필수. 이미 공개된 민감 자료는 이 검사만으로 회수할 수 없고 별도 이력 정화가 필요하다. |
 
 - 단위 / 물리식 / 상관식 / 제품 데이터 영향: 없음. 제품 수치, SI 변환, validator 및 loader 동작을 변경하지 않는다.
 - public interface 영향 / ACR 링크: 없음. 개발·CI 검사만 추가한다.
@@ -47,15 +48,16 @@
 | 검증 대상 | 정확한 명령 또는 검사 방법 | 환경 | PASS/FAIL/NOT_RUN/BLOCKED | 결과 요약 및 증거 |
 |---|---|---|---|---|
 | 공개 저장소 경계 | `python scripts/check_public_data_boundary.py` | Windows | PASS | 빈 template 1개, 제한 artifact와 component data 없음. |
-| 집중 회귀 | `python -m pytest -q tests/contracts/test_public_data_boundary.py` | Windows | PASS | 6 passed. |
+| 집중 회귀 | `python -m pytest -q -p no:cacheprovider --basetemp=.artifact_work/pytest-boundary-fixed tests/contracts/test_public_data_boundary.py` | Windows | PASS | 9 passed. Git 추적 `docs/build` PDF 거부, 첫 행 변조 거부, GUI 증빙 allowlist 포함. |
 | Ruff | `ruff check ...`, `ruff format --check ...` | Windows | PASS | 새 script/test 통과. |
 | mypy | `mypy scripts/check_public_data_boundary.py` | Windows | PASS | 1 source file 통과. |
-| WS-B·contract 회귀 | `python -m pytest -q --tb=short -p no:cacheprovider --basetemp='.artifact_work\\pytest-wsb-boundary' tests\\contracts tests\\ws_b` | Windows | PASS | 112 passed. |
+| WS-B·contract 회귀 | `python -m pytest -q --tb=short -p no:cacheprovider --basetemp=.artifact_work/pytest-wsb-boundary-final tests/contracts tests/ws_b` | Windows | PASS | 115 passed. 최초 manifest 갱신 전 실행은 114 passed, manifest 차이 1 failed였으며 `source_manifest.py --write` 후 재실행해 모두 통과했다. |
 | 전체 Ruff | `ruff check .`, `ruff format --check .` | Windows | PASS | 153 files formatted. |
 | 전체 mypy | `mypy`, `mypy src\\agent_hvac\\app\\streamlit_app.py` | Windows | PASS | 72 source files와 GUI entry 통과. |
 | source manifest | `python scripts\\source_manifest.py --write`, `--check` | Windows | PASS | 152 source files. |
 | build | `python -m build --no-isolation` | Windows | PASS | sdist와 wheel 생성. |
-| 원격 CI | 공개 PR head | GitHub Actions | NOT_RUN | push 및 PR 제출 후 확인한다. |
+| 최초 원격 CI | PR #5 최초 head `d7dc54c854eb890e9926ffa69a56fbce80748872` | GitHub Actions | PASS | 관리자 확인 기준 Windows/Ubuntu × base/gui 4개 통과. 보완 head CI와 구분한다. |
+| 보완 원격 CI | PR #5 보완 head | GitHub Actions | NOT_RUN | push 후 새 head에서 다시 확인한다. |
 
 - 수치 검증 기준값·단위·출처·허용오차·실제 오차(해당 시): 제품 수치를 사용하지 않아 해당 없음.
 - 실패 재현 및 조치 / 미실행 이유: 첫 집중 실행에서 test directory 생성의 `exist_ok` 누락과 `.artifact_work` 미제외를 확인해 수정했다. 남은 권한 제한 pytest 임시 폴더 때문에 첫 전체 Ruff format 검사가 중단됐으며 해당 임시 폴더만 제거한 뒤 153개 파일 검사가 통과했다.
@@ -64,8 +66,8 @@
 ## 종료 및 인수인계
 
 - 완료한 범위: 경계 검사, 합성 회귀, CI 연결, 작업 기록 및 로컬 품질·build 검증.
-- 남은 작업 / 알려진 한계 / blocker: 공개 PR과 원격 Windows/Ubuntu × base/gui CI.
+- 남은 작업 / 알려진 한계 / blocker: PR #5 보완 head의 원격 Windows/Ubuntu × base/gui CI와 재검토. 공개 push 뒤 CI이므로 최초 공개 전 차단은 별도 로컬 실행과 contributor 절차에 의존한다.
 - 다음 담당자와 첫 실행 작업: WS-A는 제품 소비 계약 변경이 없음을 확인하고 관리자는 공개자료 경계 정책을 검토한다.
 - `CURRENT_STATE.md` 갱신 여부: 갱신.
 - Phase checklist / Gate 상태와 증거: CV-1~CV-3, P06 전체, production 및 Gate 상태 변경 없음.
-- PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): PR 미제출, REVIEW_PENDING, 미병합, CI NOT_RUN.
+- PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): 공개 PR #5, CHANGES_REQUESTED 보완 중, 미병합. 최초 head CI 4/4 PASS, 보완 head CI NOT_RUN.

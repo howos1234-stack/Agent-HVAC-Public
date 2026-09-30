@@ -35,9 +35,10 @@
 ## WS-B 공개 제품자료 경계 검사 (2026-09-29, 진행 중)
 
 - Branch: `codex/ws-b/public-data-boundary-guard`, start `041121cf7036409d160f462aab87a163a05a8cc6`.
-- 공개 저장소에서 허용되는 binary product-data artifact는 데이터 행이 없는 15-sheet Excel schema 0.2.0 template 한 개로 제한한다.
-- 제조사 PDF·추가 Excel·스크린샷·ZIP과 `data/components`의 실제 record는 CI에서 거부한다. pytest가 임시 생성하는 합성 workbook은 repository에 저장하지 않는다.
+- 공개 저장소의 Git 추적 파일을 기준으로 binary allowlist를 검사한다. 제품자료는 승인된 15-sheet Excel schema 0.2.0 template 한 개만 허용하고, WS-E 공개 GUI 검증 이미지 3개는 경로를 명시해 별도 허용한다.
+- 빈 template은 sheet 순서, 모든 첫 행 header와 2행 이후 공백을 모두 검증한다. 제조사 PDF·추가 Excel·승인되지 않은 이미지·ZIP과 `data/components`의 실제 record는 CI에서 거부한다. pytest가 임시 생성하는 합성 workbook은 repository에 저장하지 않는다.
 - ProductRecord, schema, loader, 단위 변환, WS-A adapter 및 실제 제품 데이터는 변경하지 않는다.
-- 집중 합성 회귀: 6 passed. 전체 품질 검사와 공개 matrix CI는 후속 확인한다.
+- 관리자 재현 3건(`docs/build` 우회, template 첫 행 변조, 공개 GUI 이미지 오탐)을 보완했다. 집중 합성 회귀: 9 passed. 전체 품질 검사와 공개 matrix CI는 후속 확인한다.
+- 이 검사는 로컬 실행과 공개 push 뒤 CI에서 동작한다. GitHub에 최초 push되는 순간의 공개를 사전에 막지 못하므로, contributor는 push 전에 로컬 검사를 실행해야 하며 민감 자료가 이미 공개됐다면 별도 이력 정화·자격 증명 폐기 절차가 필요하다.
 - CV-1~CV-3, 실제 제조사 검증, P06 전체, production 및 Gate 상태는 변경하지 않는다.
 - Work record: [record](docs/development_log/2026-09-29_2334_WS-B_sangryul1208_public-data-boundary-guard.md).
