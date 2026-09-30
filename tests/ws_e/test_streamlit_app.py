@@ -39,6 +39,22 @@ def test_default_app_and_input_contract_switch():
     assert any("ConstraintReport" in element.value for element in app.info)
 
 
+def test_state_charts_render_ph_and_only_render_ts_when_entropy_is_present():
+    data = json.loads(
+        (ROOT / "tests/fixtures/simulation_result_r744.json").read_text(encoding="utf-8")
+    )
+    missing_entropy = render(data)
+    assert len(missing_entropy.get("vega_lite_chart")) == 1
+    assert any("엔트로피 데이터가 없습니다" in item.value for item in missing_entropy.info)
+
+    for index, state in enumerate(data["state_points"].values()):
+        state["entropy"] = {"value": 1_000.0 + index * 25.0, "unit": "J/(kg*K)"}
+    with_entropy = render(data)
+    assert not with_entropy.exception
+    assert len(with_entropy.get("vega_lite_chart")) == 2
+    assert not any("엔트로피 데이터가 없습니다" in item.value for item in with_entropy.info)
+
+
 @pytest.mark.parametrize(
     "status",
     ["unconverged", "infeasible", "invalid-property-state", "component-envelope-violation"],
