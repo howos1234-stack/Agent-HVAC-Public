@@ -89,7 +89,7 @@
   },
   {
     "path": "src/agent_hvac/app/design_workbench_app.py",
-    "sha256": "5f093997f6a5386417bc30ca75692b7f21a6bd101b03d7fb9b9114950eba0fb4"
+    "sha256": "3c390d690016f25eb8d495111080369a4e8c455774495fb98df8668e06e93aff"
   },
   {
     "path": "src/agent_hvac/app/result_view.py",
@@ -105,7 +105,7 @@
   },
   {
     "path": "src/agent_hvac/app/workbench_canvas_component.py",
-    "sha256": "f895d457e0f206c9f5de2e721b5bb7a81bc53856223f2b83cb382b86205ed2f8"
+    "sha256": "689a26666b864a9a8eede40f10a5fd89eb3e82df06539546545053994fe216d9"
   },
   {
     "path": "src/agent_hvac/app/workbench_command.py",
@@ -605,7 +605,7 @@
   },
   {
     "path": "tests/ws_e/test_design_workbench.py",
-    "sha256": "140aa95f869bc2d57d1359467f6a233c99aa702af70d21318494b72b0579f429"
+    "sha256": "db066355a08dbd8eb6d4d7d628a1f9b082ca4a647eec77987174d3a0efc19fba"
   },
   {
     "path": "tests/ws_e/test_file_generators.py",
