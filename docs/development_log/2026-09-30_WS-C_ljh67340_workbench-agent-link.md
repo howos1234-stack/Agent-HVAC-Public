@@ -5,7 +5,7 @@
 - 시작 / 종료 시각 및 시간대: 2026-09-30 14:20 +09:00 / 2026-09-30 14:35 +09:00 (Asia/Seoul)
 - 수행자 / human owner: LJH / @ljh67340
 - Phase / Workstream: P10-P12 / WS-C·WS-E 연결
-- 작업 상태: LOCAL_VALIDATED / PR 준비
+- 작업 상태: REVIEW_PENDING / 보완 제출
 - 사용자 요청과 목표: 관리자 검토 대기 중 가능한 후속 작업을 조사하고, 공개 integration에 병합된 워크벤치를 Agent가 구조화 호출할 수 있는 최소 결정론적 adapter를 구현한다.
 - 허용 파일 / 제외 파일: `agents` adapter·합성 테스트·공개 문서·manifest·상태 기록 / LLM SDK, 공통 schema, 물리 solver, 제품 DB, lockfile 제외
 - branch / 시작 commit / 종료 checkpoint(확인된 경우): `codex/ws-c/ljh67340/workbench-agent-link` / `d97edf1` / 미정
@@ -26,6 +26,8 @@
 | `src/agent_hvac/agents/workbench.py` | 구조화 command request/response와 명시적 실행 경계 추가 |
 | `tests/ws_c/test_workbench_agent.py` | 누락·project-only·완전 실행·모호/거부·solver 실패 5경로 검증 |
 | `docs/validation/p00-source-manifest.json` | 신규 source와 test hash 반영 |
+| `src/agent_hvac/app/workbench_command.py` | 잘못된 효율 단위와 상충하는 중복 조건을 명령 해석 단계에서 명시적으로 거부 |
+| `tests/ws_c/test_workbench_agent.py` | 입력 거부 시 solver 미호출과 미수렴 결과 보존 회귀 추가 |
 
 ## 결정, 가정 및 출처
 
@@ -50,16 +52,21 @@
 | mypy | `uv run --locked mypy`; GUI 두 entrypoint 별도 mypy | Windows | PASS | 기본 76 source files, GUI 2 files |
 | manifest | `uv run --locked python scripts/source_manifest.py --check` | Windows | PASS | 159 files verified |
 | build | `uv build --no-build-isolation` | Windows | PASS | sdist와 wheel 생성 |
+| 최초 head 원격 CI | [run 36686253990](https://github.com/howos1234-stack/Agent-HVAC-Public/actions/runs/36686253990) | Windows/Ubuntu × base/gui | PASS | 4/4; 검토 보완 전 head `fcdf50c` |
+| 검토 보완 집중검사 | `uv run --locked --extra gui pytest tests/ws_c/test_workbench_agent.py -q` | Windows / GUI | PASS | 8 passed; 잘못된 단위·상충 조건 solver 미호출과 미수렴 결과 보존 포함 |
+| 보완 head base 전체 | `uv run --locked pytest -q` | Windows / 기존 GUI-capable 환경 | PASS | 691 passed; clean base-only 환경 증거로 사용하지 않음 |
+| 보완 head GUI 전체 | `uv run --locked --extra gui pytest -q` | Windows / GUI dependency | PASS | 691 passed |
+| 보완 head 품질·계약 | Ruff, format, mypy, GUI strict mypy, manifest 계약, build | Windows | PASS | 159-file manifest, 계약 9 passed, sdist/wheel 생성 |
 
 - 수치 검증 기준값·단위·출처·허용오차·실제 오차(해당 시): 제품 기준값 없음; 기존 합성 baseline 입력만 사용 예정.
-- 실패 재현 및 조치 / 미실행 이유: 최초 테스트가 일반 baseline 결과를 mock으로 잘못 기대했고, 모호한 명령의 전체 누락 목록을 축소 기대해 2건 실패했다. 기존 계약을 확인해 테스트를 정정했다. 원격 CI는 PR 생성 후 확인 예정.
+- 실패 재현 및 조치 / 미실행 이유: 최초 테스트의 잘못된 기대 2건은 기존 계약에 맞게 정정했다. 관리자 검토에서 효율의 잘못된 단위와 상충하는 중복 조건이 조용히 승인되는 결함을 재현해 실행 전 거부와 solver 미호출 회귀를 추가했다. 보완 head 로컬 검증은 모두 통과했고 원격 CI는 push 후 확인한다.
 - diff 검토 결과: LLM SDK·공통 schema·물리 solver·제품 DB·lockfile 변경 없음. 일반 baseline 결과는 기존 계약대로 `is_mock=false`이며 제조사 제품 검증을 의미하지 않는다.
 
 ## 종료 및 인수인계
 
 - 완료한 범위: 구조화 명령 해석, 누락 입력 보존, 명시적 계산 실행, 실패 상태 변환과 회귀 검증.
-- 남은 작업 / 알려진 한계 / blocker: 공개 integration PR, 원격 CI와 관리자 리뷰. 실제 LLM 연동과 자유형 명령 이해는 별도 범위.
+- 남은 작업 / 알려진 한계 / blocker: PR #8 보완 head 원격 CI와 관리자 재검토. 실제 LLM 연동과 자유형 명령 이해는 별도 범위.
 - 다음 담당자와 첫 실행 작업: 관리자가 adapter 상태 경계와 원격 CI를 검토한다.
 - `CURRENT_STATE.md` 갱신 여부: 완료.
 - Phase checklist / Gate 상태와 증거: 실제 AI 추론·HVAC production·Gate 승인 범위 아님.
-- PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): PR 준비; 원격 CI·리뷰·병합 미수행.
+- PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): 공개 PR #8 보완 제출 준비; 최초 head CI 4/4 PASS; 보완 head 로컬 검증 PASS; 새 원격 CI 대기; integration 미병합.

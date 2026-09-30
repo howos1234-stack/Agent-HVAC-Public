@@ -109,6 +109,16 @@ def _first_match(
     return None
 
 
+def _all_matches(prompt: str, patterns: Iterable[str]) -> tuple[tuple[float, str], ...]:
+    matches: list[tuple[float, str]] = []
+    for pattern in patterns:
+        matches.extend(
+            (float(match.group("value")), match.group("unit"))
+            for match in re.finditer(pattern, prompt, flags=re.IGNORECASE)
+        )
+    return tuple(matches)
+
+
 def _condition(name: str, value: float, unit: str, prompt: str) -> WorkbenchCondition:
     return WorkbenchCondition(
         name=name,
@@ -177,23 +187,36 @@ def interpret_command(prompt: str) -> CommandPlan:
         notes.append(
             f"{insertion.first.value}와 {insertion.second.value} 사이에 배관을 삽입합니다."
         )
-    efficiency_match = re.search(
-        r"(?:등엔트로피\s*효율|isentropic\s*efficiency)"
-        r"(?:\s*모델)?[^0-9+%.\-]{0,24}"
-        r"(?P<value>[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+))\s*(?P<percent>%)?",
-        cleaned,
-        re.IGNORECASE,
+    efficiency_matches = tuple(
+        re.finditer(
+            r"(?:등엔트로피\s*효율|isentropic\s*efficiency)"
+            r"(?:\s*모델)?[^0-9+%.\-]{0,24}"
+            r"(?P<value>[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+))"
+            r"(?:\s*(?P<unit>%|percent|dimensionless|[A-Za-z][A-Za-z0-9/()°]*))?",
+            cleaned,
+            re.IGNORECASE,
+        )
     )
-    if efficiency_match:
+    efficiency_values: list[WorkbenchCondition] = []
+    for efficiency_match in efficiency_matches:
         value = float(efficiency_match.group("value"))
-        if efficiency_match.group("percent"):
+        unit = efficiency_match.group("unit") or "dimensionless"
+        if unit.lower() not in {"%", "percent", "dimensionless"}:
+            raise ValueError(f"지원하지 않는 등엔트로피 효율 단위: {unit}")
+        if unit.lower() in {"%", "percent"}:
             value /= 100.0
         if 0.0 < value <= 1.0:
-            parsed.append(
+            efficiency_values.append(
                 _condition("compressor_isentropic_efficiency", value, "dimensionless", cleaned)
             )
         else:
             notes.append("등엔트로피 효율은 0보다 크고 1 이하여야 합니다.")
+    if efficiency_values:
+        if any(
+            condition.value != efficiency_values[0].value for condition in efficiency_values[1:]
+        ):
+            raise ValueError("상충하는 compressor_isentropic_efficiency 입력이 있습니다.")
+        parsed.append(efficiency_values[0])
 
     if re.search(r"(?i)(?<![A-Za-z])(?:bar\s*\(\s*g\s*\)|barg)(?![A-Za-z])", cleaned):
         raise ValueError(
@@ -241,9 +264,14 @@ def interpret_command(prompt: str) -> CommandPlan:
         ),
     )
     for name, patterns in specifications:
-        match = _first_match(cleaned, patterns)
-        if match is not None:
-            parsed.append(_condition(name, match[0], match[1], cleaned))
+        matches = _all_matches(cleaned, patterns)
+        if not matches:
+            continue
+        conditions = tuple(_condition(name, value, unit, cleaned) for value, unit in matches)
+        normalized = tuple(_normalized_condition_value(condition) for condition in conditions)
+        if any(value != normalized[0] for value in normalized[1:]):
+            raise ValueError(f"상충하는 {name} 입력이 있습니다.")
+        parsed.append(conditions[0])
 
     supplied = {condition.name for condition in parsed}
     missing.extend(name for name in _REQUIRED_SOLVER_INPUTS if name not in supplied)
@@ -427,6 +455,21 @@ def _efficiency_si(condition: WorkbenchCondition) -> Quantity:
     if not 0.0 < value <= 1.0:
         raise ValueError("등엔트로피 효율은 0보다 크고 1 이하여야 합니다.")
     return Quantity(value=value, unit="dimensionless")
+
+
+def _normalized_condition_value(condition: WorkbenchCondition) -> float:
+    if condition.name in {"evaporator_pressure", "high_side_pressure"}:
+        return _pressure_si(condition).value
+    if condition.name in {
+        "compressor_inlet_temperature",
+        "heat_rejection_outlet_temperature",
+    }:
+        return _temperature_si(condition).value
+    if condition.name == "refrigerant_mass_flow":
+        return _mass_flow_si(condition).value
+    if condition.name == "compressor_isentropic_efficiency":
+        return _efficiency_si(condition).value
+    raise ValueError(f"지원하지 않는 설계조건: {condition.name}")
 
 
 def design_from_project(project: WorkbenchProject) -> DesignSpecification:

@@ -6,6 +6,7 @@ from agent_hvac.agents.workbench import (
     WorkbenchCommandRequest,
     run_workbench_command,
 )
+from agent_hvac.schemas.results import SimulationResult, SolverStatus
 from agent_hvac.utils.exceptions import InvalidPropertyStateError
 
 COMPLETE_COMMAND = (
@@ -91,3 +92,45 @@ def test_solver_service_failure_is_returned_as_failed_without_a_result() -> None
     assert response.project is not None
     assert response.result is None
     assert response.messages == ("synthetic property failure",)
+
+
+def test_wrong_efficiency_unit_is_rejected_before_solver_call() -> None:
+    command = COMPLETE_COMMAND.replace("효율 0.75", "효율 0.75 kg/s")
+    with patch("agent_hvac.agents.workbench.simulate_project") as simulate:
+        response = run_workbench_command(WorkbenchCommandRequest(prompt=command, execute=True))
+
+    assert response.status == "rejected"
+    assert "효율 단위" in response.messages[0]
+    assert response.result is None
+    simulate.assert_not_called()
+
+
+def test_conflicting_duplicate_condition_is_rejected_before_solver_call() -> None:
+    command = COMPLETE_COMMAND + " 고압 90 bar(a)."
+    with patch("agent_hvac.agents.workbench.simulate_project") as simulate:
+        response = run_workbench_command(WorkbenchCommandRequest(prompt=command, execute=True))
+
+    assert response.status == "rejected"
+    assert "상충하는 high_side_pressure" in response.messages[0]
+    assert response.result is None
+    simulate.assert_not_called()
+
+
+def test_nonconverged_solver_result_is_preserved_as_failed_result() -> None:
+    nonconverged = SimulationResult(
+        design_id="WORKBENCH-R134a",
+        status=SolverStatus.UNCONVERGED,
+        is_mock=False,
+        messages=("synthetic convergence limit",),
+    )
+    with patch(
+        "agent_hvac.agents.workbench.simulate_project", return_value=nonconverged
+    ) as simulate:
+        response = run_workbench_command(
+            WorkbenchCommandRequest(prompt=COMPLETE_COMMAND, execute=True)
+        )
+
+    assert response.status == "failed"
+    assert response.result == nonconverged
+    assert response.messages == nonconverged.messages
+    simulate.assert_called_once()
