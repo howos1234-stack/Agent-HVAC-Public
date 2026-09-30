@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 from pydantic import ValidationError
@@ -46,6 +47,7 @@ from agent_hvac.app.workbench_command import (
     simulate_project,
 )
 from agent_hvac.schemas.results import SolverStatus
+from agent_hvac.utils.exceptions import InvalidPropertyStateError
 
 
 def test_default_project_is_a_complete_editor_graph_and_round_trips() -> None:
@@ -1063,13 +1065,16 @@ def test_streamlit_natural_language_builder_runs_real_baseline_result() -> None:
         "응축기 출구온도 35°C, 냉매 질량유량 0.05 kg/s."
     )
     app = app.text_area[0].set_value(prompt).run(timeout=20)
-    analyze = next(button for button in app.button if button.label == "명령 해석")
+    analyze = next(button for button in app.button if button.label == "Agent 입력 확인")
     app = analyze.click().run(timeout=20)
 
-    assert any("필요한 입력을 모두 인식" in item.value for item in app.success)
+    assert any("Agent 상태 · 프로젝트 준비" in item.value for item in app.info)
     apply = next(button for button in app.button if button.label == "캔버스에 구성")
     assert not apply.disabled
-    app = apply.click().run(timeout=20)
+    execute = next(button for button in app.button if button.label == "명시적 계산 실행")
+    app = execute.click().run(timeout=20)
+    assert any("Agent 상태 · 계산 완료" in item.value for item in app.success)
+    assert any("설계 목표 달성" in item.value for item in app.caption)
     assert any("냉매 R134a" in item.value for item in app.caption)
     component_selector = next(item for item in app.selectbox if item.label == "선택 부품")
     assert "condenser" in component_selector.options
@@ -1080,15 +1085,100 @@ def test_streamlit_natural_language_builder_runs_real_baseline_result() -> None:
     assert float(high_pressure.value) == 12.0
     assert target_selector.value == "condenser"
 
-    run = next(
-        button for button in app.button if button.label == "캔버스 구성으로 baseline 계산 실행"
-    )
-    assert not run.disabled
-    app = run.click().run(timeout=20)
-
     assert any("결과 · WORKBENCH-R134a" in item.value for item in app.subheader)
     assert any("Solver status: converged" in item.value for item in app.text)
     assert len(app.get("vega_lite_chart")) == 2
+
+
+def test_streamlit_agent_missing_inputs_can_be_completed_then_run() -> None:
+    pytest.importorskip("streamlit")
+    from streamlit.testing.v1 import AppTest
+
+    root = Path(__file__).resolve().parents[2]
+    app = AppTest.from_file(str(root / "src/agent_hvac/app/design_workbench_app.py")).run(
+        timeout=20
+    )
+    app = app.text_area[0].set_value("R134a 기본 냉동사이클을 구성해줘").run(timeout=20)
+    confirm = next(button for button in app.button if button.label == "Agent 입력 확인")
+    app = confirm.click().run(timeout=20)
+
+    assert any("Agent 상태 · 추가 입력 필요" in item.value for item in app.warning)
+    assert any("사용자 보완 필요" in item.value for item in app.warning)
+    apply = next(button for button in app.button if button.label == "캔버스에 구성")
+    app = apply.click().run(timeout=20)
+    values = {
+        "전체 · 증발·저압측 압력 [bar(a)]": "3",
+        "전체 · 토출·고압측 압력 [bar(a)]": "12",
+        "전체 · 흡입 온도 [degC]": "10",
+        "전체 · 고압 열교환기 출구 온도 [degC]": "35",
+        "전체 · 냉매 질량유량 [kg/s]": "0.05",
+        "전체 · 등엔트로피 효율 [dimensionless]": "0.75",
+    }
+    for field in app.text_input:
+        if field.label in values:
+            field.set_value(values[field.label])
+    apply_conditions = next(button for button in app.button if button.label == "설계조건 적용")
+    app = apply_conditions.click().run(timeout=20)
+    run = next(
+        button for button in app.button if button.label == "캔버스 구성으로 baseline 계산 실행"
+    )
+    app = run.click().run(timeout=20)
+
+    assert any("Solver status: converged" in item.value for item in app.text)
+
+
+@pytest.mark.parametrize(
+    "prompt",
+    [
+        (
+            "R134a 기본 냉동사이클, 등엔트로피 효율 0.75 kg/s, "
+            "증발압력 3 bar(a), 고압 12 bar(a), 흡입온도 10°C, "
+            "응축기 출구온도 35°C, 냉매 질량유량 0.05 kg/s."
+        ),
+        "R744 저압 30 bar(g)",
+        (
+            "R134a 기본 냉동사이클, 등엔트로피 효율 0.75, "
+            "증발압력 3 bar(a), 고압 12 bar(a), 고압 90 bar(a), "
+            "흡입온도 10°C, 응축기 출구온도 35°C, 냉매 질량유량 0.05 kg/s."
+        ),
+    ],
+)
+def test_streamlit_agent_rejects_invalid_command_before_execution(prompt: str) -> None:
+    pytest.importorskip("streamlit")
+    from streamlit.testing.v1 import AppTest
+
+    root = Path(__file__).resolve().parents[2]
+    app = AppTest.from_file(str(root / "src/agent_hvac/app/design_workbench_app.py")).run(
+        timeout=20
+    )
+    app = app.text_area[0].set_value(prompt).run(timeout=20)
+    execute = next(button for button in app.button if button.label == "명시적 계산 실행")
+    with patch("agent_hvac.agents.workbench.simulate_project") as simulate:
+        app = execute.click().run(timeout=20)
+
+    assert any("Agent 상태 · 입력 거부" in item.value for item in app.error)
+    assert "workbench_result" not in app.session_state.filtered_state
+    simulate.assert_not_called()
+
+
+def test_streamlit_agent_solver_failure_is_explicit_and_has_no_result() -> None:
+    pytest.importorskip("streamlit")
+    from streamlit.testing.v1 import AppTest
+
+    root = Path(__file__).resolve().parents[2]
+    app = AppTest.from_file(str(root / "src/agent_hvac/app/design_workbench_app.py")).run(
+        timeout=20
+    )
+    execute = next(button for button in app.button if button.label == "명시적 계산 실행")
+    with patch(
+        "agent_hvac.agents.workbench.simulate_project",
+        side_effect=InvalidPropertyStateError("synthetic property failure"),
+    ):
+        app = execute.click().run(timeout=20)
+
+    assert any("Agent 상태 · 계산 실패" in item.value for item in app.error)
+    assert any("synthetic property failure" in item.value for item in app.caption)
+    assert "workbench_result" not in app.session_state.filtered_state
 
 
 def test_streamlit_direct_conditions_run_canvas_without_natural_language() -> None:
@@ -1173,7 +1263,7 @@ def test_streamlit_component_parameter_edit_reaches_the_real_solver() -> None:
     app = AppTest.from_file(str(root / "src/agent_hvac/app/design_workbench_app.py")).run(
         timeout=20
     )
-    analyze = next(button for button in app.button if button.label == "명령 해석")
+    analyze = next(button for button in app.button if button.label == "Agent 입력 확인")
     app = analyze.click().run(timeout=20)
     apply = next(button for button in app.button if button.label == "캔버스에 구성")
     app = apply.click().run(timeout=20)
@@ -1225,6 +1315,28 @@ def _assert_workbench_result_invalidated(app) -> None:
     assert "workbench_result" not in app.session_state.filtered_state
     assert "workbench_result_project_fingerprint" not in app.session_state.filtered_state
     assert not any("Solver status: converged" in item.value for item in app.text)
+
+
+def test_agent_project_change_uses_history_and_invalidates_previous_result() -> None:
+    pytest.importorskip("streamlit")
+    app = _converged_default_workbench_app()
+    prompt = (
+        "R134a 기본 냉동사이클을 구성하고 압축기에 등엔트로피 효율 0.75 모델을 "
+        "적용해줘. 증발압력 3 bar(a), 고압 12 bar(a), 흡입온도 10°C, "
+        "응축기 출구온도 35°C, 냉매 질량유량 0.05 kg/s."
+    )
+    app = app.text_area[0].set_value(prompt).run(timeout=20)
+    confirm = next(button for button in app.button if button.label == "Agent 입력 확인")
+    app = confirm.click().run(timeout=20)
+    apply = next(button for button in app.button if button.label == "캔버스에 구성")
+    app = apply.click().run(timeout=20)
+
+    _assert_workbench_result_invalidated(app)
+    assert any("냉매 R134a" in item.value for item in app.caption)
+    undo = next(button for button in app.button if button.label == "↶ 실행 취소")
+    app = undo.click().run(timeout=20)
+    _assert_workbench_result_invalidated(app)
+    assert any("냉매 R744" in item.value for item in app.caption)
 
 
 def test_streamlit_component_delete_invalidates_previous_result() -> None:

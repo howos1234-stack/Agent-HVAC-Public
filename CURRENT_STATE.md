@@ -60,6 +60,15 @@
 - General baseline calculations remain distinct from manufacturer product validation, optimization, production and Gate approval.
 - Evidence: [record](docs/development_log/2026-09-30_WS-C_ljh67340_workbench-agent-link.md).
 
+## Pending public WS-C adapter to WS-E screen connection
+
+- Branch `codex/ws-c-e/ljh67340/agent-workbench-screen` starts from integration `17570772eceb173399b2ab26d844dd0bc52a97ac`; post-merge run [36706621493](https://github.com/howos1234-stack/Agent-HVAC-Public/actions/runs/36706621493) passed Windows/Ubuntu × base/gui 4/4.
+- The natural-language panel now calls the integrated deterministic WS-C adapter and displays rejected, needs-input, project-ready, completed and failed outcomes separately. It does not infer missing engineering values.
+- An adapter-created project enters the existing full-project edit history. Explicit adapter execution stores a result only against the matching project fingerprint; later condition, JSON, component or history changes retain existing stale-result invalidation.
+- Completed execution is labelled as calculation-flow completion only, separate from design-target achievement and product suitability.
+- This GUI connection does not add an LLM/API, product selection, manufacturer validation, production use, CV/P06 completion or Gate approval.
+- Evidence: [record](docs/development_log/2026-09-30_WS-C-E_ljh67340_agent-workbench-screen.md).
+
 ## WS-A 공개 이관 작업 (2026-09-29, 검토 대기)
 
 - 공개 `integration` `f19f2fe`에서 별도 브랜치 `codex/ws-a/public-pipe-closure`를 시작했다. 이전 비공개 작업 폴더와 Git 이력은 합치지 않았다.
