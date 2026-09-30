@@ -72,6 +72,10 @@
     "sha256": "40bd06b3344e383eef8a0513b33785fcce77d0d2ce2b1ae20cab8c2b2a855490"
   },
   {
+    "path": "src/agent_hvac/agents/workbench.py",
+    "sha256": "9e5fb415221b99127118f69a28f04cc1c6770c2b42a8cfca68ccbafb0b7330f2"
+  },
+  {
     "path": "src/agent_hvac/app/__init__.py",
     "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
   },
@@ -594,6 +598,10 @@
   {
     "path": "tests/ws_b/test_product_record_v020.py",
     "sha256": "153f96a70056e358c0a7c11f0edb4338f0c3de4a55d2d62d28e5392cf23c2844"
+  },
+  {
+    "path": "tests/ws_c/test_workbench_agent.py",
+    "sha256": "940163ec2fa3fba5f472d1465630ac61e4625fc53356bf37fde0c61b65f05777"
   },
   {
     "path": "tests/ws_d/test_synthetic_search.py",
