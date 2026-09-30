@@ -22,6 +22,14 @@
 - Public PR [#3](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/3) was approved and merged to integration as `49dcfbc522f798b1567e61aeabe198c7502bbf27`. Its latest-head Windows/Ubuntu × base/gui CI passed 4/4; post-merge CI is tracked separately.
 - This work does not imply manufacturer validation, production use, CV/P06 completion or Gate approval.
 
+## WS-E 공개 workbench 편집 이력 UX (integration 반영 완료)
+
+- Public PR [#9](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/9), branch `codex/ws-e/ljh67340/workbench-ux-followup`, started from integration `d97edf1f5854e44607d657d58710d320f5c8fa94` after public PR #7 merged; integration merge `1757077`.
+- The workbench records validated project JSON snapshots for up to 50 edits and exposes sidebar Undo/Redo plus canvas `Ctrl+Z`, `Ctrl+Y` and `Ctrl+Shift+Z` shortcuts. Restoring history invalidates any previous calculation result. An uploaded JSON is applied once per selected file content so reruns and Undo do not silently re-import it.
+- The direct condition editor now opens automatically while required baseline inputs are missing, so the default 4/6 input state exposes the two missing values without an extra click.
+- Actual in-app Chromium verification confirmed component addition and sidebar Undo restoration. AppTest covers add/undo/redo, delete/undo with stale-result invalidation, missing-input expansion and shortcut asset wiring.
+- This is GUI editing usability and synthetic regression work only. HVAC physics, product data, production use, CV/P06 and Gate status are unchanged.
+
 ## WS-B public product-database audit
 
 - Public PR: [#2](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/2), branch `codex/ws-b/public-product-db-audit`; original audit basis `f19f2fefc05c78bb050e024b9e15651b0fd4bef4`, latest integration merge basis `a200c7bec109cb475c8283e7a1f9a2d9733fb743`.
@@ -42,6 +50,15 @@
 - Local Windows validation: WS-D 10 passed; base-command 618 passed in the existing environment; GUI 618 passed; Ruff, format, mypy, 150-file manifest and package build passed.
 - This is mock synthetic input validation only. It does not add HVAC physics, manufacturer products, production selection or Gate approval.
 - Evidence: [record](docs/development_log/2026-09-30_WS-D_ljh67340_synthetic-candidate-identity.md).
+
+## WS-C 공개 Agent-to-workbench adapter (integration 반영 완료)
+
+- Public PR [#8](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/8), branch `codex/ws-c/ljh67340/workbench-agent-link`, started from integration `d97edf1` after WS-E PR #3 and WS-D PR #7 were integrated; integration merge `f26c5c2`.
+- A deterministic structured adapter now converts the already-supported command vocabulary into a workbench project, preserves missing inputs, and runs the existing baseline solver only when `execute=true` and all six required conditions are present.
+- Ambiguous or unsupported input, incomplete input, project-only preparation, successful execution, and solver failure remain distinct outcomes. Wrong-dimension efficiency, every explicitly invalid efficiency value even when accompanied by a valid value, and conflicting duplicate conditions are rejected before solver invocation; nonconverged solver artifacts remain available as failed results. No LLM SDK or inferred engineering value is added.
+- Original head validation: WS-C 5 passed; base-command 688 passed; GUI 688 passed; Ruff, format, mypy, GUI entrypoint mypy, 159-file manifest and package build passed; remote CI run 36686253990 passed 4/4. Review-requested input guards were subsequently integrated; final-head CI is tracked separately.
+- General baseline calculations remain distinct from manufacturer product validation, optimization, production and Gate approval.
+- Evidence: [record](docs/development_log/2026-09-30_WS-C_ljh67340_workbench-agent-link.md).
 
 ## WS-A 공개 이관 작업 (2026-09-29, integration 반영 완료)
 
@@ -81,6 +98,6 @@
 
 ## WS-A PR #6 최신 integration 동기화 (2026-09-30, 진행 중)
 
-- 최신 공개 integration `7277b75`를 반영하고 WS-D #7, WS-E #3, WS-B #5·#10과 WS-A #1·#6의 기록을 함께 보존한다.
+- 최신 공개 integration `1757077`을 반영하고 WS-D #7, WS-E #3·#9, WS-C #8, WS-B #5·#10과 WS-A #1·#6의 기록을 함께 보존한다. 이전 중간 동기화 `7277b75` 이후 PR #8·#9가 추가 병합돼 상태 문서 충돌을 한 번 더 해결했다.
 - 충돌은 이 상태 문서에만 있었고, 합성 후보 평가의 물리식·계약·제품 DB는 변경하지 않는다. 검증과 새 head 원격 CI는 [작업 기록](docs/development_log/2026-09-30_2003_WS-A_public-pr6-integration-reconcile.md)에서 확인한다.
 - 실제 제조사 검증·CV-1~CV-3·P06 전체·production·Gate 상태는 변경하지 않는다.

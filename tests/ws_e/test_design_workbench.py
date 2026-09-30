@@ -492,6 +492,9 @@ def test_component_addition_uses_deterministic_ids_and_canvas_assets_show_connec
     assert "setTriggerValue('action'" in WORKBENCH_CANVAS_JS
     assert "marker-end:url(#wb-arrow)" in WORKBENCH_CANVAS_CSS
     assert "application/x-agent-hvac-kind" in WORKBENCH_CANVAS_JS
+    assert "event.ctrlKey||event.metaKey" in WORKBENCH_CANVAS_JS
+    assert "emit({type:event.shiftKey?'redo':'undo'})" in WORKBENCH_CANVAS_JS
+    assert "emit({type:'redo'})" in WORKBENCH_CANVAS_JS
     assert "type:'connect'" in WORKBENCH_CANVAS_JS
     assert "type:'disconnect'" in WORKBENCH_CANVAS_JS
     assert "orthogonalVertices" in WORKBENCH_CANVAS_JS
@@ -982,6 +985,15 @@ def test_streamlit_palette_and_mock_connection_are_explicit() -> None:
     assert any("부품 5개" in text.value for text in app.caption)
     assert any("연결되지 않은 부품: pipe_1" in error.value for error in app.error)
 
+    undo = next(button for button in app.button if button.label == "↶ 실행 취소")
+    assert not undo.disabled
+    app = undo.click().run(timeout=20)
+    assert any("부품 4개" in text.value for text in app.caption)
+    redo = next(button for button in app.button if button.label == "↷ 다시 실행")
+    assert not redo.disabled
+    app = redo.click().run(timeout=20)
+    assert any("부품 5개" in text.value for text in app.caption)
+
     run_mock = next(
         button for button in app.button if button.label == "P09 결정론적 MOCK 연결 점검 실행"
     )
@@ -1227,6 +1239,28 @@ def test_streamlit_component_delete_invalidates_previous_result() -> None:
     _assert_workbench_result_invalidated(app)
     assert any("부품 3개" in item.value for item in app.caption)
 
+    undo = next(button for button in app.button if button.label == "↶ 실행 취소")
+    app = undo.click().run(timeout=20)
+    _assert_workbench_result_invalidated(app)
+    assert any("부품 4개" in item.value for item in app.caption)
+
+
+def test_missing_conditions_expand_editor_and_history_starts_disabled() -> None:
+    pytest.importorskip("streamlit")
+    from streamlit.testing.v1 import AppTest
+
+    root = Path(__file__).resolve().parents[2]
+    app = AppTest.from_file(str(root / "src/agent_hvac/app/design_workbench_app.py")).run(
+        timeout=20
+    )
+
+    editor = next(item for item in app.expander if item.label == "설계조건 입력·수정")
+    assert editor.proto.expanded
+    undo = next(button for button in app.button if button.label == "↶ 실행 취소")
+    redo = next(button for button in app.button if button.label == "↷ 다시 실행")
+    assert undo.disabled
+    assert redo.disabled
+
 
 def test_streamlit_connection_change_invalidates_previous_result() -> None:
     pytest.importorskip("streamlit")
@@ -1264,3 +1298,12 @@ def test_streamlit_json_upload_invalidates_previous_result() -> None:
 
     _assert_workbench_result_invalidated(app)
     assert any("냉매 R134a" in item.value for item in app.caption)
+
+    undo = next(button for button in app.button if button.label == "↶ 실행 취소")
+    assert not undo.disabled
+    app = undo.click().run(timeout=20)
+
+    _assert_workbench_result_invalidated(app)
+    assert any("냉매 R744" in item.value for item in app.caption)
+    redo = next(button for button in app.button if button.label == "↷ 다시 실행")
+    assert not redo.disabled
