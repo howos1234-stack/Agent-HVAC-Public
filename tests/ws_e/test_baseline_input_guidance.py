@@ -1,4 +1,9 @@
-from agent_hvac.app.baseline_input_guidance import baseline_guidance_checks, failure_explanation
+from agent_hvac.app.baseline_input_guidance import (
+    GUIDANCE_ROWS,
+    NATURAL_COMMAND_EXAMPLES,
+    baseline_guidance_checks,
+    failure_explanation,
+)
 from agent_hvac.app.design_workbench import default_r744_project, update_condition
 
 
@@ -81,3 +86,37 @@ def test_unknown_failure_keeps_safe_generic_recovery_steps():
     explanation, actions = failure_explanation(("unexpected synthetic failure",))
     assert "완료하지 못했습니다" in explanation
     assert any("원문 사유" in action for action in actions)
+
+
+def test_natural_language_section_shows_beginner_command_guidance():
+    import pytest
+
+    pytest.importorskip("streamlit")
+    from pathlib import Path
+
+    from streamlit.testing.v1 import AppTest
+
+    root = Path(__file__).resolve().parents[2]
+    app = AppTest.from_file(str(root / "src/agent_hvac/app/design_workbench_app.py")).run(
+        timeout=20
+    )
+    assert any(item.label == "자연어 명령 작성 가이드" for item in app.expander)
+    assert any("제품 허용범위" in item.value for item in app.warning)
+
+
+def test_natural_language_examples_are_complete_and_guidance_covers_six_inputs():
+    assert set(NATURAL_COMMAND_EXAMPLES) == {"R134a", "R410A", "R744"}
+    for refrigerant, command in NATURAL_COMMAND_EXAMPLES.items():
+        assert refrigerant in command
+        assert "bar(a)" in command
+        assert "kg/s" in command
+        assert "효율" in command
+    assert len(GUIDANCE_ROWS) == 6
+    assert {row["입력"] for row in GUIDANCE_ROWS} == {
+        "증발·저압측 압력",
+        "토출·고압측 압력",
+        "흡입 온도",
+        "고압 열교환기 출구온도",
+        "냉매 질량유량",
+        "등엔트로피 효율",
+    }
