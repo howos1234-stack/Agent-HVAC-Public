@@ -297,6 +297,18 @@ def _render_failure_help(messages: tuple[str, ...]) -> None:
                 st.code(message, language=None)
 
 
+def _render_guidance_checks(project: WorkbenchProject) -> None:
+    for check in baseline_guidance_checks(project):
+        if check.level == "error":
+            st.error(check.message)
+        elif check.level == "warning":
+            st.warning(check.message)
+        elif check.level == "pass":
+            st.success(check.message)
+        else:
+            st.info(check.message)
+
+
 def _render_command_response(response: WorkbenchCommandResponse) -> None:
     status_label = {
         "rejected": "입력 거부",
@@ -346,6 +358,9 @@ def _render_command_response(response: WorkbenchCommandResponse) -> None:
             ],
             hide_index=True,
         )
+    if response.project is not None:
+        st.markdown("**해석된 조건의 물리 입력 점검**")
+        _render_guidance_checks(response.project)
 
 
 def _render_command_builder() -> None:
@@ -359,6 +374,26 @@ def _render_command_builder() -> None:
     command_key = "natural-language-command"
     if command_key not in st.session_state:
         st.session_state[command_key] = default_prompt
+    with st.expander("자연어 명령 작성 가이드", expanded=True):
+        st.markdown(
+            "1. 냉매와 기본 사이클을 먼저 적습니다.\n"
+            "2. **증발압력, 고압, 흡입온도, 고압 열교환기 출구온도, "
+            "냉매 질량유량, 등엔트로피 효율**을 모두 적습니다.\n"
+            "3. 압력은 `bar(a)` 같은 절대압으로 쓰고 고압을 저압보다 높게 입력합니다.\n"
+            "4. 값이 확실하지 않으면 임의로 채우지 말고 입력 검사 후 직접 보완합니다."
+        )
+        st.code(
+            "[냉매] 기본 냉동사이클을 구성해줘. 증발압력 [값] bar(a), "
+            "고압 [값] bar(a), 흡입온도 [값] °C, 고압 열교환기 출구온도 [값] °C, "
+            "냉매 질량유량 [값] kg/s, 등엔트로피 효율 [값].",
+            language=None,
+        )
+        for refrigerant, example in EXAMPLE_CONDITIONS.items():
+            st.caption(f"{refrigerant} 사용 예시 · {example}")
+        st.warning(
+            "예시는 화면 사용 확인용 baseline 조건입니다. 제품 허용범위, 안전 한계, "
+            "최적 설계값 또는 제조사 성능 보증이 아닙니다."
+        )
     with st.expander("입력 가능한 항목과 단위", expanded=False):
         st.caption("현재 BaselineCycleSolver adapter가 실제로 요구하는 입력만 표시합니다.")
         st.markdown("**필수 냉매:** R134a · R410A · R744 중 하나")
@@ -456,15 +491,7 @@ def _render_condition_editor(project: WorkbenchProject) -> WorkbenchProject:
         )
         example = EXAMPLE_CONDITIONS.get(project.refrigerant, "공식 예시 없음")
         st.caption(f"{project.refrigerant} 예시 · {example}")
-        for check in baseline_guidance_checks(project):
-            if check.level == "error":
-                st.error(check.message)
-            elif check.level == "warning":
-                st.warning(check.message)
-            elif check.level == "pass":
-                st.success(check.message)
-            else:
-                st.info(check.message)
+        _render_guidance_checks(project)
     with st.expander("설계조건 입력·수정", expanded=bool(missing)):
         entered: dict[str, tuple[str, str]] = {}
         with st.form(f"workbench-condition-form-{suffix}"):

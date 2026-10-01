@@ -25,7 +25,7 @@
 - 최신 공개 integration `eb2c5c3`에서 별도 브랜치로 시작했다.
 - R134a/R410A/R744 입력 예시와 절대압·압력 관계·질량유량·효율·온도 점검, CoolProp 기반 과열도·과냉도·초임계 안내를 설계조건 편집기에 추가했다. 자연어 입력은 입력 검사→캔버스 적용→계산 실행으로 명칭과 설명을 정리하고 실패 원인·해결 가이드를 한국어로 표시한다.
 - 명백한 입력 오류는 baseline 실행 전에 차단하지만 사용자 값을 자동 변경하지 않으며, 예시를 제품 허용범위나 설계 권장값으로 표시하지 않는다.
-- 집중 회귀 72개와 Ruff·format·mypy·GUI strict mypy, 실제 Chromium 표시를 확인했다. [작업 기록](docs/development_log/2026-10-01_WS-E_ljh67340_baseline-input-guidance.md).
+- 자연어 작성 영역에도 필수 6개 조건, 명령 템플릿과 냉매별 예시를 제공하며 입력 검사 후 동일한 동적 물리 점검을 표시한다. 최신 integration 반영 후 집중 회귀 85개와 Ruff·format·mypy·GUI strict mypy, 실제 Chromium 표시를 확인했다. [작업 기록](docs/development_log/2026-10-01_WS-E_ljh67340_baseline-input-guidance.md).
 - Public PR [#3](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/3) was approved and merged to integration as `49dcfbc522f798b1567e61aeabe198c7502bbf27`. Its latest-head Windows/Ubuntu × base/gui CI passed 4/4; post-merge CI is tracked separately.
 - This work does not imply manufacturer validation, production use, CV/P06 completion or Gate approval.
 

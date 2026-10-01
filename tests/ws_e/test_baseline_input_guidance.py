@@ -81,3 +81,19 @@ def test_unknown_failure_keeps_safe_generic_recovery_steps():
     explanation, actions = failure_explanation(("unexpected synthetic failure",))
     assert "완료하지 못했습니다" in explanation
     assert any("원문 사유" in action for action in actions)
+
+
+def test_natural_language_section_shows_beginner_command_guidance():
+    import pytest
+
+    pytest.importorskip("streamlit")
+    from pathlib import Path
+
+    from streamlit.testing.v1 import AppTest
+
+    root = Path(__file__).resolve().parents[2]
+    app = AppTest.from_file(str(root / "src/agent_hvac/app/design_workbench_app.py")).run(
+        timeout=20
+    )
+    assert any(item.label == "자연어 명령 작성 가이드" for item in app.expander)
+    assert any("제품 허용범위" in item.value for item in app.warning)
