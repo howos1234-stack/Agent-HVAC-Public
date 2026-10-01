@@ -264,6 +264,61 @@ def _store_command_project(
         st.session_state.workbench_result_project_fingerprint = _project_fingerprint(project)
 
 
+def _failure_explanation(messages: tuple[str, ...]) -> tuple[str, tuple[str, ...]]:
+    """Translate known solver failures into corrective, non-invented user guidance."""
+    joined = " ".join(messages).lower()
+    if "evaporator capacity must be positive" in joined:
+        return (
+            "팽창 후 냉매가 증발기에서 열을 흡수할 수 있는 상태가 만들어지지 않았습니다.",
+            (
+                "냉매에 맞게 고압측 압력을 저압측보다 충분히 높게 설정하세요.",
+                "고압 열교환기 출구온도를 낮추고 흡입온도가 포화온도 이상인지 확인하세요.",
+            ),
+        )
+    if "high_side_pressure must exceed" in joined or "고압측 압력" in joined:
+        return (
+            "고압측 압력이 저압측보다 높지 않아 압축·팽창 사이클을 구성할 수 없습니다.",
+            ("고압측 압력을 증발·저압측 압력보다 큰 절대압으로 입력하세요.",),
+        )
+    if "efficiency" in joined or "효율" in joined:
+        return (
+            "압축기 효율 값 또는 단위가 허용 형식과 맞지 않습니다.",
+            ("효율을 무차원 0 초과 1 이하 또는 percent 0 초과 100 이하로 입력하세요.",),
+        )
+    if "coolprop" in joined or "property" in joined or "phase" in joined:
+        return (
+            "선택한 냉매에서 입력 압력·온도의 물성 상태를 계산할 수 없습니다.",
+            (
+                "냉매명과 압력·온도 단위를 확인하세요.",
+                "위 입력 가이드의 과열도·과냉도 경고를 확인한 뒤 조건을 조정하세요.",
+            ),
+        )
+    if "converg" in joined or "unconverged" in joined:
+        return (
+            "solver가 주어진 조건에서 안정된 해에 도달하지 못했습니다.",
+            ("압력과 온도를 냉매별 예시 근처에서 다시 시작한 뒤 한 항목씩 변경하세요.",),
+        )
+    return (
+        "입력 또는 물성 계산 단계에서 해석을 완료하지 못했습니다.",
+        (
+            "아래 원문 사유와 입력 가이드의 경고를 확인하세요.",
+            "한 번에 한 조건만 수정한 뒤 다시 계산하세요.",
+        ),
+    )
+
+
+def _render_failure_help(messages: tuple[str, ...]) -> None:
+    explanation, actions = _failure_explanation(messages)
+    st.error("실패 원인 · " + explanation)
+    st.markdown("**해결 가이드**")
+    for index, action in enumerate(actions, start=1):
+        st.write(f"{index}. {action}")
+    if messages:
+        with st.expander("상세 오류 원문"):
+            for message in messages:
+                st.code(message, language=None)
+
+
 def _render_command_response(response: WorkbenchCommandResponse) -> None:
     status_label = {
         "rejected": "입력 거부",
@@ -283,6 +338,7 @@ def _render_command_response(response: WorkbenchCommandResponse) -> None:
         st.caption("계산 흐름이 완료됐습니다. 설계 목표 달성이나 제품 적합 판정은 아닙니다.")
     else:
         st.error(f"Agent 상태 · {status_label}")
+        _render_failure_help(response.messages)
     if response.missing_inputs:
         missing_labels = [
             PARAMETER_PRESENTATION.get(name, (name, ""))[0] for name in response.missing_inputs
@@ -290,7 +346,9 @@ def _render_command_response(response: WorkbenchCommandResponse) -> None:
         st.warning("사용자 보완 필요: " + ", ".join(missing_labels))
     for message in response.messages:
         st.caption(
-            "명시적 계산 실행 전입니다." if message == "Calculation was not requested." else message
+            "아직 계산하지 않았습니다. 3단계 ‘계산 실행’을 눌러야 solver가 실행됩니다."
+            if message == "Calculation was not requested."
+            else message
         )
 
     plan = response.plan
@@ -357,9 +415,14 @@ def _render_command_builder() -> None:
     response_prompt = st.session_state.get(_COMMAND_RESPONSE_PROMPT_KEY)
     if response_prompt != prompt:
         response = None
+    st.caption(
+        "① 입력 검사: 명령에서 냉매·조건을 읽기만 함 → "
+        "② 캔버스에 적용: 부품과 조건을 편집 화면에 반영하며 계산하지 않음 → "
+        "③ 계산 실행: 확인된 조건으로 solver를 실행"
+    )
     analyze, apply, execute = st.columns(3)
     with analyze:
-        if st.button("Agent 입력 확인", use_container_width=True):
+        if st.button("1. 입력 검사", use_container_width=True):
             try:
                 response = run_workbench_command(
                     WorkbenchCommandRequest(prompt=prompt, execute=False)
@@ -371,7 +434,7 @@ def _render_command_builder() -> None:
                 st.session_state[_COMMAND_RESPONSE_PROMPT_KEY] = prompt
     with apply:
         if st.button(
-            "캔버스에 구성",
+            "2. 캔버스에 적용",
             use_container_width=True,
             disabled=(
                 not isinstance(response, WorkbenchCommandResponse) or response.project is None
@@ -381,7 +444,7 @@ def _render_command_builder() -> None:
             _store_command_project(response)
             st.rerun()
     with execute:
-        if st.button("명시적 계산 실행", type="primary", use_container_width=True):
+        if st.button("3. 계산 실행", type="primary", use_container_width=True):
             try:
                 response = run_workbench_command(
                     WorkbenchCommandRequest(prompt=prompt, execute=True)
@@ -816,13 +879,8 @@ def _render_workbench_result(project: WorkbenchProject, result: SimulationResult
             st.subheader("컴포넌트 입·출구 상태")
             st.dataframe(rows, hide_index=True, use_container_width=True)
             st.caption("solver가 반환한 상태점을 캔버스 연결의 상태번호 1–4에 대응했습니다.")
-    elif any("evaporator capacity must be positive" in message for message in result.messages):
-        st.warning(
-            "입력 조건에서 팽창밸브 출구 엔탈피가 압축기 흡입 엔탈피보다 낮아지지 않아 "
-            "증발기 냉동능력을 양수로 계산할 수 없습니다. 냉매에 맞는 고압측 압력, "
-            "고압 열교환기 출구온도와 저압측 흡입상태를 다시 확인하세요. "
-            "값은 자동 변경하지 않습니다."
-        )
+    if result.status != SolverStatus.CONVERGED:
+        _render_failure_help(result.messages)
     render_artifact(result)
 
 
