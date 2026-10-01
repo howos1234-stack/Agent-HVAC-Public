@@ -49,14 +49,15 @@ AppTest의 프로젝트 주입 검증과 아래 실제 포인터 조작은 별�
 |---|---|---|
 | WS-C·WS-E 집중 | `uv run --locked --extra gui pytest tests/ws_e/test_design_workbench.py tests/ws_c/test_workbench_agent.py -q` | 최초 PASS 76 passed; PR #14 보완 후 PASS 77 passed |
 | 실제 브라우저 | 위 네 흐름을 in-app Chromium에서 조작 | PASS |
-| base 전체 | `uv run --locked pytest -q` | PASS, 714 passed |
-| GUI 전체 | `uv run --locked --extra gui pytest -q` | PASS, 714 passed |
+| base 전체 | `uv run --locked pytest -q` | 최초 PASS 714 passed; PR #13 integration 반영 및 PR #14 보완 후 PASS 715 passed |
+| GUI 전체 | `uv run --locked --extra gui pytest -q` | 최초 PASS 714 passed; PR #13 integration 반영 및 PR #14 보완 후 PASS 715 passed |
 | 품질·계약 | Ruff check/format, mypy, 두 GUI entry strict mypy, source manifest, build | PASS; 77 source files, 2 GUI entrypoints, 162-file manifest, sdist/wheel |
 
 ## 남은 제한
 
 - 결과 JSON은 현재 `SimulationResult` 경계이며 HTML/PDF 보고서나 묶음 transaction을 새로 추가하지 않았다.
 - 제품 DB 적재·reload 상태 소비와 실제 제품 자동선정은 WS-B 인계 이후 별도 계약 검토 대상이다.
+- 공개 PR #13은 `eb2c5c3a82ec47b81cecedc40f9dd1017643d2f3`로 integration에 병합됐고 이 브랜치에도 반영했다. 조회·선택·DB 버전 무효화 구현은 관리자 지시대로 최신 integration의 별도 PR로 분리한다.
 - 자연어는 결정론적 adapter의 지원 문법만 처리하며 자유형 LLM/API는 연결하지 않았다.
 
 ## 종료 및 인수인계
