@@ -23,7 +23,8 @@
 ## WS-E P-h/T-s 베이퍼돔 시각화 (2026-10-01, 검토 대기)
 
 - 공개 PR #14의 상태 일관성 범위와 분리해 최신 integration `eb2c5c3`에서 별도 브랜치로 진행한다.
-- CoolProp 포화 경계를 P-h/T-s 차트에 단일 베이퍼돔 경로로 표시하고, 사이클 주변 압력 범위와 그래프 크기·대비를 조정한다. solver 상태점이나 물성값은 변경하지 않는다.
+- CoolProp 포화 경계를 P-h/T-s 차트에 표시하고, 물성 계산 실패 구간은 별도 선분으로 끊는다. 임계점 부근의 액선·증기선 자료가 모두 있을 때만 돔 상단을 연결하며, 불완전 경계는 화면에 명시한다. solver 상태점이나 물성값은 변경하지 않는다.
+- 공개 PR #15는 최신 integration `84ed660`을 반영했으며, 중간 온도 실패와 임계점 부근 실패 주입 회귀를 포함한 보완 검토 중이다.
 - 집중 회귀 87개, Ruff·format·mypy·GUI strict mypy·162-file manifest·build와 실제 Chromium R744 렌더링을 확인했다.
 - 실제 제품 성능 검증, CV/P06 전체, production 및 Gate 상태는 변경하지 않는다. 세부 근거는 [작업 기록](docs/development_log/2026-10-01_WS-E_ljh67340_vapor-dome-charts.md)을 따른다.
 

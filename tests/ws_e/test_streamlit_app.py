@@ -6,7 +6,12 @@ import pytest
 pytest.importorskip("streamlit")
 from streamlit.testing.v1 import AppTest  # noqa: E402
 
-from agent_hvac.app.streamlit_app import _dome_chart_rows, _saturation_dome  # noqa: E402
+from agent_hvac.app import streamlit_app  # noqa: E402
+from agent_hvac.app.streamlit_app import (  # noqa: E402
+    _dome_chart_rows,
+    _saturation_dome,
+    _saturation_warning,
+)
 from agent_hvac.app.synthetic_flow import SyntheticScenario, run_synthetic_scenario  # noqa: E402
 from agent_hvac.schemas.design import DesignProblem  # noqa: E402
 
@@ -58,25 +63,72 @@ def test_state_charts_render_ph_and_only_render_ts_when_entropy_is_present():
 
 
 def test_coolprop_saturation_dome_contains_liquid_and_vapor_boundaries():
-    rows = _saturation_dome("R744", samples=12)
+    dome = _saturation_dome("R744", samples=12)
 
-    assert len(rows) == 24
-    assert {row["series"] for row in rows} == {"포화액선", "포화증기선"}
-    assert all(float(row["p"]) > 0 for row in rows)
-    assert all(float(row["temperature"]) > 0 for row in rows)
-    assert _saturation_dome("NOT-A-REFRIGERANT", samples=12) == ()
+    assert len(dome.rows) == 24
+    assert {row["series"] for row in dome.rows} == {"포화액선", "포화증기선"}
+    assert all(float(row["p"]) > 0 for row in dome.rows)
+    assert all(float(row["temperature"]) > 0 for row in dome.rows)
+    assert dome.critical_joinable
+    assert not dome.incomplete
+    assert not _saturation_dome("NOT-A-REFRIGERANT", samples=12).rows
 
 
 def test_vapor_dome_chart_path_joins_near_critical_end_and_filters_low_pressure():
-    saturation = list(_saturation_dome("R134a", samples=12))
+    saturation = _saturation_dome("R134a", samples=12)
     rows = _dome_chart_rows(saturation, minimum_pressure=100_000.0)
 
     assert rows
     assert {row["series"] for row in rows} == {"베이퍼돔"}
+    assert {row["path"] for row in rows} == {"베이퍼돔-임계점"}
     assert all(float(row["p"]) >= 100_000.0 for row in rows)
     midpoint = len(rows) // 2
     assert rows[midpoint - 1]["p"] == pytest.approx(float(rows[midpoint]["p"]))
     assert rows[midpoint - 1]["h"] == pytest.approx(float(rows[midpoint]["h"]), rel=0.02)
+
+
+def _fail_at_temperature(monkeypatch, fluid: str, samples: int, failed_index: int) -> None:
+    real_props = streamlit_app.PropsSI
+    lower = max(float(real_props("Ttriple", fluid)), float(real_props("Tmin", fluid))) + 0.05
+    critical = float(real_props("Tcrit", fluid))
+    upper = critical - max(1e-4, abs(critical) * 1e-6)
+    failed_temperature = lower + (upper - lower) * failed_index / (samples - 1)
+
+    def failing_props(output, *args):
+        if len(args) >= 4 and args[0] == "T" and abs(float(args[1]) - failed_temperature) < 1e-9:
+            raise ValueError("injected saturation failure")
+        return real_props(output, *args)
+
+    monkeypatch.setattr(streamlit_app, "PropsSI", failing_props)
+    _saturation_dome.cache_clear()
+
+
+def test_middle_saturation_failure_breaks_paths_without_bridging(monkeypatch):
+    samples = 11
+    _fail_at_temperature(monkeypatch, "R134a", samples, failed_index=5)
+    dome = _saturation_dome("R134a", samples=samples)
+    rows = _dome_chart_rows(dome, minimum_pressure=0.0)
+
+    assert dome.incomplete
+    assert dome.critical_joinable
+    assert len({row["path"] for row in rows}) == 3
+    assert "베이퍼돔-임계점" in {row["path"] for row in rows}
+    assert "중간 구간" in (_saturation_warning(dome) or "")
+    _saturation_dome.cache_clear()
+
+
+def test_near_critical_failure_keeps_liquid_and_vapor_paths_unjoined(monkeypatch):
+    samples = 11
+    _fail_at_temperature(monkeypatch, "R134a", samples, failed_index=samples - 1)
+    dome = _saturation_dome("R134a", samples=samples)
+    rows = _dome_chart_rows(dome, minimum_pressure=0.0)
+
+    assert dome.incomplete
+    assert not dome.critical_joinable
+    assert "베이퍼돔-임계점" not in {row["path"] for row in rows}
+    assert len({row["path"] for row in rows}) == 2
+    assert "돔 꼭대기를 연결하지 않습니다" in (_saturation_warning(dome) or "")
+    _saturation_dome.cache_clear()
 
 
 @pytest.mark.parametrize(

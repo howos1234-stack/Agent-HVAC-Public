@@ -1,6 +1,7 @@
 """P12 mock-first results viewer. Run with Streamlit; never imported by core."""
 
 import math
+from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
 
@@ -26,20 +27,29 @@ from agent_hvac.schemas.results import (
 )
 
 
+@dataclass(frozen=True)
+class SaturationDome:
+    rows: tuple[dict[str, float | str], ...] = ()
+    incomplete: bool = False
+    critical_joinable: bool = False
+
+
 @lru_cache(maxsize=8)
-def _saturation_dome(fluid: str, samples: int = 96) -> tuple[dict[str, float | str], ...]:
+def _saturation_dome(fluid: str, samples: int = 96) -> SaturationDome:
     """Return CoolProp saturation boundaries without filling failed property points."""
     if samples < 3:
-        return ()
+        return SaturationDome(incomplete=True)
     try:
         lower = max(float(PropsSI("Ttriple", fluid)), float(PropsSI("Tmin", fluid))) + 0.05
         critical = float(PropsSI("Tcrit", fluid))
         upper = critical - max(1e-4, abs(critical) * 1e-6)
     except (TypeError, ValueError):
-        return ()
+        return SaturationDome(incomplete=True)
     if not math.isfinite(lower) or not math.isfinite(upper) or lower >= upper:
-        return ()
+        return SaturationDome(incomplete=True)
     rows: list[dict[str, float | str]] = []
+    segments = {"포화액선": 0, "포화증기선": 0}
+    incomplete = False
     for index in range(samples):
         temperature = lower + (upper - lower) * index / (samples - 1)
         for quality, branch in ((0.0, "포화액선"), (1.0, "포화증기선")):
@@ -48,11 +58,14 @@ def _saturation_dome(fluid: str, samples: int = 96) -> tuple[dict[str, float | s
                 enthalpy = float(PropsSI("Hmass", "T", temperature, "Q", quality, fluid))
                 entropy = float(PropsSI("Smass", "T", temperature, "Q", quality, fluid))
             except (TypeError, ValueError):
+                segments[branch] += 1
+                incomplete = True
                 continue
             if all(math.isfinite(value) for value in (pressure, enthalpy, entropy)):
                 rows.append(
                     {
                         "series": branch,
+                        "segment": f"{branch}-{segments[branch]}",
                         "order": float(index),
                         "p": pressure,
                         "temperature": temperature,
@@ -60,7 +73,12 @@ def _saturation_dome(fluid: str, samples: int = 96) -> tuple[dict[str, float | s
                         "s": entropy,
                     }
                 )
-    return tuple(rows)
+            else:
+                segments[branch] += 1
+                incomplete = True
+    critical_rows = [row for row in rows if int(float(row["order"])) == samples - 1]
+    critical_joinable = {row["series"] for row in critical_rows} == {"포화액선", "포화증기선"}
+    return SaturationDome(tuple(rows), incomplete, critical_joinable)
 
 
 def _cycle_fluid(states_in_order: list[tuple[str, ThermoState]]) -> str | None:
@@ -69,30 +87,63 @@ def _cycle_fluid(states_in_order: list[tuple[str, ThermoState]]) -> str | None:
 
 
 def _dome_chart_rows(
-    saturation: list[dict[str, float | str]], minimum_pressure: float
+    saturation: SaturationDome, minimum_pressure: float
 ) -> list[dict[str, float | str]]:
-    """Join liquid and vapor boundaries through the near-critical endpoint."""
-    liquid = sorted(
-        (
-            row
-            for row in saturation
-            if row["series"] == "포화액선" and float(row["p"]) >= minimum_pressure
-        ),
-        key=lambda row: float(row["order"]),
+    """Build distinct chart paths; never bridge failed property intervals."""
+    filtered = [row for row in saturation.rows if float(row["p"]) >= minimum_pressure]
+    grouped: dict[str, list[dict[str, float | str]]] = {}
+    for row in filtered:
+        grouped.setdefault(str(row["segment"]), []).append(row)
+
+    paths: list[tuple[str, list[dict[str, float | str]]]] = []
+    critical_segments: set[str] = set()
+    if saturation.critical_joinable:
+        liquid_last = max(
+            (row for row in filtered if row["series"] == "포화액선"),
+            key=lambda row: float(row["order"]),
+            default=None,
+        )
+        vapor_last = max(
+            (row for row in filtered if row["series"] == "포화증기선"),
+            key=lambda row: float(row["order"]),
+            default=None,
+        )
+        if liquid_last is not None and vapor_last is not None:
+            liquid_segment = str(liquid_last["segment"])
+            vapor_segment = str(vapor_last["segment"])
+            critical_segments = {liquid_segment, vapor_segment}
+            joined = sorted(grouped[liquid_segment], key=lambda row: float(row["order"]))
+            joined += sorted(
+                grouped[vapor_segment], key=lambda row: float(row["order"]), reverse=True
+            )
+            paths.append(("베이퍼돔-임계점", joined))
+    for segment, segment_rows in grouped.items():
+        if segment in critical_segments:
+            continue
+        paths.append((segment, sorted(segment_rows, key=lambda row: float(row["order"]))))
+
+    chart_rows: list[dict[str, float | str]] = []
+    for path, path_rows in paths:
+        chart_rows.extend(
+            {**row, "series": "베이퍼돔", "path": path, "order": float(index)}
+            for index, row in enumerate(path_rows)
+        )
+    return chart_rows
+
+
+def _saturation_warning(saturation: SaturationDome) -> str | None:
+    """Explain incomplete saturation data without implying interpolated coverage."""
+    if not saturation.incomplete:
+        return None
+    if saturation.critical_joinable:
+        return (
+            "포화 경계가 불완전합니다. 물성 계산에 실패한 중간 구간은 "
+            "선을 끊어 표시하며 누락 구간을 보간하지 않습니다."
+        )
+    return (
+        "포화 경계가 불완전하고 임계점 부근의 액·증기 자료가 모두 "
+        "확인되지 않았습니다. 실패 구간을 끊고 돔 꼭대기를 연결하지 않습니다."
     )
-    vapor = sorted(
-        (
-            row
-            for row in saturation
-            if row["series"] == "포화증기선" and float(row["p"]) >= minimum_pressure
-        ),
-        key=lambda row: float(row["order"]),
-        reverse=True,
-    )
-    return [
-        {**row, "series": "베이퍼돔", "order": float(index)}
-        for index, row in enumerate([*liquid, *vapor])
-    ]
 
 
 def _parameter_rows(candidate: RankedDesign) -> list[dict[str, str]]:
@@ -199,9 +250,12 @@ def render_artifact(artifact: Artifact) -> None:
             st.subheader("P-h 상태점")
             states_in_order = list(result.state_points.items())
             fluid = _cycle_fluid(states_in_order)
-            saturation = list(_saturation_dome(fluid)) if fluid is not None else []
+            saturation = _saturation_dome(fluid) if fluid is not None else SaturationDome()
             minimum_cycle_pressure = min(state.pressure.value for _, state in states_in_order)
             dome_points = _dome_chart_rows(saturation, minimum_cycle_pressure / 3.0)
+            saturation_warning = _saturation_warning(saturation)
+            if saturation_warning is not None:
+                st.warning(saturation_warning)
             ph_points = [
                 {
                     "state": name,
@@ -242,6 +296,7 @@ def render_artifact(artifact: Artifact) -> None:
                                     "scale": {"type": "log"},
                                 },
                                 "order": {"field": "order", "type": "quantitative"},
+                                "detail": {"field": "path", "type": "nominal"},
                             },
                         },
                         {
@@ -321,6 +376,7 @@ def render_artifact(artifact: Artifact) -> None:
                                         "scale": {"zero": False},
                                     },
                                     "order": {"field": "order", "type": "quantitative"},
+                                    "detail": {"field": "path", "type": "nominal"},
                                 },
                             },
                             {
