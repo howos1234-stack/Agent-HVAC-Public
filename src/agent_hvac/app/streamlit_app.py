@@ -1,8 +1,11 @@
 """P12 mock-first results viewer. Run with Streamlit; never imported by core."""
 
+import math
+from functools import lru_cache
 from pathlib import Path
 
 import streamlit as st
+from CoolProp.CoolProp import PropsSI
 from pydantic import ValidationError
 
 from agent_hvac.app.result_view import (
@@ -14,12 +17,54 @@ from agent_hvac.app.result_view import (
     quantity_text,
     state_rows,
 )
+from agent_hvac.physics.state import ThermoState
 from agent_hvac.schemas.results import (
     FinalDesignPackage,
     OptimizationResult,
     RankedDesign,
     SolverStatus,
 )
+
+
+@lru_cache(maxsize=8)
+def _saturation_dome(fluid: str, samples: int = 96) -> tuple[dict[str, float | str], ...]:
+    """Return CoolProp saturation boundaries without filling failed property points."""
+    if samples < 3:
+        return ()
+    try:
+        lower = max(float(PropsSI("Ttriple", fluid)), float(PropsSI("Tmin", fluid))) + 0.05
+        upper = float(PropsSI("Tcrit", fluid)) - 0.05
+    except (TypeError, ValueError):
+        return ()
+    if not math.isfinite(lower) or not math.isfinite(upper) or lower >= upper:
+        return ()
+    rows: list[dict[str, float | str]] = []
+    for index in range(samples):
+        temperature = lower + (upper - lower) * index / (samples - 1)
+        for quality, branch in ((0.0, "포화액선"), (1.0, "포화증기선")):
+            try:
+                pressure = float(PropsSI("P", "T", temperature, "Q", quality, fluid))
+                enthalpy = float(PropsSI("Hmass", "T", temperature, "Q", quality, fluid))
+                entropy = float(PropsSI("Smass", "T", temperature, "Q", quality, fluid))
+            except (TypeError, ValueError):
+                continue
+            if all(math.isfinite(value) for value in (pressure, enthalpy, entropy)):
+                rows.append(
+                    {
+                        "series": branch,
+                        "order": float(index),
+                        "p": pressure,
+                        "temperature": temperature,
+                        "h": enthalpy,
+                        "s": entropy,
+                    }
+                )
+    return tuple(rows)
+
+
+def _cycle_fluid(states_in_order: list[tuple[str, ThermoState]]) -> str | None:
+    fluids = {state.fluid for _, state in states_in_order}
+    return next(iter(fluids)) if len(fluids) == 1 and None not in fluids else None
 
 
 def _parameter_rows(candidate: RankedDesign) -> list[dict[str, str]]:
@@ -125,9 +170,12 @@ def render_artifact(artifact: Artifact) -> None:
             st.dataframe(rows, hide_index=True)
             st.subheader("P-h 상태점")
             states_in_order = list(result.state_points.items())
+            fluid = _cycle_fluid(states_in_order)
+            saturation = list(_saturation_dome(fluid)) if fluid is not None else []
             ph_points = [
                 {
                     "state": name,
+                    "series": "사이클",
                     "order": index,
                     "h": state.enthalpy.value,
                     "p": state.pressure.value,
@@ -137,28 +185,64 @@ def render_artifact(artifact: Artifact) -> None:
             if len(ph_points) > 1:
                 ph_points.append({**ph_points[0], "order": len(ph_points)})
             st.vega_lite_chart(
-                ph_points,
+                [*saturation, *ph_points],
                 {
                     "title": "MOCK · P-h states" if result.is_mock else "P-h states",
-                    "mark": {"type": "line", "point": {"filled": True, "size": 80}},
-                    "encoding": {
-                        "x": {"field": "h", "type": "quantitative", "title": "h [J/kg]"},
-                        "y": {
-                            "field": "p",
-                            "type": "quantitative",
-                            "title": "p [Pa, absolute]",
-                            "scale": {"type": "log"},
+                    "layer": [
+                        {
+                            "transform": [{"filter": "datum.series !== '사이클'"}],
+                            "mark": {"type": "line", "strokeWidth": 1.5, "opacity": 0.7},
+                            "encoding": {
+                                "x": {
+                                    "field": "h",
+                                    "type": "quantitative",
+                                    "title": "h [J/kg]",
+                                },
+                                "y": {
+                                    "field": "p",
+                                    "type": "quantitative",
+                                    "title": "p [Pa, absolute]",
+                                    "scale": {"type": "log"},
+                                },
+                                "color": {
+                                    "field": "series",
+                                    "type": "nominal",
+                                    "title": "포화 경계",
+                                },
+                                "order": {"field": "order", "type": "quantitative"},
+                            },
                         },
-                        "order": {"field": "order", "type": "ordinal"},
-                        "tooltip": [
-                            {"field": "state", "type": "nominal", "title": "상태점"},
-                            {"field": "h", "type": "quantitative", "title": "h [J/kg]"},
-                            {"field": "p", "type": "quantitative", "title": "p [Pa(a)]"},
-                        ],
-                    },
+                        {
+                            "transform": [{"filter": "datum.series === '사이클'"}],
+                            "mark": {
+                                "type": "line",
+                                "point": {"filled": True, "size": 80},
+                                "strokeWidth": 3,
+                                "color": "#2563eb",
+                            },
+                            "encoding": {
+                                "x": {"field": "h", "type": "quantitative"},
+                                "y": {
+                                    "field": "p",
+                                    "type": "quantitative",
+                                    "scale": {"type": "log"},
+                                },
+                                "order": {"field": "order", "type": "ordinal"},
+                                "tooltip": [
+                                    {"field": "state", "type": "nominal", "title": "상태점"},
+                                    {"field": "h", "type": "quantitative", "title": "h [J/kg]"},
+                                    {"field": "p", "type": "quantitative", "title": "p [Pa(a)]"},
+                                ],
+                            },
+                        },
+                    ],
                 },
             )
-            st.caption("제공된 상태점 순서를 연결합니다. 포화선은 임의 생성하지 않습니다.")
+            st.caption(
+                f"{fluid} CoolProp 포화액선·포화증기선과 제공된 상태점 순서를 함께 표시합니다."
+                if saturation
+                else "포화 경계를 계산할 수 없어 제공된 상태점 순서만 표시합니다."
+            )
 
             if states_in_order and all(state.entropy is not None for _, state in states_in_order):
                 st.subheader("T-s 상태점")
@@ -174,42 +258,85 @@ def render_artifact(artifact: Artifact) -> None:
                 ]
                 if len(ts_points) > 1:
                     ts_points.append({**ts_points[0], "order": len(ts_points)})
+                for point in ts_points:
+                    point["series"] = "사이클"
                 st.vega_lite_chart(
-                    ts_points,
+                    [*saturation, *ts_points],
                     {
                         "title": "MOCK · T-s states" if result.is_mock else "T-s states",
-                        "mark": {"type": "line", "point": {"filled": True, "size": 80}},
-                        "encoding": {
-                            "x": {
-                                "field": "s",
-                                "type": "quantitative",
-                                "title": "s [J/(kg·K)]",
-                                "scale": {"zero": False},
-                            },
-                            "y": {
-                                "field": "temperature",
-                                "type": "quantitative",
-                                "title": "T [K]",
-                                "scale": {"zero": False},
-                            },
-                            "order": {"field": "order", "type": "ordinal"},
-                            "tooltip": [
-                                {"field": "state", "type": "nominal", "title": "상태점"},
-                                {
-                                    "field": "s",
-                                    "type": "quantitative",
-                                    "title": "s [J/(kg·K)]",
+                        "layer": [
+                            {
+                                "transform": [{"filter": "datum.series !== '사이클'"}],
+                                "mark": {"type": "line", "strokeWidth": 1.5, "opacity": 0.7},
+                                "encoding": {
+                                    "x": {
+                                        "field": "s",
+                                        "type": "quantitative",
+                                        "title": "s [J/(kg·K)]",
+                                        "scale": {"zero": False},
+                                    },
+                                    "y": {
+                                        "field": "temperature",
+                                        "type": "quantitative",
+                                        "title": "T [K]",
+                                        "scale": {"zero": False},
+                                    },
+                                    "color": {
+                                        "field": "series",
+                                        "type": "nominal",
+                                        "title": "포화 경계",
+                                    },
+                                    "order": {"field": "order", "type": "quantitative"},
                                 },
-                                {
-                                    "field": "temperature",
-                                    "type": "quantitative",
-                                    "title": "T [K]",
+                            },
+                            {
+                                "transform": [{"filter": "datum.series === '사이클'"}],
+                                "mark": {
+                                    "type": "line",
+                                    "point": {"filled": True, "size": 80},
+                                    "strokeWidth": 3,
+                                    "color": "#2563eb",
                                 },
-                            ],
-                        },
+                                "encoding": {
+                                    "x": {
+                                        "field": "s",
+                                        "type": "quantitative",
+                                        "scale": {"zero": False},
+                                    },
+                                    "y": {
+                                        "field": "temperature",
+                                        "type": "quantitative",
+                                        "scale": {"zero": False},
+                                    },
+                                    "order": {"field": "order", "type": "ordinal"},
+                                    "tooltip": [
+                                        {
+                                            "field": "state",
+                                            "type": "nominal",
+                                            "title": "상태점",
+                                        },
+                                        {
+                                            "field": "s",
+                                            "type": "quantitative",
+                                            "title": "s [J/(kg·K)]",
+                                        },
+                                        {
+                                            "field": "temperature",
+                                            "type": "quantitative",
+                                            "title": "T [K]",
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
                     },
                 )
-                st.caption("제공된 entropy 상태점만 사용합니다. 포화선은 임의 생성하지 않습니다.")
+                st.caption(
+                    f"{fluid} CoolProp 포화액선·포화증기선과 제공된 entropy 상태점을 함께 "
+                    "표시합니다."
+                    if saturation
+                    else "포화 경계를 계산할 수 없어 제공된 entropy 상태점만 표시합니다."
+                )
             else:
                 st.info("T-s 그래프 대기 · 일부 상태점에 엔트로피 데이터가 없습니다.")
         else:

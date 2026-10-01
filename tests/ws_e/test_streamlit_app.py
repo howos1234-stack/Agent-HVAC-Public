@@ -6,6 +6,7 @@ import pytest
 pytest.importorskip("streamlit")
 from streamlit.testing.v1 import AppTest  # noqa: E402
 
+from agent_hvac.app.streamlit_app import _saturation_dome  # noqa: E402
 from agent_hvac.app.synthetic_flow import SyntheticScenario, run_synthetic_scenario  # noqa: E402
 from agent_hvac.schemas.design import DesignProblem  # noqa: E402
 
@@ -53,6 +54,17 @@ def test_state_charts_render_ph_and_only_render_ts_when_entropy_is_present():
     assert not with_entropy.exception
     assert len(with_entropy.get("vega_lite_chart")) == 2
     assert not any("엔트로피 데이터가 없습니다" in item.value for item in with_entropy.info)
+    assert sum("포화액선·포화증기선" in item.value for item in with_entropy.caption) == 2
+
+
+def test_coolprop_saturation_dome_contains_liquid_and_vapor_boundaries():
+    rows = _saturation_dome("R744", samples=12)
+
+    assert len(rows) == 24
+    assert {row["series"] for row in rows} == {"포화액선", "포화증기선"}
+    assert all(float(row["p"]) > 0 for row in rows)
+    assert all(float(row["temperature"]) > 0 for row in rows)
+    assert _saturation_dome("NOT-A-REFRIGERANT", samples=12) == ()
 
 
 @pytest.mark.parametrize(
