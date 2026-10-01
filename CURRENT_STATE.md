@@ -60,15 +60,26 @@
 - General baseline calculations remain distinct from manufacturer product validation, optimization, production and Gate approval.
 - Evidence: [record](docs/development_log/2026-09-30_WS-C_ljh67340_workbench-agent-link.md).
 
-## Pending public WS-C adapter to WS-E screen connection
+## Public WS-C adapter to WS-E screen connection (integration 반영 완료)
 
 - Branch `codex/ws-c-e/ljh67340/agent-workbench-screen` starts from integration `17570772eceb173399b2ab26d844dd0bc52a97ac`; post-merge run [36706621493](https://github.com/howos1234-stack/Agent-HVAC-Public/actions/runs/36706621493) passed Windows/Ubuntu × base/gui 4/4.
 - The natural-language panel now calls the integrated deterministic WS-C adapter and displays rejected, needs-input, project-ready, completed and failed outcomes separately. It does not infer missing engineering values.
 - An adapter-created project enters the existing full-project edit history. Explicit adapter execution stores a result only against the matching project fingerprint; later condition, JSON, component or history changes retain existing stale-result invalidation.
 - Completed execution is labelled as calculation-flow completion only, separate from design-target achievement and product suitability.
 - PR #12 review follow-up invalidates the cached Agent completion/result together with the workbench result on project, history, condition, component and JSON-import changes. Applying a cached command now applies only its project; only a new explicit execution may register a result.
+- Public PR [#12](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/12) was integrated as `a42be4346c6868f57ae8d552b4ebe3d8374c6cae`. Its latest-head CI passed 4/4, and post-merge [run 36719833476](https://github.com/howos1234-stack/Agent-HVAC-Public/actions/runs/36719833476) also completed successfully.
 - This GUI connection does not add an LLM/API, product selection, manufacturer validation, production use, CV/P06 completion or Gate approval.
 - Evidence: [record](docs/development_log/2026-09-30_WS-C-E_ljh67340_agent-workbench-screen.md).
+
+## WS-E workbench flow and export-boundary audit (review pending)
+
+- Branch `codex/ws-e/ljh67340/workbench-flow-audit` starts from integration `a42be4346c6868f57ae8d552b4ebe3d8374c6cae` after PR #12 integration.
+- The screen now presents input readiness, calculation availability, last calculation state, target-evaluation state and MOCK/general-baseline identity separately. A project edit records why the previous result became stale and requires a new explicit calculation.
+- Every project-changing path invalidates both the workbench result and cached Agent completion/result. Only a result whose full-project fingerprint matches the current project is displayed or exported.
+- Synthetic AppTest covers invalidation after condition, connection, component, history and JSON-import changes, successful recalculation, failed-result status/reason preservation and the absence of normal performance cards for failure.
+- Current-head in-app Chromium verification covered direct blank-canvas component creation and connection editing, incomplete natural-language input followed by six direct conditions and convergence, and connection deletion/Undo with stale-result suppression and explicit recalculation.
+- This is GUI workflow and synthetic regression work. It does not add product DB consumption, manufacturer performance validation, production use, CV/P06 completion or Gate approval.
+- Evidence: [record](docs/development_log/2026-09-30_WS-E_ljh67340_workbench-flow-audit.md).
 
 ## WS-A 공개 이관 작업 (2026-09-29, integration 반영 완료)
 
