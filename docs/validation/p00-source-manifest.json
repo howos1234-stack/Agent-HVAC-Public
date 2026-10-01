@@ -105,7 +105,7 @@
   },
   {
     "path": "src/agent_hvac/app/streamlit_app.py",
-    "sha256": "3ee5e2cfc8ff66fe0f2cad2882271f041ca7f7773883b233214bd5d6a7973f9f"
+    "sha256": "a6e8f17ddd98faef978171b89aeb35cedc5edd29f9e7cd835ba890a3e969ed23"
   },
   {
     "path": "src/agent_hvac/app/synthetic_flow.py",
@@ -645,7 +645,7 @@
   },
   {
     "path": "tests/ws_e/test_streamlit_app.py",
-    "sha256": "554f22bc27faac424e8e7b8c589a3a54baf4cf769a8316392496624fba0034bc"
+    "sha256": "26e6704e850f9c58d1820444bffcd9a12cdca1a22538b6e81e0614de2c54c109"
   },
   {
     "path": "tests/ws_e/test_synthetic_result_flow.py",

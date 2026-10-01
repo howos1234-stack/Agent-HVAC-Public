@@ -20,7 +20,15 @@
 - Local Windows validation after merging latest integration: WS-E 121 passed; base-command 672 passed in the existing GUI-capable `.venv`; GUI 672 passed; Ruff, format, mypy, both GUI entry-point mypy checks, 155-file manifest and package build passed. The local base command was not a clean base-only environment.
 - Actual Chromium 153 pointer validation passed for blank-canvas component creation, node drag, port drag closed loop, direct inputs, convergence/state display, result invalidation and unsupported connected-component blocking. Evidence: [record](docs/development_log/2026-09-29_WS-E_ljh67340_public-workbench-migration.md).
 
-## WS-E 처음 사용자 baseline 입력 가이드 (2026-10-01, 검토 대기)
+## WS-E P-h/T-s 베이퍼돔 시각화 (2026-10-01, 검토 대기)
+
+- 공개 PR #14의 상태 일관성 범위와 분리해 최신 integration `eb2c5c3`에서 별도 브랜치로 진행한다.
+- CoolProp 포화 경계를 P-h/T-s 차트에 표시하고, 물성 계산 실패 구간은 별도 선분으로 끊는다. 임계점 부근의 액선·증기선 자료가 모두 있을 때만 돔 상단을 연결하며, 불완전 경계는 화면에 명시한다. solver 상태점이나 물성값은 변경하지 않는다.
+- 공개 PR #15는 최신 integration `84ed660`을 반영했으며, 중간 온도 실패와 임계점 부근 실패 주입 회귀를 포함한 보완 검토 중이다.
+- 집중 회귀 87개, Ruff·format·mypy·GUI strict mypy·162-file manifest·build와 실제 Chromium R744 렌더링을 확인했다.
+- 실제 제품 성능 검증, CV/P06 전체, production 및 Gate 상태는 변경하지 않는다. 세부 근거는 [작업 기록](docs/development_log/2026-10-01_WS-E_ljh67340_vapor-dome-charts.md)을 따른다.
+
+## WS-E 처음 사용자 baseline 입력 가이드 (2026-10-01, integration 반영 완료)
 
 - 최신 공개 integration `eb2c5c3`에서 별도 브랜치로 시작했다.
 - R134a/R410A/R744 입력 예시와 절대압·압력 관계·질량유량·효율·온도 점검, CoolProp 기반 과열도·과냉도·초임계 안내를 설계조건 편집기에 추가했다. 자연어 입력은 입력 검사→캔버스 적용→계산 실행으로 명칭과 설명을 정리하고 실패 원인·해결 가이드를 한국어로 표시한다.
