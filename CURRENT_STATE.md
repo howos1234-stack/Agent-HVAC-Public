@@ -26,6 +26,13 @@
 - CoolProp 포화 경계를 P-h/T-s 차트에 단일 베이퍼돔 경로로 표시하고, 사이클 주변 압력 범위와 그래프 크기·대비를 조정한다. solver 상태점이나 물성값은 변경하지 않는다.
 - 집중 회귀 87개, Ruff·format·mypy·GUI strict mypy·162-file manifest·build와 실제 Chromium R744 렌더링을 확인했다.
 - 실제 제품 성능 검증, CV/P06 전체, production 및 Gate 상태는 변경하지 않는다. 세부 근거는 [작업 기록](docs/development_log/2026-10-01_WS-E_ljh67340_vapor-dome-charts.md)을 따른다.
+
+## WS-E 처음 사용자 baseline 입력 가이드 (2026-10-01, integration 반영 완료)
+
+- 최신 공개 integration `eb2c5c3`에서 별도 브랜치로 시작했다.
+- R134a/R410A/R744 입력 예시와 절대압·압력 관계·질량유량·효율·온도 점검, CoolProp 기반 과열도·과냉도·초임계 안내를 설계조건 편집기에 추가했다. 자연어 입력은 입력 검사→캔버스 적용→계산 실행으로 명칭과 설명을 정리하고 실패 원인·해결 가이드를 한국어로 표시한다.
+- 명백한 입력 오류는 baseline 실행 전에 차단하지만 사용자 값을 자동 변경하지 않으며, 예시를 제품 허용범위나 설계 권장값으로 표시하지 않는다.
+- 자연어 작성 영역에도 필수 6개 조건의 의미·단위·사전 확인표, 명령 템플릿, R134a/R410A/R744 전체 예시와 입력 검사 후 확인 순서를 제공하며 동일한 동적 물리 점검을 표시한다. 최신 integration 반영 후 집중 회귀 86개와 Ruff·format·mypy·GUI strict mypy, 실제 Chromium 표시를 확인했다. [작업 기록](docs/development_log/2026-10-01_WS-E_ljh67340_baseline-input-guidance.md).
 - Public PR [#3](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/3) was approved and merged to integration as `49dcfbc522f798b1567e61aeabe198c7502bbf27`. Its latest-head Windows/Ubuntu × base/gui CI passed 4/4; post-merge CI is tracked separately.
 - This work does not imply manufacturer validation, production use, CV/P06 completion or Gate approval.
 
@@ -67,15 +74,26 @@
 - General baseline calculations remain distinct from manufacturer product validation, optimization, production and Gate approval.
 - Evidence: [record](docs/development_log/2026-09-30_WS-C_ljh67340_workbench-agent-link.md).
 
-## Pending public WS-C adapter to WS-E screen connection
+## Public WS-C adapter to WS-E screen connection (integration 반영 완료)
 
 - Branch `codex/ws-c-e/ljh67340/agent-workbench-screen` starts from integration `17570772eceb173399b2ab26d844dd0bc52a97ac`; post-merge run [36706621493](https://github.com/howos1234-stack/Agent-HVAC-Public/actions/runs/36706621493) passed Windows/Ubuntu × base/gui 4/4.
 - The natural-language panel now calls the integrated deterministic WS-C adapter and displays rejected, needs-input, project-ready, completed and failed outcomes separately. It does not infer missing engineering values.
 - An adapter-created project enters the existing full-project edit history. Explicit adapter execution stores a result only against the matching project fingerprint; later condition, JSON, component or history changes retain existing stale-result invalidation.
 - Completed execution is labelled as calculation-flow completion only, separate from design-target achievement and product suitability.
 - PR #12 review follow-up invalidates the cached Agent completion/result together with the workbench result on project, history, condition, component and JSON-import changes. Applying a cached command now applies only its project; only a new explicit execution may register a result.
+- Public PR [#12](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/12) was integrated as `a42be4346c6868f57ae8d552b4ebe3d8374c6cae`. Its latest-head CI passed 4/4, and post-merge [run 36719833476](https://github.com/howos1234-stack/Agent-HVAC-Public/actions/runs/36719833476) also completed successfully.
 - This GUI connection does not add an LLM/API, product selection, manufacturer validation, production use, CV/P06 completion or Gate approval.
 - Evidence: [record](docs/development_log/2026-09-30_WS-C-E_ljh67340_agent-workbench-screen.md).
+
+## WS-E workbench flow and export-boundary audit (review pending)
+
+- Branch `codex/ws-e/ljh67340/workbench-flow-audit` starts from integration `a42be4346c6868f57ae8d552b4ebe3d8374c6cae` after PR #12 integration.
+- The screen now presents input readiness, calculation availability, last calculation state, target-evaluation state and MOCK/general-baseline identity separately. A project edit records why the previous result became stale and requires a new explicit calculation.
+- Every project-changing path invalidates both the workbench result and cached Agent completion/result. Only a result whose full-project fingerprint matches the current project is displayed or exported.
+- Synthetic AppTest covers invalidation after condition, connection, component, history and JSON-import changes, successful recalculation, failed-result status/reason preservation and the absence of normal performance cards for failure.
+- Current-head in-app Chromium verification covered direct blank-canvas component creation and connection editing, incomplete natural-language input followed by six direct conditions and convergence, and connection deletion/Undo with stale-result suppression and explicit recalculation.
+- This is GUI workflow and synthetic regression work. It does not add product DB consumption, manufacturer performance validation, production use, CV/P06 completion or Gate approval.
+- Evidence: [record](docs/development_log/2026-09-30_WS-E_ljh67340_workbench-flow-audit.md).
 
 ## WS-A 공개 이관 작업 (2026-09-29, integration 반영 완료)
 

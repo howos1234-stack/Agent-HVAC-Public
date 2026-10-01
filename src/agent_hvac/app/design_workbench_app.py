@@ -15,6 +15,14 @@ from agent_hvac.agents.workbench import (
     WorkbenchCommandResponse,
     run_workbench_command,
 )
+from agent_hvac.app import workbench_command
+from agent_hvac.app.baseline_input_guidance import (
+    EXAMPLE_CONDITIONS,
+    GUIDANCE_ROWS,
+    NATURAL_COMMAND_EXAMPLES,
+    baseline_guidance_checks,
+    failure_explanation,
+)
 from agent_hvac.app.design_workbench import (
     ComponentKind,
     WorkbenchProject,
@@ -47,10 +55,10 @@ from agent_hvac.app.workbench_command import (
     missing_solver_inputs,
     project_from_command,
     required_solver_input_names,
-    simulate_project,
 )
 from agent_hvac.schemas.design import DesignProblem
 from agent_hvac.schemas.results import SimulationResult, SolverStatus
+from agent_hvac.utils.exceptions import HVACError
 
 ROOT = Path(__file__).resolve().parents[3]
 
@@ -149,17 +157,34 @@ _HISTORY_LIMIT = 50
 _IMPORTED_UPLOAD_KEY = "workbench_imported_upload"
 _COMMAND_RESPONSE_KEY = "agent_command_response"
 _COMMAND_RESPONSE_PROMPT_KEY = "agent_command_response_prompt"
+_RESULT_INVALIDATION_REASON_KEY = "workbench_result_invalidation_reason"
+_LAST_CALCULATION_ERROR_KEY = "workbench_last_calculation_error"
 
 
 def _project_fingerprint(project: WorkbenchProject) -> str:
     return hashlib.sha256(project_json(project).encode("utf-8")).hexdigest()
 
 
-def _invalidate_workbench_result() -> None:
+def _invalidate_workbench_result(reason: str = "프로젝트가 변경되었습니다.") -> None:
+    response = st.session_state.get(_COMMAND_RESPONSE_KEY)
+    had_execution = "workbench_result" in st.session_state or (
+        isinstance(response, WorkbenchCommandResponse)
+        and response.status in {"completed", "failed"}
+    )
     st.session_state.pop("workbench_result", None)
     st.session_state.pop("workbench_result_project_fingerprint", None)
     st.session_state.pop(_COMMAND_RESPONSE_KEY, None)
     st.session_state.pop(_COMMAND_RESPONSE_PROMPT_KEY, None)
+    st.session_state.pop(_LAST_CALCULATION_ERROR_KEY, None)
+    if had_execution:
+        st.session_state[_RESULT_INVALIDATION_REASON_KEY] = reason
+
+
+def _register_workbench_result(project: WorkbenchProject, result: SimulationResult) -> None:
+    st.session_state.workbench_result = result
+    st.session_state.workbench_result_project_fingerprint = _project_fingerprint(project)
+    st.session_state.pop(_RESULT_INVALIDATION_REASON_KEY, None)
+    st.session_state.pop(_LAST_CALCULATION_ERROR_KEY, None)
 
 
 def _sync_project_history(project: WorkbenchProject) -> None:
@@ -197,7 +222,7 @@ def _restore_project_history(direction: Literal["undo", "redo"]) -> None:
     st.session_state[_HISTORY_CURRENT_KEY] = restored_json
     st.session_state.workbench_project = restored
     _clear_project_widget_state()
-    _invalidate_workbench_result()
+    _invalidate_workbench_result("Undo/Redo로 프로젝트가 복원되었습니다.")
     st.rerun()
 
 
@@ -257,10 +282,33 @@ def _store_command_project(
     _clear_project_widget_state()
     st.session_state.workbench_project = project
     _sync_project_history(project)
-    _invalidate_workbench_result()
+    _invalidate_workbench_result("Agent 명령으로 프로젝트가 변경되었습니다.")
     if register_result and response.result is not None:
-        st.session_state.workbench_result = response.result
-        st.session_state.workbench_result_project_fingerprint = _project_fingerprint(project)
+        _register_workbench_result(project, response.result)
+
+
+def _render_failure_help(messages: tuple[str, ...]) -> None:
+    explanation, actions = failure_explanation(messages)
+    st.error("실패 원인 · " + explanation)
+    st.markdown("**해결 가이드**")
+    for index, action in enumerate(actions, start=1):
+        st.write(f"{index}. {action}")
+    if messages:
+        with st.expander("상세 오류 원문"):
+            for message in messages:
+                st.code(message, language=None)
+
+
+def _render_guidance_checks(project: WorkbenchProject) -> None:
+    for check in baseline_guidance_checks(project):
+        if check.level == "error":
+            st.error(check.message)
+        elif check.level == "warning":
+            st.warning(check.message)
+        elif check.level == "pass":
+            st.success(check.message)
+        else:
+            st.info(check.message)
 
 
 def _render_command_response(response: WorkbenchCommandResponse) -> None:
@@ -282,6 +330,7 @@ def _render_command_response(response: WorkbenchCommandResponse) -> None:
         st.caption("계산 흐름이 완료됐습니다. 설계 목표 달성이나 제품 적합 판정은 아닙니다.")
     else:
         st.error(f"Agent 상태 · {status_label}")
+        _render_failure_help(response.messages)
     if response.missing_inputs:
         missing_labels = [
             PARAMETER_PRESENTATION.get(name, (name, ""))[0] for name in response.missing_inputs
@@ -289,7 +338,9 @@ def _render_command_response(response: WorkbenchCommandResponse) -> None:
         st.warning("사용자 보완 필요: " + ", ".join(missing_labels))
     for message in response.messages:
         st.caption(
-            "명시적 계산 실행 전입니다." if message == "Calculation was not requested." else message
+            "아직 계산하지 않았습니다. 3단계 ‘계산 실행’을 눌러야 solver가 실행됩니다."
+            if message == "Calculation was not requested."
+            else message
         )
 
     plan = response.plan
@@ -309,6 +360,9 @@ def _render_command_response(response: WorkbenchCommandResponse) -> None:
             ],
             hide_index=True,
         )
+    if response.project is not None:
+        st.markdown("**해석된 조건의 물리 입력 점검**")
+        _render_guidance_checks(response.project)
 
 
 def _render_command_builder() -> None:
@@ -322,6 +376,38 @@ def _render_command_builder() -> None:
     command_key = "natural-language-command"
     if command_key not in st.session_state:
         st.session_state[command_key] = default_prompt
+    with st.expander("자연어 명령 작성 가이드", expanded=True):
+        st.markdown(
+            "1. 냉매와 기본 사이클을 먼저 적습니다.\n"
+            "2. **증발압력, 고압, 흡입온도, 고압 열교환기 출구온도, "
+            "냉매 질량유량, 등엔트로피 효율**을 모두 적습니다.\n"
+            "3. 압력은 `bar(a)` 같은 절대압으로 쓰고 고압을 저압보다 높게 입력합니다.\n"
+            "4. 값이 확실하지 않으면 임의로 채우지 말고 입력 검사 후 직접 보완합니다."
+        )
+        st.code(
+            "[냉매] 기본 냉동사이클을 구성해줘. 증발압력 [값] bar(a), "
+            "고압 [값] bar(a), 흡입온도 [값] °C, 고압 열교환기 출구온도 [값] °C, "
+            "냉매 질량유량 [값] kg/s, 등엔트로피 효율 [값].",
+            language=None,
+        )
+        st.markdown("**필수 입력의 의미와 사전 확인**")
+        st.dataframe(GUIDANCE_ROWS, hide_index=True, use_container_width=True)
+        st.markdown("**냉매별 전체 명령 예시**")
+        for refrigerant, example in NATURAL_COMMAND_EXAMPLES.items():
+            st.markdown(f"**{refrigerant}**")
+            st.code(example, language=None)
+        st.warning(
+            "예시는 화면 사용 확인용 baseline 조건입니다. 제품 허용범위, 안전 한계, "
+            "최적 설계값 또는 제조사 성능 보증이 아닙니다."
+        )
+        st.markdown(
+            "**입력 검사 후 확인 순서**\n\n"
+            "1. 감지 냉매가 의도한 냉매인지 확인합니다.\n"
+            "2. 감지 조건이 6개인지 확인합니다.\n"
+            "3. 과열도·과냉도 또는 초임계 안내를 확인합니다.\n"
+            "4. 오류가 있으면 캔버스에 적용하거나 계산하기 전에 명령을 수정합니다.\n"
+            "5. 경고만 있는 경우에도 조건의 근거를 확인한 뒤 사용자가 계산을 결정합니다."
+        )
     with st.expander("입력 가능한 항목과 단위", expanded=False):
         st.caption("현재 BaselineCycleSolver adapter가 실제로 요구하는 입력만 표시합니다.")
         st.markdown("**필수 냉매:** R134a · R410A · R744 중 하나")
@@ -356,9 +442,14 @@ def _render_command_builder() -> None:
     response_prompt = st.session_state.get(_COMMAND_RESPONSE_PROMPT_KEY)
     if response_prompt != prompt:
         response = None
+    st.caption(
+        "① 입력 검사: 명령에서 냉매·조건을 읽기만 함 → "
+        "② 캔버스에 적용: 부품과 조건을 편집 화면에 반영하며 계산하지 않음 → "
+        "③ 계산 실행: 확인된 조건으로 solver를 실행"
+    )
     analyze, apply, execute = st.columns(3)
     with analyze:
-        if st.button("Agent 입력 확인", use_container_width=True):
+        if st.button("1. 입력 검사", use_container_width=True):
             try:
                 response = run_workbench_command(
                     WorkbenchCommandRequest(prompt=prompt, execute=False)
@@ -370,7 +461,7 @@ def _render_command_builder() -> None:
                 st.session_state[_COMMAND_RESPONSE_PROMPT_KEY] = prompt
     with apply:
         if st.button(
-            "캔버스에 구성",
+            "2. 캔버스에 적용",
             use_container_width=True,
             disabled=(
                 not isinstance(response, WorkbenchCommandResponse) or response.project is None
@@ -380,7 +471,7 @@ def _render_command_builder() -> None:
             _store_command_project(response)
             st.rerun()
     with execute:
-        if st.button("명시적 계산 실행", type="primary", use_container_width=True):
+        if st.button("3. 계산 실행", type="primary", use_container_width=True):
             try:
                 response = run_workbench_command(
                     WorkbenchCommandRequest(prompt=prompt, execute=True)
@@ -404,6 +495,17 @@ def _render_condition_editor(project: WorkbenchProject) -> WorkbenchProject:
     completed = sum(condition is not None for condition in supplied.values())
     missing = missing_solver_inputs(project)
     st.caption(f"계산 입력 {completed}/{len(required)} · 자연어 없이 직접 입력 가능")
+    with st.expander("처음 사용자를 위한 baseline 입력 가이드", expanded=bool(missing)):
+        st.markdown(
+            "- 압력은 **절대압**을 사용하고 고압측을 저압측보다 높게 입력하세요.\n"
+            "- 압축기 흡입은 기체·과열 상태, 응축기 출구는 액체·과냉 상태가 기본입니다. "
+            "R744 초임계 조건은 gas cooler 출구로 해석합니다.\n"
+            "- 효율은 0 초과 1 이하, 질량유량은 양수여야 합니다.\n"
+            "- 아래 값은 프로그램 사용 예시이며 제품 허용범위나 설계 권장값이 아닙니다."
+        )
+        example = EXAMPLE_CONDITIONS.get(project.refrigerant, "공식 예시 없음")
+        st.caption(f"{project.refrigerant} 예시 · {example}")
+        _render_guidance_checks(project)
     with st.expander("설계조건 입력·수정", expanded=bool(missing)):
         entered: dict[str, tuple[str, str]] = {}
         with st.form(f"workbench-condition-form-{suffix}"):
@@ -446,7 +548,7 @@ def _render_condition_editor(project: WorkbenchProject) -> WorkbenchProject:
                 st.error(f"설계조건 입력 거부: {error}")
             else:
                 st.session_state.workbench_project = changed
-                _invalidate_workbench_result()
+                _invalidate_workbench_result("설계조건이 수정되었습니다.")
                 st.rerun()
     if missing:
         st.warning("미입력: " + ", ".join(PARAMETER_PRESENTATION[name][0] for name in missing))
@@ -471,7 +573,7 @@ def _render_palette(project: WorkbenchProject) -> tuple[WorkbenchProject, str]:
             y=min(88, 18 + len(project.components) * 9),
         )
         st.session_state.workbench_project = project
-        _invalidate_workbench_result()
+        _invalidate_workbench_result("부품이 추가되었습니다.")
         st.rerun()
     st.subheader("부품 선택")
     suffix = _project_widget_suffix(project)
@@ -575,7 +677,7 @@ def _render_sidebar_component_editor(project: WorkbenchProject) -> WorkbenchProj
                 calculation_model=calculation_model,
             )
             st.session_state.workbench_project = changed
-            _invalidate_workbench_result()
+            _invalidate_workbench_result("부품 위치 또는 속성이 수정되었습니다.")
             st.rerun()
 
         st.markdown("#### 계산 파라미터")
@@ -614,14 +716,14 @@ def _render_sidebar_component_editor(project: WorkbenchProject) -> WorkbenchProj
                 st.error(f"파라미터 입력 거부: {error}")
             else:
                 st.session_state.workbench_project = changed
-                _invalidate_workbench_result()
+                _invalidate_workbench_result("부품 계산 파라미터가 수정되었습니다.")
                 st.rerun()
 
         if st.button("선택 부품 제거", use_container_width=True):
             changed = remove_component(project, selected_id)
             st.session_state.workbench_project = changed
             st.session_state.pop("workbench-property-focus", None)
-            _invalidate_workbench_result()
+            _invalidate_workbench_result("부품이 삭제되었습니다.")
             st.rerun()
     return project
 
@@ -685,7 +787,7 @@ def _render_interactive_canvas(
     if action.get("type") == "remove_component":
         st.session_state.pop("workbench-property-focus", None)
         st.session_state.pop("workbench-pending-component-selection", None)
-    _invalidate_workbench_result()
+    _invalidate_workbench_result("캔버스의 부품 또는 연결이 변경되었습니다.")
     st.rerun()
     return changed
 
@@ -726,13 +828,13 @@ def _render_connection_editor(project: WorkbenchProject) -> None:
                 st.error(f"연결 추가 거부: {error.errors()[0]['msg']}")
             else:
                 st.session_state.workbench_project = changed
-                _invalidate_workbench_result()
+                _invalidate_workbench_result("연결이 추가되었습니다.")
                 st.rerun()
     with remove_column:
         if st.button("연결 삭제", use_container_width=True, disabled=not connection_exists):
             changed = remove_connection(project, source, target)
             st.session_state.workbench_project = changed
-            _invalidate_workbench_result()
+            _invalidate_workbench_result("연결이 삭제되었습니다.")
             st.rerun()
 
 
@@ -796,13 +898,8 @@ def _render_workbench_result(project: WorkbenchProject, result: SimulationResult
             st.subheader("컴포넌트 입·출구 상태")
             st.dataframe(rows, hide_index=True, use_container_width=True)
             st.caption("solver가 반환한 상태점을 캔버스 연결의 상태번호 1–4에 대응했습니다.")
-    elif any("evaporator capacity must be positive" in message for message in result.messages):
-        st.warning(
-            "입력 조건에서 팽창밸브 출구 엔탈피가 압축기 흡입 엔탈피보다 낮아지지 않아 "
-            "증발기 냉동능력을 양수로 계산할 수 없습니다. 냉매에 맞는 고압측 압력, "
-            "고압 열교환기 출구온도와 저압측 흡입상태를 다시 확인하세요. "
-            "값은 자동 변경하지 않습니다."
-        )
+    if result.status != SolverStatus.CONVERGED:
+        _render_failure_help(result.messages)
     render_artifact(result)
 
 
@@ -811,32 +908,86 @@ def _render_services(project: WorkbenchProject) -> None:
     missing = missing_solver_inputs(project)
     model_issues = baseline_model_issues(project)
     editor_issues = topology_issues(project)
+    guidance_errors = tuple(
+        check.message for check in baseline_guidance_checks(project) if check.level == "error"
+    )
+    blocked = bool(missing or editor_issues or model_issues or guidance_errors)
+    result = st.session_state.get("workbench_result")
+    result_fingerprint = st.session_state.get("workbench_result_project_fingerprint")
+    if isinstance(result, SimulationResult) and result_fingerprint != _project_fingerprint(project):
+        _invalidate_workbench_result("현재 프로젝트와 마지막 계산의 지문이 일치하지 않습니다.")
+        result = None
+    invalidation_reason = st.session_state.get(_RESULT_INVALIDATION_REASON_KEY)
+    agent_response = st.session_state.get(_COMMAND_RESPONSE_KEY)
+    calculation_error = st.session_state.get(_LAST_CALCULATION_ERROR_KEY)
+    latest_calculation_failed = isinstance(calculation_error, str) or (
+        isinstance(agent_response, WorkbenchCommandResponse) and agent_response.status == "failed"
+    )
     st.info(
         "제품 모델이 없어도 선택한 일반 부품 모델과 직접 입력한 파라미터로 "
         "CoolProp 물성·P02 단일단 solver를 실행합니다. 제조사 제품 성능이나 "
         "자동선정 결과는 포함하지 않습니다."
     )
+    if isinstance(result, SimulationResult):
+        last_status = (
+            "계산 완료 · 수렴"
+            if result.status == SolverStatus.CONVERGED
+            else f"계산 완료 · {result.status.value}"
+        )
+        mock_status = "MOCK" if result.is_mock else "일반 baseline"
+    elif latest_calculation_failed:
+        last_status = "계산 실패"
+        mock_status = "평가 전"
+    elif isinstance(invalidation_reason, str):
+        last_status = "결과 무효화 · 재계산 필요"
+        mock_status = "평가 전"
+    else:
+        last_status = "계산 전"
+        mock_status = "평가 전"
+    readiness, executable, calculation, target, mock = st.columns(5)
+    readiness.metric("입력 준비도", "보완 필요" if missing else "필수 입력 완료")
+    executable.metric("계산 가능 여부", "차단" if blocked else "실행 가능")
+    calculation.metric("마지막 계산", last_status)
+    target.metric("목표 달성", "평가하지 않음")
+    mock.metric("결과 구분", mock_status)
+    if (
+        isinstance(invalidation_reason, str)
+        and not isinstance(result, SimulationResult)
+        and not latest_calculation_failed
+    ):
+        st.warning(
+            f"이전 계산 결과가 무효화됐습니다: {invalidation_reason} "
+            "현재 프로젝트로 다시 계산해 주세요."
+        )
+    if isinstance(calculation_error, str):
+        st.error("마지막 계산 실패: " + calculation_error)
     if missing:
-        st.warning("Baseline 실행 불가 · 필수 입력 누락: " + ", ".join(missing))
+        missing_labels = [
+            f"{PARAMETER_PRESENTATION.get(name, (name, ''))[0]} "
+            f"[{PARAMETER_PRESENTATION.get(name, (name, ''))[1]}]"
+            for name in missing
+        ]
+        st.warning("Baseline 실행 불가 · 필수 입력 누락: " + ", ".join(missing_labels))
     for issue in model_issues:
         st.warning("Baseline 실행 불가 · " + issue)
-    if not missing and not editor_issues and not model_issues:
+    for issue in guidance_errors:
+        st.error("Baseline 실행 불가 · " + issue)
+    if not blocked:
         st.success("현재 캔버스 연결과 직접 입력한 설계조건으로 계산할 준비가 됐습니다.")
     if st.button(
         "캔버스 구성으로 baseline 계산 실행",
         type="primary",
-        disabled=bool(missing or editor_issues or model_issues),
+        disabled=blocked,
     ):
+        _invalidate_workbench_result("새 계산을 시작했습니다.")
         try:
-            st.session_state.workbench_result = simulate_project(project)
-            st.session_state.workbench_result_project_fingerprint = _project_fingerprint(project)
-        except (ValidationError, ValueError) as error:
-            st.error(f"Baseline 입력 변환 실패: {error}")
-    result = st.session_state.get("workbench_result")
-    result_fingerprint = st.session_state.get("workbench_result_project_fingerprint")
-    if isinstance(result, SimulationResult) and result_fingerprint != _project_fingerprint(project):
-        _invalidate_workbench_result()
-        result = None
+            _register_workbench_result(project, workbench_command.simulate_project(project))
+        except (HVACError, ValidationError, ValueError) as error:
+            st.session_state[_LAST_CALCULATION_ERROR_KEY] = str(error)
+            st.session_state[_RESULT_INVALIDATION_REASON_KEY] = (
+                "마지막 계산이 입력 변환 또는 solver 호출 전에 실패했습니다."
+            )
+        st.rerun()
     if isinstance(result, SimulationResult):
         _render_workbench_result(project, result)
 
@@ -890,7 +1041,7 @@ def main() -> None:
             try:
                 uploaded_project = load_project(upload_bytes)
                 if _project_fingerprint(uploaded_project) != _project_fingerprint(project):
-                    _invalidate_workbench_result()
+                    _invalidate_workbench_result("다른 프로젝트 JSON을 불러왔습니다.")
                 project = uploaded_project
                 st.session_state.workbench_project = uploaded_project
                 st.session_state[_IMPORTED_UPLOAD_KEY] = upload_id
@@ -905,7 +1056,7 @@ def main() -> None:
     if st.sidebar.button("기본 사이클로 초기화"):
         project = _basic_project(project.refrigerant)
         _clear_project_widget_state()
-        _invalidate_workbench_result()
+        _invalidate_workbench_result("기본 사이클로 초기화했습니다.")
         st.session_state.workbench_project = project
         st.rerun()
     with st.sidebar.expander("새 빈 캔버스"):
@@ -917,7 +1068,7 @@ def main() -> None:
         if st.button("빈 캔버스 시작", use_container_width=True):
             project = _empty_project(cast(Literal["R744", "R134a", "R410A"], blank_refrigerant))
             _clear_project_widget_state()
-            _invalidate_workbench_result()
+            _invalidate_workbench_result("새 빈 캔버스를 시작했습니다.")
             st.session_state.workbench_project = project
             st.rerun()
 
