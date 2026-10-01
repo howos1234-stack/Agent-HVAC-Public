@@ -142,3 +142,46 @@ def baseline_guidance_checks(project: WorkbenchProject) -> tuple[GuidanceCheck, 
                 )
             )
     return tuple(checks)
+
+
+def failure_explanation(messages: tuple[str, ...]) -> tuple[str, tuple[str, ...]]:
+    """Translate known solver failures into corrective, non-invented guidance."""
+    joined = " ".join(messages).lower()
+    if "evaporator capacity must be positive" in joined:
+        return (
+            "팽창 후 냉매가 증발기에서 열을 흡수할 수 있는 상태가 만들어지지 않았습니다.",
+            (
+                "냉매에 맞게 고압측 압력을 저압측보다 충분히 높게 설정하세요.",
+                "고압 열교환기 출구온도를 낮추고 흡입온도가 포화온도 이상인지 확인하세요.",
+            ),
+        )
+    if "high_side_pressure must exceed" in joined or "고압측 압력" in joined:
+        return (
+            "고압측 압력이 저압측보다 높지 않아 압축·팽창 사이클을 구성할 수 없습니다.",
+            ("고압측 압력을 증발·저압측 압력보다 큰 절대압으로 입력하세요.",),
+        )
+    if "efficiency" in joined or "효율" in joined:
+        return (
+            "압축기 효율 값 또는 단위가 허용 형식과 맞지 않습니다.",
+            ("효율을 무차원 0 초과 1 이하 또는 percent 0 초과 100 이하로 입력하세요.",),
+        )
+    if "coolprop" in joined or "property" in joined or "phase" in joined:
+        return (
+            "선택한 냉매에서 입력 압력·온도의 물성 상태를 계산할 수 없습니다.",
+            (
+                "냉매명과 압력·온도 단위를 확인하세요.",
+                "위 입력 가이드의 과열도·과냉도 경고를 확인한 뒤 조건을 조정하세요.",
+            ),
+        )
+    if "converg" in joined or "unconverged" in joined:
+        return (
+            "solver가 주어진 조건에서 안정된 해에 도달하지 못했습니다.",
+            ("압력과 온도를 냉매별 예시 근처에서 다시 시작한 뒤 한 항목씩 변경하세요.",),
+        )
+    return (
+        "입력 또는 물성 계산 단계에서 해석을 완료하지 못했습니다.",
+        (
+            "아래 원문 사유와 입력 가이드의 경고를 확인하세요.",
+            "한 번에 한 조건만 수정한 뒤 다시 계산하세요.",
+        ),
+    )

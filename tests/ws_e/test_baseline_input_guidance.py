@@ -1,6 +1,5 @@
-from agent_hvac.app.baseline_input_guidance import baseline_guidance_checks
+from agent_hvac.app.baseline_input_guidance import baseline_guidance_checks, failure_explanation
 from agent_hvac.app.design_workbench import default_r744_project, update_condition
-from agent_hvac.app.design_workbench_app import _failure_explanation
 
 
 def _messages(project):
@@ -72,13 +71,13 @@ def test_negative_mass_flow_and_efficiency_are_explicit_errors():
 
 
 def test_failure_explanation_translates_known_capacity_failure_to_actions():
-    explanation, actions = _failure_explanation(("evaporator capacity must be positive",))
+    explanation, actions = failure_explanation(("evaporator capacity must be positive",))
     assert "열을 흡수" in explanation
     assert any("고압측 압력" in action for action in actions)
     assert any("출구온도" in action for action in actions)
 
 
 def test_unknown_failure_keeps_safe_generic_recovery_steps():
-    explanation, actions = _failure_explanation(("unexpected synthetic failure",))
+    explanation, actions = failure_explanation(("unexpected synthetic failure",))
     assert "완료하지 못했습니다" in explanation
     assert any("원문 사유" in action for action in actions)
