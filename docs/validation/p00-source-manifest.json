@@ -88,12 +88,16 @@
     "sha256": "dce31c947d54782dd56d1d8f1e37ce5540280245a176f928e14249df4be3351b"
   },
   {
+    "path": "src/agent_hvac/app/baseline_input_guidance.py",
+    "sha256": "70372f18065dc2b8a392aa69c3dafa5ca4757b5cb82a89833d31d912362dd3c4"
+  },
+  {
     "path": "src/agent_hvac/app/design_workbench.py",
     "sha256": "1371216eae11839b2f3398dfebf51d56288ddd295128c8764d7c586dfad3616a"
   },
   {
     "path": "src/agent_hvac/app/design_workbench_app.py",
-    "sha256": "456ac533addf8d7933651a6724806ff1b9e859ca781f6a0f99b2d4099b7e4da7"
+    "sha256": "ecf820b0bbff3dda672aa68ffa7bf4e8555d82420310479d8c98fd0ddf1e4e5d"
   },
   {
     "path": "src/agent_hvac/app/result_view.py",
@@ -622,6 +626,10 @@
   {
     "path": "tests/ws_e/test_analysis_screen.py",
     "sha256": "0e30ca93f76401360ef251c44e5e621f6e33248dd96737163b54088794f8445d"
+  },
+  {
+    "path": "tests/ws_e/test_baseline_input_guidance.py",
+    "sha256": "344702adb4999841c865c6d049560482e5a3c134afcdf564070c2344ec23132c"
   },
   {
     "path": "tests/ws_e/test_design_workbench.py",

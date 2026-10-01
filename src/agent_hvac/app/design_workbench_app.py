@@ -15,6 +15,7 @@ from agent_hvac.agents.workbench import (
     WorkbenchCommandResponse,
     run_workbench_command,
 )
+from agent_hvac.app.baseline_input_guidance import EXAMPLE_CONDITIONS, baseline_guidance_checks
 from agent_hvac.app.design_workbench import (
     ComponentKind,
     WorkbenchProject,
@@ -404,6 +405,25 @@ def _render_condition_editor(project: WorkbenchProject) -> WorkbenchProject:
     completed = sum(condition is not None for condition in supplied.values())
     missing = missing_solver_inputs(project)
     st.caption(f"계산 입력 {completed}/{len(required)} · 자연어 없이 직접 입력 가능")
+    with st.expander("처음 사용자를 위한 baseline 입력 가이드", expanded=bool(missing)):
+        st.markdown(
+            "- 압력은 **절대압**을 사용하고 고압측을 저압측보다 높게 입력하세요.\n"
+            "- 압축기 흡입은 기체·과열 상태, 응축기 출구는 액체·과냉 상태가 기본입니다. "
+            "R744 초임계 조건은 gas cooler 출구로 해석합니다.\n"
+            "- 효율은 0 초과 1 이하, 질량유량은 양수여야 합니다.\n"
+            "- 아래 값은 프로그램 사용 예시이며 제품 허용범위나 설계 권장값이 아닙니다."
+        )
+        example = EXAMPLE_CONDITIONS.get(project.refrigerant, "공식 예시 없음")
+        st.caption(f"{project.refrigerant} 예시 · {example}")
+        for check in baseline_guidance_checks(project):
+            if check.level == "error":
+                st.error(check.message)
+            elif check.level == "warning":
+                st.warning(check.message)
+            elif check.level == "pass":
+                st.success(check.message)
+            else:
+                st.info(check.message)
     with st.expander("설계조건 입력·수정", expanded=bool(missing)):
         entered: dict[str, tuple[str, str]] = {}
         with st.form(f"workbench-condition-form-{suffix}"):
@@ -811,6 +831,9 @@ def _render_services(project: WorkbenchProject) -> None:
     missing = missing_solver_inputs(project)
     model_issues = baseline_model_issues(project)
     editor_issues = topology_issues(project)
+    guidance_errors = tuple(
+        check.message for check in baseline_guidance_checks(project) if check.level == "error"
+    )
     st.info(
         "제품 모델이 없어도 선택한 일반 부품 모델과 직접 입력한 파라미터로 "
         "CoolProp 물성·P02 단일단 solver를 실행합니다. 제조사 제품 성능이나 "
@@ -820,12 +843,14 @@ def _render_services(project: WorkbenchProject) -> None:
         st.warning("Baseline 실행 불가 · 필수 입력 누락: " + ", ".join(missing))
     for issue in model_issues:
         st.warning("Baseline 실행 불가 · " + issue)
-    if not missing and not editor_issues and not model_issues:
+    for issue in guidance_errors:
+        st.error("Baseline 실행 불가 · " + issue)
+    if not missing and not editor_issues and not model_issues and not guidance_errors:
         st.success("현재 캔버스 연결과 직접 입력한 설계조건으로 계산할 준비가 됐습니다.")
     if st.button(
         "캔버스 구성으로 baseline 계산 실행",
         type="primary",
-        disabled=bool(missing or editor_issues or model_issues),
+        disabled=bool(missing or editor_issues or model_issues or guidance_errors),
     ):
         try:
             st.session_state.workbench_result = simulate_project(project)

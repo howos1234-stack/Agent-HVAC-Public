@@ -19,6 +19,13 @@
 - Existing public WS-D P09 implementation and tests match the reviewed private source snapshot; they are not duplicated in this GUI change. WS-C/Agent integration remains a separate PR.
 - Local Windows validation after merging latest integration: WS-E 121 passed; base-command 672 passed in the existing GUI-capable `.venv`; GUI 672 passed; Ruff, format, mypy, both GUI entry-point mypy checks, 155-file manifest and package build passed. The local base command was not a clean base-only environment.
 - Actual Chromium 153 pointer validation passed for blank-canvas component creation, node drag, port drag closed loop, direct inputs, convergence/state display, result invalidation and unsupported connected-component blocking. Evidence: [record](docs/development_log/2026-09-29_WS-E_ljh67340_public-workbench-migration.md).
+
+## WS-E 처음 사용자 baseline 입력 가이드 (2026-10-01, 검토 대기)
+
+- 최신 공개 integration `eb2c5c3`에서 별도 브랜치로 시작했다.
+- R134a/R410A/R744 입력 예시와 절대압·압력 관계·질량유량·효율·온도 점검, CoolProp 기반 과열도·과냉도·초임계 안내를 설계조건 편집기에 추가했다.
+- 명백한 입력 오류는 baseline 실행 전에 차단하지만 사용자 값을 자동 변경하지 않으며, 예시를 제품 허용범위나 설계 권장값으로 표시하지 않는다.
+- 집중 회귀 70개와 Ruff·format·mypy·GUI strict mypy, 실제 Chromium 표시를 확인했다. [작업 기록](docs/development_log/2026-10-01_WS-E_ljh67340_baseline-input-guidance.md).
 - Public PR [#3](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/3) was approved and merged to integration as `49dcfbc522f798b1567e61aeabe198c7502bbf27`. Its latest-head Windows/Ubuntu × base/gui CI passed 4/4; post-merge CI is tracked separately.
 - This work does not imply manufacturer validation, production use, CV/P06 completion or Gate approval.
 
