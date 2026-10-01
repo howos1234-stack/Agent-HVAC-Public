@@ -33,7 +33,8 @@ def _saturation_dome(fluid: str, samples: int = 96) -> tuple[dict[str, float | s
         return ()
     try:
         lower = max(float(PropsSI("Ttriple", fluid)), float(PropsSI("Tmin", fluid))) + 0.05
-        upper = float(PropsSI("Tcrit", fluid)) - 0.05
+        critical = float(PropsSI("Tcrit", fluid))
+        upper = critical - max(1e-4, abs(critical) * 1e-6)
     except (TypeError, ValueError):
         return ()
     if not math.isfinite(lower) or not math.isfinite(upper) or lower >= upper:
@@ -65,6 +66,33 @@ def _saturation_dome(fluid: str, samples: int = 96) -> tuple[dict[str, float | s
 def _cycle_fluid(states_in_order: list[tuple[str, ThermoState]]) -> str | None:
     fluids = {state.fluid for _, state in states_in_order}
     return next(iter(fluids)) if len(fluids) == 1 and None not in fluids else None
+
+
+def _dome_chart_rows(
+    saturation: list[dict[str, float | str]], minimum_pressure: float
+) -> list[dict[str, float | str]]:
+    """Join liquid and vapor boundaries through the near-critical endpoint."""
+    liquid = sorted(
+        (
+            row
+            for row in saturation
+            if row["series"] == "포화액선" and float(row["p"]) >= minimum_pressure
+        ),
+        key=lambda row: float(row["order"]),
+    )
+    vapor = sorted(
+        (
+            row
+            for row in saturation
+            if row["series"] == "포화증기선" and float(row["p"]) >= minimum_pressure
+        ),
+        key=lambda row: float(row["order"]),
+        reverse=True,
+    )
+    return [
+        {**row, "series": "베이퍼돔", "order": float(index)}
+        for index, row in enumerate([*liquid, *vapor])
+    ]
 
 
 def _parameter_rows(candidate: RankedDesign) -> list[dict[str, str]]:
@@ -172,6 +200,8 @@ def render_artifact(artifact: Artifact) -> None:
             states_in_order = list(result.state_points.items())
             fluid = _cycle_fluid(states_in_order)
             saturation = list(_saturation_dome(fluid)) if fluid is not None else []
+            minimum_cycle_pressure = min(state.pressure.value for _, state in states_in_order)
+            dome_points = _dome_chart_rows(saturation, minimum_cycle_pressure / 3.0)
             ph_points = [
                 {
                     "state": name,
@@ -185,13 +215,20 @@ def render_artifact(artifact: Artifact) -> None:
             if len(ph_points) > 1:
                 ph_points.append({**ph_points[0], "order": len(ph_points)})
             st.vega_lite_chart(
-                [*saturation, *ph_points],
+                [*dome_points, *ph_points],
                 {
                     "title": "MOCK · P-h states" if result.is_mock else "P-h states",
+                    "height": 480,
+                    "width": "container",
                     "layer": [
                         {
                             "transform": [{"filter": "datum.series !== '사이클'"}],
-                            "mark": {"type": "line", "strokeWidth": 1.5, "opacity": 0.7},
+                            "mark": {
+                                "type": "line",
+                                "strokeWidth": 2.5,
+                                "opacity": 0.9,
+                                "color": "#38bdf8",
+                            },
                             "encoding": {
                                 "x": {
                                     "field": "h",
@@ -203,11 +240,6 @@ def render_artifact(artifact: Artifact) -> None:
                                     "type": "quantitative",
                                     "title": "p [Pa, absolute]",
                                     "scale": {"type": "log"},
-                                },
-                                "color": {
-                                    "field": "series",
-                                    "type": "nominal",
-                                    "title": "포화 경계",
                                 },
                                 "order": {"field": "order", "type": "quantitative"},
                             },
@@ -239,8 +271,8 @@ def render_artifact(artifact: Artifact) -> None:
                 },
             )
             st.caption(
-                f"{fluid} CoolProp 포화액선·포화증기선과 제공된 상태점 순서를 함께 표시합니다."
-                if saturation
+                f"{fluid} CoolProp 베이퍼돔과 제공된 상태점 순서를 함께 표시합니다."
+                if dome_points
                 else "포화 경계를 계산할 수 없어 제공된 상태점 순서만 표시합니다."
             )
 
@@ -261,13 +293,20 @@ def render_artifact(artifact: Artifact) -> None:
                 for point in ts_points:
                     point["series"] = "사이클"
                 st.vega_lite_chart(
-                    [*saturation, *ts_points],
+                    [*dome_points, *ts_points],
                     {
                         "title": "MOCK · T-s states" if result.is_mock else "T-s states",
+                        "height": 480,
+                        "width": "container",
                         "layer": [
                             {
                                 "transform": [{"filter": "datum.series !== '사이클'"}],
-                                "mark": {"type": "line", "strokeWidth": 1.5, "opacity": 0.7},
+                                "mark": {
+                                    "type": "line",
+                                    "strokeWidth": 2.5,
+                                    "opacity": 0.9,
+                                    "color": "#38bdf8",
+                                },
                                 "encoding": {
                                     "x": {
                                         "field": "s",
@@ -280,11 +319,6 @@ def render_artifact(artifact: Artifact) -> None:
                                         "type": "quantitative",
                                         "title": "T [K]",
                                         "scale": {"zero": False},
-                                    },
-                                    "color": {
-                                        "field": "series",
-                                        "type": "nominal",
-                                        "title": "포화 경계",
                                     },
                                     "order": {"field": "order", "type": "quantitative"},
                                 },
@@ -332,9 +366,8 @@ def render_artifact(artifact: Artifact) -> None:
                     },
                 )
                 st.caption(
-                    f"{fluid} CoolProp 포화액선·포화증기선과 제공된 entropy 상태점을 함께 "
-                    "표시합니다."
-                    if saturation
+                    f"{fluid} CoolProp 베이퍼돔과 제공된 entropy 상태점을 함께 표시합니다."
+                    if dome_points
                     else "포화 경계를 계산할 수 없어 제공된 entropy 상태점만 표시합니다."
                 )
             else:

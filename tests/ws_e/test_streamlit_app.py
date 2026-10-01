@@ -6,7 +6,7 @@ import pytest
 pytest.importorskip("streamlit")
 from streamlit.testing.v1 import AppTest  # noqa: E402
 
-from agent_hvac.app.streamlit_app import _saturation_dome  # noqa: E402
+from agent_hvac.app.streamlit_app import _dome_chart_rows, _saturation_dome  # noqa: E402
 from agent_hvac.app.synthetic_flow import SyntheticScenario, run_synthetic_scenario  # noqa: E402
 from agent_hvac.schemas.design import DesignProblem  # noqa: E402
 
@@ -54,7 +54,7 @@ def test_state_charts_render_ph_and_only_render_ts_when_entropy_is_present():
     assert not with_entropy.exception
     assert len(with_entropy.get("vega_lite_chart")) == 2
     assert not any("엔트로피 데이터가 없습니다" in item.value for item in with_entropy.info)
-    assert sum("포화액선·포화증기선" in item.value for item in with_entropy.caption) == 2
+    assert sum("CoolProp 베이퍼돔" in item.value for item in with_entropy.caption) == 2
 
 
 def test_coolprop_saturation_dome_contains_liquid_and_vapor_boundaries():
@@ -65,6 +65,18 @@ def test_coolprop_saturation_dome_contains_liquid_and_vapor_boundaries():
     assert all(float(row["p"]) > 0 for row in rows)
     assert all(float(row["temperature"]) > 0 for row in rows)
     assert _saturation_dome("NOT-A-REFRIGERANT", samples=12) == ()
+
+
+def test_vapor_dome_chart_path_joins_near_critical_end_and_filters_low_pressure():
+    saturation = list(_saturation_dome("R134a", samples=12))
+    rows = _dome_chart_rows(saturation, minimum_pressure=100_000.0)
+
+    assert rows
+    assert {row["series"] for row in rows} == {"베이퍼돔"}
+    assert all(float(row["p"]) >= 100_000.0 for row in rows)
+    midpoint = len(rows) // 2
+    assert rows[midpoint - 1]["p"] == pytest.approx(float(rows[midpoint]["p"]))
+    assert rows[midpoint - 1]["h"] == pytest.approx(float(rows[midpoint]["h"]), rel=0.02)
 
 
 @pytest.mark.parametrize(
