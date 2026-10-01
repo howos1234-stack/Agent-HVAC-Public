@@ -552,6 +552,10 @@
     "sha256": "3c16dfa903abce64164dffe3b14f89b866fed68fc6306f0cb71c0d5e1f4afe9b"
   },
   {
+    "path": "tests/ws_a/test_loaded_candidate_trials.py",
+    "sha256": "de713de356071cd8e74976717398285b20f553c64e405390538a19e7b6d9472d"
+  },
+  {
     "path": "tests/ws_a/test_manufacturer_validation.py",
     "sha256": "c45a6a4521feaa870659159ec1285fd6581925570835e7875a2ec845ad730a33"
   },

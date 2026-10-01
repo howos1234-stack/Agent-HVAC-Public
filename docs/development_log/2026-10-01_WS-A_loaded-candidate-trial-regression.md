@@ -1,0 +1,44 @@
+# WS-A loaded synthetic candidate regression
+
+## Scope and plan
+
+- Human owner: daeyunekim; WS-A; 2026-10-01 KST.
+- Status: REVIEW_PENDING.
+- Phase / Workstream: P06 synthetic regression / WS-A.
+- 작업 상태: REVIEW_PENDING
+- Base: public integration `0c735d0`; branch `codex/ws-a/loaded-candidate-trial-regression`.
+- Initial tracked changes: none. Read AGENTS, README, CURRENT_STATE, WORK_PROTOCOL, trial and Excel integration source/tests.
+- Test mixed compressor/valve/HX evaluation, reversed order, and freshly loaded records after workbook quarantine and restoration.
+- Only synthetic tests, state, work record and generated manifest may change. No physical equations, tolerance, schema, loader, ranking or manufacturer data changes.
+- Existing ProductRecord/adapter interfaces remain frozen. Expected failures must retain no calculation result.
+
+## 수행 내용
+
+Mixed Excel products now reach the existing candidate evaluator in synthetic tests.
+
+## 결정, 가정 및 출처
+
+Use only public synthetic helper fixtures. Fresh reload records are caller-owned; no cache invalidation or physical policy changes.
+
+## 검증 결과
+
+- Added `tests/ws_a/test_loaded_candidate_trials.py` (3 cases), state entry and generated source manifest. Production implementation unchanged. Helpers follow the existing in-repository test import convention.
+- Mixed/reversed execution preserves complete result equality and mock/parent source identity. Missing map after reload has no result, retains only surviving selected envelope source, and independent valve/HX results are unchanged. Restoring original bytes restores version and outputs. No guarantee of invalidating caller-held old immutable ProductRecord snapshots is asserted.
+- Local runtime: `D:/codex/HVAC agent/Agent-HVAC/.venv/Scripts/python.exe`, public `src` and repository first on PYTHONPATH. No private files/data/history imported. This environment is not freshly locked; remote CI must verify locked base/gui.
+- `python -m pytest -p no:cacheprovider tests/ws_a/test_loaded_candidate_trials.py -q`: PASS, 3.
+- `python -m pytest -p no:cacheprovider tests/ws_a -q`: PASS, 239.
+- `python -m pytest -p no:cacheprovider tests/contracts/test_source_manifest.py -q`: PASS, 6 after manifest generation. Initial concurrent full-suite run began before manifest regeneration and reported one manifest failure; not described as PASS.
+- `python -m ruff check .`, `python -m ruff format --check .`: PASS.
+- `python -m mypy`: PASS, 77 source files; both GUI entries separate mypy: PASS.
+- `python scripts/source_manifest.py --write` then `--check`: PASS, 163 files.
+- `python scripts/check_public_data_boundary.py`: PASS.
+- `python -m hatchling build`: PASS, sdist/wheel.
+- `python -m pytest -p no:cacheprovider -q`: 717 passed, 1 manifest failure (pre-regeneration run); not full-suite PASS. Manifest's 6 tests subsequently passed.
+- `python -m pytest -p no:cacheprovider tests/contracts tests/ws_b tests/ws_a tests/ws_a_system -q`: PASS, 495 after manifest regeneration.
+- Work-record and diff checks: PASS after protocol heading correction. Initial work-record check failed on missing mandatory metadata/headings; corrected without changing code.
+- Public draft PR [#17](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/17), first submitted head `a67512c37dd46a31757bbf91b4d5ca188c3dfa75`. Final-head CI not yet confirmed; no approval/merge. No implementation policy decision needed; ordinary PR review remains required.
+- CV/manufacturer/P06/production/Gate status unchanged.
+
+## 종료 및 인수인계
+
+Ordinary PR review and remote locked CI remain required. CURRENT_STATE updated; no merge authority exercised.

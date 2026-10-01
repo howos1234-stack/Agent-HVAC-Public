@@ -1,5 +1,12 @@
 # Public snapshot status
 
+## WS-A loaded synthetic candidate regressions (2026-10-01)
+
+- Branch `codex/ws-a/loaded-candidate-trial-regression`, base `0c735d0a21e45feddfbb0dc94833c921f50b27aa`; REVIEW_PENDING.
+- Three synthetic tests connect multi-workbook loader output to mixed compressor/valve/HX candidate evaluation, reversed ordering, missing-map quarantine and reload recovery. Callers explicitly acquire fresh records after reload; old immutable snapshots are not automatically invalidated.
+- Production equations, loader/schema/adapter contracts, tolerances and ranking policies are unchanged. CV/manufacturer/P06/production/Gate statuses are unchanged.
+- Local focused tests 3 passed; WS-A 239 passed; Ruff, mypy including GUI entries, manifest 163 files, public-data boundary and package build passed. Locked base/gui and final-head remote CI are tracked separately in the work record; local existing GUI environment is not locked evidence.
+
 - Date: 2026-09-29 KST
 - Source code snapshot: 0ea4828467d71cbc9ae8da71a548c43976ee6491
 - Public initial code commit: b954c9de58e290439e8ff90211d7705e559e3ae1
