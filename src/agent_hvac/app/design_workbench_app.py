@@ -880,7 +880,12 @@ def _render_services(project: WorkbenchProject) -> None:
     if isinstance(calculation_error, str):
         st.error("마지막 계산 실패: " + calculation_error)
     if missing:
-        st.warning("Baseline 실행 불가 · 필수 입력 누락: " + ", ".join(missing))
+        missing_labels = [
+            f"{PARAMETER_PRESENTATION.get(name, (name, ''))[0]} "
+            f"[{PARAMETER_PRESENTATION.get(name, (name, ''))[1]}]"
+            for name in missing
+        ]
+        st.warning("Baseline 실행 불가 · 필수 입력 누락: " + ", ".join(missing_labels))
     for issue in model_issues:
         st.warning("Baseline 실행 불가 · " + issue)
     if not blocked:

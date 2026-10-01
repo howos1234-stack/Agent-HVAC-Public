@@ -1569,6 +1569,12 @@ def test_missing_conditions_expand_editor_and_history_starts_disabled() -> None:
     redo = next(button for button in app.button if button.label == "↷ 다시 실행")
     assert undo.disabled
     assert redo.disabled
+    missing_warning = next(
+        item for item in app.warning if "Baseline 실행 불가 · 필수 입력 누락" in item.value
+    )
+    assert "냉매 질량유량 [kg/s]" in missing_warning.value
+    assert "등엔트로피 효율 [dimensionless]" in missing_warning.value
+    assert "refrigerant_mass_flow" not in missing_warning.value
 
 
 def test_streamlit_connection_change_invalidates_previous_result() -> None:
