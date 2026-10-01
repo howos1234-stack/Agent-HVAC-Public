@@ -107,18 +107,30 @@
 - Work record: [record](docs/development_log/2026-09-30_WS-B_sangryul1208_public-loader-adapter-bundle.md).
 - WS-A와 관리자가 합성 연결 검증 범위를 수용했으며 production·CV·Gate 승인은 별도다.
 
-- PR5 integration reconciliation: latest49dcfbc incorporated; WS-E GUI and WS-B boundary checks retained together. Manifest157; new-head CI required before merge.
+- PR #5 integration reconciliation의 중간 기록(`49dcfbc`, manifest 157, 새 head CI 필요)은 과거 상태다. 이후 최종 검증과 관리자 승인 후 `0d6f886`으로 병합됐으며, 현재 완료 근거는 위 PR #5 항목을 따른다.
 
-## WS-B 다중 workbook 오류 격리·reload 회귀 (2026-09-30, 진행 중)
+## WS-B 다중 workbook 오류 격리·reload 회귀 (2026-09-30, integration 반영 완료)
 
 - Branch: `codex/ws-b/public-loader-reload-isolation`, start `7277b752ac8493d76cd8e7f1f8041cebdd7bb95c` (PR #10 integration merge).
 - PR #10의 정상 compressor·valve·gas-cooler 합성 bundle을 확장해 workbook fatal 오류, 파일 간 중복 `product_id`, 교차 workbook `source_id` 오류, 파일 add/modify/delete 및 수정 후 복구를 연속 reload로 검증한다.
 - 오류 reload 뒤 이전 제품·source가 남지 않고, 무관한 정상 제품과 adapter용 record가 유지되며, 원본 bytes 복구 시 최초 `database_version`과 제품 집합이 결정론적으로 복구되는지를 확인한다.
 - 공개 PR [#11](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/11), 최초 head `93ffe2165c3d07c0cca524baf7ab73aa22756383`. 새 합성 회귀 4 passed, bundle 및 기존 장비별 Excel 통합 11 passed, contracts·WS-B·WS-A 348 passed다. 최초 head의 [CI run 36710170632](https://github.com/howos1234-stack/Agent-HVAC-Public/actions/runs/36710170632)은 Windows/Ubuntu × base/gui 4/4 PASS다.
-- WS-A 요청에 따라 오류 후 정상 adapter 사용, 격리된 정격점 선택 실패, 복구 후 adapter 재사용을 명시하고 최신 integration `75755f9`을 반영했다. 보완 후 Excel 통합 11 passed, contracts·WS-B·WS-A 352 passed이며 새 head CI는 별도 확인한다.
+- WS-A 요청에 따라 오류 후 정상 adapter 사용, 격리된 정격점 선택 실패, 복구 후 adapter 재사용을 명시하고 최신 integration `75755f9`을 반영했다. 보완 후 Excel 통합 11 passed, contracts·WS-B·WS-A 352 passed다.
+- 공개 PR #11은 관리자 승인 후 `50735dd3c561517952a719a7bc09323c1a9cb191`로 integration에 병합됐다. 관리자 독립 통합 회귀 11개와 최신 PR head CI 4/4 PASS를 확인했고, 병합 후 [Foundation CI run 36716270757](https://github.com/howos1234-stack/Agent-HVAC-Public/actions/runs/36716270757)도 Windows/Ubuntu × base/gui 4/4 SUCCESS다.
 - production loader·ProductRecord·Schema·SI/단위 계약·WS-A adapter 구현은 변경하지 않는다. 제조사 자료나 실제 제품 수치는 사용하지 않는다.
 - CV-1~CV-3, 실제 제조사 검증, P06 전체, production 및 Gate 상태는 변경하지 않는다.
 - Work record: [record](docs/development_log/2026-09-30_2006_WS-B_sangryul1208_public-loader-reload-isolation.md).
+
+## WS-B 제품 DB 소비자 인계 기준 (2026-09-30, 진행 중)
+
+- Branch: `codex/ws-b/public-data-consumer-handoff`, start `50735dd3c561517952a719a7bc09323c1a9cb191`.
+- 기존 repository API의 제품 목록, `database_version`, 오류와 parent 격리 결과를 WS-C·WS-E가 안전하게 사용하는 기준을 문서화한다.
+- 제품 전체 제외와 특정 rated point/map/envelope 격리를 구분하고, 제품이 목록에 있어도 필요한 ELIGIBLE record가 없으면 계산 가능한 제품으로 취급하지 않는다.
+- reload 후 DB 버전이 달라지면 기존 선택과 결과를 재검증한다. GUI·Agent 구현이나 공통 schema는 변경하지 않으며 소비 측 구현은 담당자와 협의한다.
+- 공개 합성 workbook용 read-only 조회 예제를 추가하며 제조사 원본·실제 성능 수치는 사용하지 않는다.
+- 기존 PR #11 회귀가 정상 적재→부분 격리→복구와 adapter 재사용을 이미 검증하므로 중복 테스트는 추가하지 않았다. 집중 4 passed, contracts·WS-B·WS-A 352 passed, Ruff·mypy·manifest 162개·공개자료 경계·build가 로컬 PASS다.
+- CV-1~CV-3, 실제 제조사 검증, P06 전체, production 및 Gate 상태는 변경하지 않는다.
+- Work record: [record](docs/development_log/2026-09-30_2202_WS-B_sangryul1208_product-database-consumer-handoff.md).
 
 ## WS-A PR #6 최신 integration 동기화 (2026-09-30, 진행 중)
 
