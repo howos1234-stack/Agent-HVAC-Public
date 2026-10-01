@@ -33,8 +33,10 @@ Use only public synthetic helper fixtures. Fresh reload records are caller-owned
 - `python scripts/source_manifest.py --write` then `--check`: PASS, 163 files.
 - `python scripts/check_public_data_boundary.py`: PASS.
 - `python -m hatchling build`: PASS, sdist/wheel.
-- Full existing-environment suite and contracts/WS-B/WS-A/system combined regression: completion pending; not PASS. Exact commands: `python -m pytest -p no:cacheprovider -q` and `python -m pytest -p no:cacheprovider tests/contracts tests/ws_b tests/ws_a tests/ws_a_system -q`.
-- Work-record/diff checks, PR and final-head CI: pending; not approved or merged. No implementation policy decision needed; ordinary PR review remains required.
+- `python -m pytest -p no:cacheprovider -q`: 717 passed, 1 manifest failure (pre-regeneration run); not full-suite PASS. Manifest's 6 tests subsequently passed.
+- `python -m pytest -p no:cacheprovider tests/contracts tests/ws_b tests/ws_a tests/ws_a_system -q`: PASS, 495 after manifest regeneration.
+- Work-record and diff checks: PASS after protocol heading correction. Initial work-record check failed on missing mandatory metadata/headings; corrected without changing code.
+- Public draft PR [#17](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/17), first submitted head `a67512c37dd46a31757bbf91b4d5ca188c3dfa75`. Final-head CI not yet confirmed; no approval/merge. No implementation policy decision needed; ordinary PR review remains required.
 - CV/manufacturer/P06/production/Gate status unchanged.
 
 ## 종료 및 인수인계
