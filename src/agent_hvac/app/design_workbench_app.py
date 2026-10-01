@@ -15,6 +15,7 @@ from agent_hvac.agents.workbench import (
     WorkbenchCommandResponse,
     run_workbench_command,
 )
+from agent_hvac.app import workbench_command
 from agent_hvac.app.design_workbench import (
     ComponentKind,
     WorkbenchProject,
@@ -47,10 +48,10 @@ from agent_hvac.app.workbench_command import (
     missing_solver_inputs,
     project_from_command,
     required_solver_input_names,
-    simulate_project,
 )
 from agent_hvac.schemas.design import DesignProblem
 from agent_hvac.schemas.results import SimulationResult, SolverStatus
+from agent_hvac.utils.exceptions import HVACError
 
 ROOT = Path(__file__).resolve().parents[3]
 
@@ -835,6 +836,10 @@ def _render_services(project: WorkbenchProject) -> None:
         result = None
     invalidation_reason = st.session_state.get(_RESULT_INVALIDATION_REASON_KEY)
     agent_response = st.session_state.get(_COMMAND_RESPONSE_KEY)
+    calculation_error = st.session_state.get(_LAST_CALCULATION_ERROR_KEY)
+    latest_calculation_failed = isinstance(calculation_error, str) or (
+        isinstance(agent_response, WorkbenchCommandResponse) and agent_response.status == "failed"
+    )
 
     st.info(
         "제품 모델이 없어도 선택한 일반 부품 모델과 직접 입력한 파라미터로 "
@@ -848,11 +853,11 @@ def _render_services(project: WorkbenchProject) -> None:
             else f"계산 완료 · {result.status.value}"
         )
         mock_status = "MOCK" if result.is_mock else "일반 baseline"
+    elif latest_calculation_failed:
+        last_status = "계산 실패"
+        mock_status = "평가 전"
     elif isinstance(invalidation_reason, str):
         last_status = "결과 무효화 · 재계산 필요"
-        mock_status = "평가 전"
-    elif isinstance(agent_response, WorkbenchCommandResponse) and agent_response.status == "failed":
-        last_status = "계산 실패"
         mock_status = "평가 전"
     else:
         last_status = "계산 전"
@@ -863,12 +868,15 @@ def _render_services(project: WorkbenchProject) -> None:
     calculation.metric("마지막 계산", last_status)
     target.metric("목표 달성", "평가하지 않음")
     mock.metric("결과 구분", mock_status)
-    if isinstance(invalidation_reason, str) and not isinstance(result, SimulationResult):
+    if (
+        isinstance(invalidation_reason, str)
+        and not isinstance(result, SimulationResult)
+        and not latest_calculation_failed
+    ):
         st.warning(
             f"이전 계산 결과가 무효화됐습니다: {invalidation_reason} "
             "현재 프로젝트로 다시 계산해 주세요."
         )
-    calculation_error = st.session_state.get(_LAST_CALCULATION_ERROR_KEY)
     if isinstance(calculation_error, str):
         st.error("마지막 계산 실패: " + calculation_error)
     if missing:
@@ -884,8 +892,8 @@ def _render_services(project: WorkbenchProject) -> None:
     ):
         _invalidate_workbench_result("새 계산을 시작했습니다.")
         try:
-            _register_workbench_result(project, simulate_project(project))
-        except (ValidationError, ValueError) as error:
+            _register_workbench_result(project, workbench_command.simulate_project(project))
+        except (HVACError, ValidationError, ValueError) as error:
             st.session_state[_LAST_CALCULATION_ERROR_KEY] = str(error)
             st.session_state[_RESULT_INVALIDATION_REASON_KEY] = (
                 "마지막 계산이 입력 변환 또는 solver 호출 전에 실패했습니다."

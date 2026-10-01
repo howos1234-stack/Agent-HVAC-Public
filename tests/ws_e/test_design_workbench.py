@@ -1276,6 +1276,11 @@ def test_streamlit_agent_solver_failure_is_explicit_and_has_no_result() -> None:
         timeout=20
     )
     execute = next(button for button in app.button if button.label == "명시적 계산 실행")
+    app = execute.click().run(timeout=20)
+    assert any("Agent 상태 · 계산 완료" in item.value for item in app.success)
+    assert any("Solver status: converged" in item.value for item in app.text)
+
+    execute = next(button for button in app.button if button.label == "명시적 계산 실행")
     with patch(
         "agent_hvac.agents.workbench.simulate_project",
         side_effect=InvalidPropertyStateError("synthetic property failure"),
@@ -1285,13 +1290,51 @@ def test_streamlit_agent_solver_failure_is_explicit_and_has_no_result() -> None:
     assert any("Agent 상태 · 계산 실패" in item.value for item in app.error)
     assert any("synthetic property failure" in item.value for item in app.caption)
     assert "workbench_result" not in app.session_state.filtered_state
+    assert "workbench_result_project_fingerprint" not in app.session_state.filtered_state
     last_calculation = next(metric for metric in app.metric if metric.label == "마지막 계산")
     assert last_calculation.value == "계산 실패"
+    assert not any("결과 무효화 · 재계산 필요" in item.value for item in app.metric)
+    assert not any("현재 프로젝트로 다시 계산" in item.value for item in app.warning)
 
     execute = next(button for button in app.button if button.label == "명시적 계산 실행")
     app = execute.click().run(timeout=20)
     assert any("Agent 상태 · 계산 완료" in item.value for item in app.success)
     assert any("Solver status: converged" in item.value for item in app.text)
+    assert next(metric for metric in app.metric if metric.label == "마지막 계산").value == (
+        "계산 완료 · 수렴"
+    )
+
+
+def test_streamlit_direct_calculation_success_failure_success_uses_latest_status() -> None:
+    pytest.importorskip("streamlit")
+    app = _converged_default_workbench_app()
+
+    run = next(
+        button for button in app.button if button.label == "캔버스 구성으로 baseline 계산 실행"
+    )
+    with patch(
+        "agent_hvac.app.workbench_command.simulate_project",
+        side_effect=InvalidPropertyStateError("synthetic direct failure"),
+    ):
+        app = run.click().run(timeout=20)
+
+    assert "workbench_result" not in app.session_state.filtered_state
+    assert "workbench_result_project_fingerprint" not in app.session_state.filtered_state
+    assert any("마지막 계산 실패: synthetic direct failure" in item.value for item in app.error)
+    assert next(metric for metric in app.metric if metric.label == "마지막 계산").value == (
+        "계산 실패"
+    )
+    assert not any("현재 프로젝트로 다시 계산" in item.value for item in app.warning)
+
+    run = next(
+        button for button in app.button if button.label == "캔버스 구성으로 baseline 계산 실행"
+    )
+    app = run.click().run(timeout=20)
+
+    assert any("Solver status: converged" in item.value for item in app.text)
+    assert next(metric for metric in app.metric if metric.label == "마지막 계산").value == (
+        "계산 완료 · 수렴"
+    )
 
 
 def test_streamlit_direct_conditions_run_canvas_without_natural_language() -> None:

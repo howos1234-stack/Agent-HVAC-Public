@@ -22,6 +22,7 @@
 - 프로젝트 변경은 이전 실행이 있을 때 무효화 사유를 남기고 결과·지문·Agent 캐시를 제거한다.
 - 조건, 연결, 부품, 속성, Undo/Redo, JSON 업로드별 무효화와 명시적 재계산을 AppTest로 검증한다.
 - 현재 프로젝트와 지문이 같은 실패 결과는 status/reason을 내보낼 수 있지만 COP 등 정상 성능 카드가 나타나지 않는지 검증한다.
+- PR #14 검토 보완에서는 이전 성공 결과를 제거한 뒤 재실행이 실패했을 때 최신 실패 상태를 과거 무효화 상태보다 우선 표시한다. Agent와 직접 baseline 양쪽에 `성공 → 실패 → 성공` 회귀를 추가했으며, 직접 경로도 서비스 계층의 `HVACError`를 화면 실패로 보존한다.
 
 ## 결정, 가정 및 출처
 
@@ -46,7 +47,7 @@ AppTest의 프로젝트 주입 검증과 아래 실제 포인터 조작은 별�
 
 | 대상 | 명령/방법 | 결과 |
 |---|---|---|
-| WS-C·WS-E 집중 | `uv run --locked --extra gui pytest tests/ws_e/test_design_workbench.py tests/ws_c/test_workbench_agent.py -q` | PASS, 76 passed |
+| WS-C·WS-E 집중 | `uv run --locked --extra gui pytest tests/ws_e/test_design_workbench.py tests/ws_c/test_workbench_agent.py -q` | 최초 PASS 76 passed; PR #14 보완 후 PASS 77 passed |
 | 실제 브라우저 | 위 네 흐름을 in-app Chromium에서 조작 | PASS |
 | base 전체 | `uv run --locked pytest -q` | PASS, 714 passed |
 | GUI 전체 | `uv run --locked --extra gui pytest -q` | PASS, 714 passed |
