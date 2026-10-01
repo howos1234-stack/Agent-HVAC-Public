@@ -2,13 +2,13 @@
 
 ## 식별 및 범위
 
-- 시작 / 종료 시각 및 시간대: 2026-09-30 20:06 KST / 진행 중
+- 시작 / 종료 시각 및 시간대: 2026-09-30 20:06 KST / 2026-09-30 KST
 - 수행자 / human owner: Codex / sangryul1208
 - Phase / Workstream: WS-B 공개 제품 DB 합성 회귀
 - 작업 상태: REVIEW_PENDING
 - 사용자 요청과 목표: PR #10 정상 bundle을 확장해 workbook 오류 격리, 중복 ID, 잘못된 참조, reload add/modify/delete 및 복구를 검증한다.
 - 허용 파일 / 제외 파일: 합성 pytest·공개 작업 기록·CURRENT_STATE·manifest만 허용. 제조사 자료·실제 제품 수치·private Git 이력은 제외한다.
-- branch / 시작 commit / 종료 checkpoint(확인된 경우): `codex/ws-b/public-loader-reload-isolation` / `7277b752ac8493d76cd8e7f1f8041cebdd7bb95c` / 최초 head `93ffe2165c3d07c0cca524baf7ab73aa22756383`, 보완 진행 중
+- branch / 시작 commit / 종료 checkpoint(확인된 경우): `codex/ws-b/public-loader-reload-isolation` / `7277b752ac8493d76cd8e7f1f8041cebdd7bb95c` / integration merge `50735dd3c561517952a719a7bc09323c1a9cb191`
 - 시작 시 기존 변경: 없음
 - 읽은 문서 및 버전: `AGENTS.md`, `README.md`, `CURRENT_STATE.md`, `docs/development/WORK_PROTOCOL.md`, PR #10 합성 bundle 테스트
 - 의존 작업 / frozen interface: ProductRecord 0.2.0, Excel schema 0.2.0, loader 0.2.x 및 기존 격리 계약을 변경하지 않는다.
@@ -60,6 +60,8 @@
 | 보완 head 정적 검사 | `python -m ruff check src tests scripts`; `python -m ruff format --check src tests scripts`; `python -m mypy`; GUI entry mypy | Windows local | PASS | Ruff 138 files, mypy 77 source files + GUI entry |
 | 보완 head manifest·경계 | `python scripts/source_manifest.py --write/--check`; `python scripts/check_public_data_boundary.py` | Windows local | PASS | manifest 162 files, 공개 제한 자료 없음 |
 | 보완 head package build | `python -m build --no-isolation` | Windows local (sandbox 밖 임시경로) | PASS | sdist/wheel 생성 |
+| 보완 head 원격 CI | 공개 PR #11 최신 head CI | GitHub Windows/Ubuntu × base/gui | PASS | 관리자 확인 4/4 SUCCESS |
+| 병합 후 원격 CI | [Foundation CI run 36716270757](https://github.com/howos1234-stack/Agent-HVAC-Public/actions/runs/36716270757) | GitHub Windows/Ubuntu × base/gui | PASS | integration merge `50735dd`, 4/4 SUCCESS |
 
 - 수치 검증 기준값·단위·출처·허용오차·실제 오차(해당 시): 해당 없음.
 - 실패 재현 및 조치 / 미실행 이유: 표준 `uv`가 로컬 PATH에 없어 기존 GUI-capable Python 환경으로 public `src`를 명시적으로 우선 import했다. pytest 기본 임시경로 권한 문제는 workspace `--basetemp`로 격리했다. 최초 전체 관련 회귀의 유일한 실패는 새 테스트 등록 전 manifest 불일치였으며 manifest를 갱신했다.
@@ -68,8 +70,8 @@
 ## 종료 및 인수인계
 
 - 완료한 범위: 다중 workbook의 fatal 오류, 중복 product ID, 잘못된 source 참조, add/modify/delete, stale 제거와 수정 후 복구 회귀 및 로컬 관련 검증.
-- 남은 작업 / 알려진 한계 / blocker: WS-A 요청 보완의 로컬 재검증, 새 head push와 Windows/Ubuntu × base/gui CI, 최종 검토·병합.
-- 다음 담당자와 첫 실행 작업: WS-A가 loader → ProductRecord → adapter 소비 관점의 격리 범위를 검토한다.
+- 남은 작업 / 알려진 한계 / blocker: 실제 제조사 검증과 production/Gate 범위는 별도다.
+- 다음 담당자와 첫 실행 작업: WS-C·WS-E가 승인된 격리·reload 결과를 소비하는 기준을 WS-B와 협의한다.
 - `CURRENT_STATE.md` 갱신 여부: 완료.
 - Phase checklist / Gate 상태와 증거: CV-1~CV-3, P06 전체, production 및 Gate 상태 변경 없음.
-- PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): 공개 PR [#11](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/11) 제출. 최초 head `93ffe21` CI 4/4 PASS, WS-A 보완 요청 수신. 보완 head 리뷰·승인·병합 및 원격 CI는 NOT_RUN.
+- PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): 공개 PR [#11](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/11)은 WS-A·관리자 검토를 거쳐 `50735dd`로 integration에 병합됐다. 관리자 독립 통합 회귀 11개와 최신 PR head CI 4/4 PASS, 병합 후 run 36716270757도 4/4 SUCCESS다. 과거 보완 시점의 NOT_RUN 표기는 현재 완료 근거로 대체한다.
