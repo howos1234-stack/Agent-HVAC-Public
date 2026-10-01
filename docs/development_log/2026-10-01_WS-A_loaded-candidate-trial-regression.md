@@ -4,13 +4,23 @@
 
 - Human owner: daeyunekim; WS-A; 2026-10-01 KST.
 - Status: REVIEW_PENDING.
+- Phase / Workstream: P06 synthetic regression / WS-A.
+- 작업 상태: REVIEW_PENDING
 - Base: public integration `0c735d0`; branch `codex/ws-a/loaded-candidate-trial-regression`.
 - Initial tracked changes: none. Read AGENTS, README, CURRENT_STATE, WORK_PROTOCOL, trial and Excel integration source/tests.
 - Test mixed compressor/valve/HX evaluation, reversed order, and freshly loaded records after workbook quarantine and restoration.
 - Only synthetic tests, state, work record and generated manifest may change. No physical equations, tolerance, schema, loader, ranking or manufacturer data changes.
 - Existing ProductRecord/adapter interfaces remain frozen. Expected failures must retain no calculation result.
 
-## Validation and handoff
+## 수행 내용
+
+Mixed Excel products now reach the existing candidate evaluator in synthetic tests.
+
+## 결정, 가정 및 출처
+
+Use only public synthetic helper fixtures. Fresh reload records are caller-owned; no cache invalidation or physical policy changes.
+
+## 검증 결과
 
 - Added `tests/ws_a/test_loaded_candidate_trials.py` (3 cases), state entry and generated source manifest. Production implementation unchanged. Helpers follow the existing in-repository test import convention.
 - Mixed/reversed execution preserves complete result equality and mock/parent source identity. Missing map after reload has no result, retains only surviving selected envelope source, and independent valve/HX results are unchanged. Restoring original bytes restores version and outputs. No guarantee of invalidating caller-held old immutable ProductRecord snapshots is asserted.
@@ -26,3 +36,7 @@
 - Full existing-environment suite and contracts/WS-B/WS-A/system combined regression: completion pending; not PASS. Exact commands: `python -m pytest -p no:cacheprovider -q` and `python -m pytest -p no:cacheprovider tests/contracts tests/ws_b tests/ws_a tests/ws_a_system -q`.
 - Work-record/diff checks, PR and final-head CI: pending; not approved or merged. No implementation policy decision needed; ordinary PR review remains required.
 - CV/manufacturer/P06/production/Gate status unchanged.
+
+## 종료 및 인수인계
+
+Ordinary PR review and remote locked CI remain required. CURRENT_STATE updated; no merge authority exercised.
