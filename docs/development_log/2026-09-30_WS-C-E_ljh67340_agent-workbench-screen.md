@@ -63,8 +63,8 @@ PR #12 검토 보완에서는 프로젝트 변경 시 계산 결과뿐 아니라
 ## 종료 및 인수인계
 
 - 완료한 범위: adapter 기반 자연어 상태 표시, 불완전 project 적용·사용자 보완, 명시적 실행·결과 표시, history·결과 무효화 회귀와 실제 브라우저 확인.
-- 남은 작업 / 알려진 한계 / blocker: 공개 PR #12 보완 head 검토와 새 원격 CI 완료 확인. 자유형 LLM 이해, 실제 제품 자동선정, 목표 달성 판정은 미지원.
+- 남은 작업 / 알려진 한계 / blocker: 자유형 LLM 이해, 실제 제품 자동선정, 목표 달성 판정은 미지원.
 - 다음 담당자와 첫 실행 작업: 관리자가 PR diff, AppTest와 실제 브라우저 근거를 검토한다.
 - `CURRENT_STATE.md` 갱신 여부: 완료.
 - Phase checklist / Gate 상태와 증거: GUI 연결 검증이며 CV·P06 전체·production·Gate 승인 아님.
-- PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): 공개 PR #12 제출 후 결과 무효화 결함으로 `CHANGES_REQUESTED`; 보완 전 최신 head `b5222b9`의 Foundation CI run 36712361759는 4/4 PASS; 보완 head 리뷰·CI·병합은 별도 확인.
+- PR / 리뷰 / 승인 / integration merge / CI 상태(없으면 미수행): 공개 PR #12는 최종 보완을 수용받아 `a42be4346c6868f57ae8d552b4ebe3d8374c6cae`로 integration에 병합됐다. 최신 PR head CI는 4/4 PASS였고 병합 후 Foundation CI run 36719833476도 SUCCESS다. 이전 `CHANGES_REQUESTED`와 run 36712361759는 중간 검토 이력으로 유지한다.
