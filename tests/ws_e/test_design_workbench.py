@@ -1066,13 +1066,13 @@ def test_streamlit_natural_language_builder_runs_real_baseline_result() -> None:
         "응축기 출구온도 35°C, 냉매 질량유량 0.05 kg/s."
     )
     app = app.text_area[0].set_value(prompt).run(timeout=20)
-    analyze = next(button for button in app.button if button.label == "Agent 입력 확인")
+    analyze = next(button for button in app.button if button.label == "1. 입력 검사")
     app = analyze.click().run(timeout=20)
 
     assert any("Agent 상태 · 프로젝트 준비" in item.value for item in app.info)
-    apply = next(button for button in app.button if button.label == "캔버스에 구성")
+    apply = next(button for button in app.button if button.label == "2. 캔버스에 적용")
     assert not apply.disabled
-    execute = next(button for button in app.button if button.label == "명시적 계산 실행")
+    execute = next(button for button in app.button if button.label == "3. 계산 실행")
     app = execute.click().run(timeout=20)
     assert any("Agent 상태 · 계산 완료" in item.value for item in app.success)
     assert any("설계 목표 달성" in item.value for item in app.caption)
@@ -1114,7 +1114,7 @@ def _completed_agent_workbench_app():
     app = AppTest.from_file(str(root / "src/agent_hvac/app/design_workbench_app.py")).run(
         timeout=20
     )
-    execute = next(button for button in app.button if button.label == "명시적 계산 실행")
+    execute = next(button for button in app.button if button.label == "3. 계산 실행")
     app = execute.click().run(timeout=20)
     assert "workbench_result" in app.session_state.filtered_state
     assert "agent_command_response" in app.session_state.filtered_state
@@ -1130,14 +1130,14 @@ def _assert_agent_execution_invalidated(app) -> None:
 
 
 def _assert_project_apply_does_not_restore_result_then_reexecute(app) -> None:
-    analyze = next(button for button in app.button if button.label == "Agent 입력 확인")
+    analyze = next(button for button in app.button if button.label == "1. 입력 검사")
     app = analyze.click().run(timeout=20)
     assert any("Agent 상태 · 프로젝트 준비" in item.value for item in app.info)
-    apply = next(button for button in app.button if button.label == "캔버스에 구성")
+    apply = next(button for button in app.button if button.label == "2. 캔버스에 적용")
     app = apply.click().run(timeout=20)
     _assert_agent_execution_invalidated(app)
 
-    execute = next(button for button in app.button if button.label == "명시적 계산 실행")
+    execute = next(button for button in app.button if button.label == "3. 계산 실행")
     app = execute.click().run(timeout=20)
     assert "workbench_result" in app.session_state.filtered_state
     assert any("Agent 상태 · 계산 완료" in item.value for item in app.success)
@@ -1205,12 +1205,12 @@ def test_streamlit_agent_missing_inputs_can_be_completed_then_run() -> None:
         timeout=20
     )
     app = app.text_area[0].set_value("R134a 기본 냉동사이클을 구성해줘").run(timeout=20)
-    confirm = next(button for button in app.button if button.label == "Agent 입력 확인")
+    confirm = next(button for button in app.button if button.label == "1. 입력 검사")
     app = confirm.click().run(timeout=20)
 
     assert any("Agent 상태 · 추가 입력 필요" in item.value for item in app.warning)
     assert any("사용자 보완 필요" in item.value for item in app.warning)
-    apply = next(button for button in app.button if button.label == "캔버스에 구성")
+    apply = next(button for button in app.button if button.label == "2. 캔버스에 적용")
     app = apply.click().run(timeout=20)
     values = {
         "전체 · 증발·저압측 압력 [bar(a)]": "3",
@@ -1258,7 +1258,7 @@ def test_streamlit_agent_rejects_invalid_command_before_execution(prompt: str) -
         timeout=20
     )
     app = app.text_area[0].set_value(prompt).run(timeout=20)
-    execute = next(button for button in app.button if button.label == "명시적 계산 실행")
+    execute = next(button for button in app.button if button.label == "3. 계산 실행")
     with patch("agent_hvac.agents.workbench.simulate_project") as simulate:
         app = execute.click().run(timeout=20)
 
@@ -1275,12 +1275,12 @@ def test_streamlit_agent_solver_failure_is_explicit_and_has_no_result() -> None:
     app = AppTest.from_file(str(root / "src/agent_hvac/app/design_workbench_app.py")).run(
         timeout=20
     )
-    execute = next(button for button in app.button if button.label == "명시적 계산 실행")
+    execute = next(button for button in app.button if button.label == "3. 계산 실행")
     app = execute.click().run(timeout=20)
     assert any("Agent 상태 · 계산 완료" in item.value for item in app.success)
     assert any("Solver status: converged" in item.value for item in app.text)
 
-    execute = next(button for button in app.button if button.label == "명시적 계산 실행")
+    execute = next(button for button in app.button if button.label == "3. 계산 실행")
     with patch(
         "agent_hvac.agents.workbench.simulate_project",
         side_effect=InvalidPropertyStateError("synthetic property failure"),
@@ -1296,7 +1296,7 @@ def test_streamlit_agent_solver_failure_is_explicit_and_has_no_result() -> None:
     assert not any("결과 무효화 · 재계산 필요" in item.value for item in app.metric)
     assert not any("현재 프로젝트로 다시 계산" in item.value for item in app.warning)
 
-    execute = next(button for button in app.button if button.label == "명시적 계산 실행")
+    execute = next(button for button in app.button if button.label == "3. 계산 실행")
     app = execute.click().run(timeout=20)
     assert any("Agent 상태 · 계산 완료" in item.value for item in app.success)
     assert any("Solver status: converged" in item.value for item in app.text)
@@ -1456,9 +1456,9 @@ def test_streamlit_component_parameter_edit_reaches_the_real_solver() -> None:
     app = AppTest.from_file(str(root / "src/agent_hvac/app/design_workbench_app.py")).run(
         timeout=20
     )
-    analyze = next(button for button in app.button if button.label == "Agent 입력 확인")
+    analyze = next(button for button in app.button if button.label == "1. 입력 검사")
     app = analyze.click().run(timeout=20)
-    apply = next(button for button in app.button if button.label == "캔버스에 구성")
+    apply = next(button for button in app.button if button.label == "2. 캔버스에 적용")
     app = apply.click().run(timeout=20)
     open_editor = next(button for button in app.button if button.label == "속성 열기")
     app = open_editor.click().run(timeout=20)
@@ -1523,9 +1523,9 @@ def test_agent_project_change_uses_history_and_invalidates_previous_result() -> 
         "응축기 출구온도 35°C, 냉매 질량유량 0.05 kg/s."
     )
     app = app.text_area[0].set_value(prompt).run(timeout=20)
-    confirm = next(button for button in app.button if button.label == "Agent 입력 확인")
+    confirm = next(button for button in app.button if button.label == "1. 입력 검사")
     app = confirm.click().run(timeout=20)
-    apply = next(button for button in app.button if button.label == "캔버스에 구성")
+    apply = next(button for button in app.button if button.label == "2. 캔버스에 적용")
     app = apply.click().run(timeout=20)
 
     _assert_workbench_result_invalidated(app)

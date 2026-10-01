@@ -16,6 +16,11 @@ from agent_hvac.agents.workbench import (
     run_workbench_command,
 )
 from agent_hvac.app import workbench_command
+from agent_hvac.app.baseline_input_guidance import (
+    EXAMPLE_CONDITIONS,
+    baseline_guidance_checks,
+    failure_explanation,
+)
 from agent_hvac.app.design_workbench import (
     ComponentKind,
     WorkbenchProject,
@@ -280,6 +285,18 @@ def _store_command_project(
         _register_workbench_result(project, response.result)
 
 
+def _render_failure_help(messages: tuple[str, ...]) -> None:
+    explanation, actions = failure_explanation(messages)
+    st.error("실패 원인 · " + explanation)
+    st.markdown("**해결 가이드**")
+    for index, action in enumerate(actions, start=1):
+        st.write(f"{index}. {action}")
+    if messages:
+        with st.expander("상세 오류 원문"):
+            for message in messages:
+                st.code(message, language=None)
+
+
 def _render_command_response(response: WorkbenchCommandResponse) -> None:
     status_label = {
         "rejected": "입력 거부",
@@ -299,6 +316,7 @@ def _render_command_response(response: WorkbenchCommandResponse) -> None:
         st.caption("계산 흐름이 완료됐습니다. 설계 목표 달성이나 제품 적합 판정은 아닙니다.")
     else:
         st.error(f"Agent 상태 · {status_label}")
+        _render_failure_help(response.messages)
     if response.missing_inputs:
         missing_labels = [
             PARAMETER_PRESENTATION.get(name, (name, ""))[0] for name in response.missing_inputs
@@ -306,7 +324,9 @@ def _render_command_response(response: WorkbenchCommandResponse) -> None:
         st.warning("사용자 보완 필요: " + ", ".join(missing_labels))
     for message in response.messages:
         st.caption(
-            "명시적 계산 실행 전입니다." if message == "Calculation was not requested." else message
+            "아직 계산하지 않았습니다. 3단계 ‘계산 실행’을 눌러야 solver가 실행됩니다."
+            if message == "Calculation was not requested."
+            else message
         )
 
     plan = response.plan
@@ -373,9 +393,14 @@ def _render_command_builder() -> None:
     response_prompt = st.session_state.get(_COMMAND_RESPONSE_PROMPT_KEY)
     if response_prompt != prompt:
         response = None
+    st.caption(
+        "① 입력 검사: 명령에서 냉매·조건을 읽기만 함 → "
+        "② 캔버스에 적용: 부품과 조건을 편집 화면에 반영하며 계산하지 않음 → "
+        "③ 계산 실행: 확인된 조건으로 solver를 실행"
+    )
     analyze, apply, execute = st.columns(3)
     with analyze:
-        if st.button("Agent 입력 확인", use_container_width=True):
+        if st.button("1. 입력 검사", use_container_width=True):
             try:
                 response = run_workbench_command(
                     WorkbenchCommandRequest(prompt=prompt, execute=False)
@@ -387,7 +412,7 @@ def _render_command_builder() -> None:
                 st.session_state[_COMMAND_RESPONSE_PROMPT_KEY] = prompt
     with apply:
         if st.button(
-            "캔버스에 구성",
+            "2. 캔버스에 적용",
             use_container_width=True,
             disabled=(
                 not isinstance(response, WorkbenchCommandResponse) or response.project is None
@@ -397,7 +422,7 @@ def _render_command_builder() -> None:
             _store_command_project(response)
             st.rerun()
     with execute:
-        if st.button("명시적 계산 실행", type="primary", use_container_width=True):
+        if st.button("3. 계산 실행", type="primary", use_container_width=True):
             try:
                 response = run_workbench_command(
                     WorkbenchCommandRequest(prompt=prompt, execute=True)
@@ -421,6 +446,25 @@ def _render_condition_editor(project: WorkbenchProject) -> WorkbenchProject:
     completed = sum(condition is not None for condition in supplied.values())
     missing = missing_solver_inputs(project)
     st.caption(f"계산 입력 {completed}/{len(required)} · 자연어 없이 직접 입력 가능")
+    with st.expander("처음 사용자를 위한 baseline 입력 가이드", expanded=bool(missing)):
+        st.markdown(
+            "- 압력은 **절대압**을 사용하고 고압측을 저압측보다 높게 입력하세요.\n"
+            "- 압축기 흡입은 기체·과열 상태, 응축기 출구는 액체·과냉 상태가 기본입니다. "
+            "R744 초임계 조건은 gas cooler 출구로 해석합니다.\n"
+            "- 효율은 0 초과 1 이하, 질량유량은 양수여야 합니다.\n"
+            "- 아래 값은 프로그램 사용 예시이며 제품 허용범위나 설계 권장값이 아닙니다."
+        )
+        example = EXAMPLE_CONDITIONS.get(project.refrigerant, "공식 예시 없음")
+        st.caption(f"{project.refrigerant} 예시 · {example}")
+        for check in baseline_guidance_checks(project):
+            if check.level == "error":
+                st.error(check.message)
+            elif check.level == "warning":
+                st.warning(check.message)
+            elif check.level == "pass":
+                st.success(check.message)
+            else:
+                st.info(check.message)
     with st.expander("설계조건 입력·수정", expanded=bool(missing)):
         entered: dict[str, tuple[str, str]] = {}
         with st.form(f"workbench-condition-form-{suffix}"):
@@ -813,13 +857,8 @@ def _render_workbench_result(project: WorkbenchProject, result: SimulationResult
             st.subheader("컴포넌트 입·출구 상태")
             st.dataframe(rows, hide_index=True, use_container_width=True)
             st.caption("solver가 반환한 상태점을 캔버스 연결의 상태번호 1–4에 대응했습니다.")
-    elif any("evaporator capacity must be positive" in message for message in result.messages):
-        st.warning(
-            "입력 조건에서 팽창밸브 출구 엔탈피가 압축기 흡입 엔탈피보다 낮아지지 않아 "
-            "증발기 냉동능력을 양수로 계산할 수 없습니다. 냉매에 맞는 고압측 압력, "
-            "고압 열교환기 출구온도와 저압측 흡입상태를 다시 확인하세요. "
-            "값은 자동 변경하지 않습니다."
-        )
+    if result.status != SolverStatus.CONVERGED:
+        _render_failure_help(result.messages)
     render_artifact(result)
 
 
@@ -828,7 +867,10 @@ def _render_services(project: WorkbenchProject) -> None:
     missing = missing_solver_inputs(project)
     model_issues = baseline_model_issues(project)
     editor_issues = topology_issues(project)
-    blocked = bool(missing or editor_issues or model_issues)
+    guidance_errors = tuple(
+        check.message for check in baseline_guidance_checks(project) if check.level == "error"
+    )
+    blocked = bool(missing or editor_issues or model_issues or guidance_errors)
     result = st.session_state.get("workbench_result")
     result_fingerprint = st.session_state.get("workbench_result_project_fingerprint")
     if isinstance(result, SimulationResult) and result_fingerprint != _project_fingerprint(project):
@@ -840,7 +882,6 @@ def _render_services(project: WorkbenchProject) -> None:
     latest_calculation_failed = isinstance(calculation_error, str) or (
         isinstance(agent_response, WorkbenchCommandResponse) and agent_response.status == "failed"
     )
-
     st.info(
         "제품 모델이 없어도 선택한 일반 부품 모델과 직접 입력한 파라미터로 "
         "CoolProp 물성·P02 단일단 solver를 실행합니다. 제조사 제품 성능이나 "
@@ -888,6 +929,8 @@ def _render_services(project: WorkbenchProject) -> None:
         st.warning("Baseline 실행 불가 · 필수 입력 누락: " + ", ".join(missing_labels))
     for issue in model_issues:
         st.warning("Baseline 실행 불가 · " + issue)
+    for issue in guidance_errors:
+        st.error("Baseline 실행 불가 · " + issue)
     if not blocked:
         st.success("현재 캔버스 연결과 직접 입력한 설계조건으로 계산할 준비가 됐습니다.")
     if st.button(
