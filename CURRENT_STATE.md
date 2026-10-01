@@ -19,6 +19,13 @@
 - Existing public WS-D P09 implementation and tests match the reviewed private source snapshot; they are not duplicated in this GUI change. WS-C/Agent integration remains a separate PR.
 - Local Windows validation after merging latest integration: WS-E 121 passed; base-command 672 passed in the existing GUI-capable `.venv`; GUI 672 passed; Ruff, format, mypy, both GUI entry-point mypy checks, 155-file manifest and package build passed. The local base command was not a clean base-only environment.
 - Actual Chromium 153 pointer validation passed for blank-canvas component creation, node drag, port drag closed loop, direct inputs, convergence/state display, result invalidation and unsupported connected-component blocking. Evidence: [record](docs/development_log/2026-09-29_WS-E_ljh67340_public-workbench-migration.md).
+
+## WS-E P-h/T-s 베이퍼돔 시각화 (2026-10-01, 검토 대기)
+
+- 공개 PR #14의 상태 일관성 범위와 분리해 최신 integration `eb2c5c3`에서 별도 브랜치로 진행한다.
+- CoolProp 포화 경계를 P-h/T-s 차트에 단일 베이퍼돔 경로로 표시하고, 사이클 주변 압력 범위와 그래프 크기·대비를 조정한다. solver 상태점이나 물성값은 변경하지 않는다.
+- 집중 회귀 87개, Ruff·format·mypy·GUI strict mypy·162-file manifest·build와 실제 Chromium R744 렌더링을 확인했다.
+- 실제 제품 성능 검증, CV/P06 전체, production 및 Gate 상태는 변경하지 않는다. 세부 근거는 [작업 기록](docs/development_log/2026-10-01_WS-E_ljh67340_vapor-dome-charts.md)을 따른다.
 - Public PR [#3](https://github.com/howos1234-stack/Agent-HVAC-Public/pull/3) was approved and merged to integration as `49dcfbc522f798b1567e61aeabe198c7502bbf27`. Its latest-head Windows/Ubuntu × base/gui CI passed 4/4; post-merge CI is tracked separately.
 - This work does not imply manufacturer validation, production use, CV/P06 completion or Gate approval.
 
